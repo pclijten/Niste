@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hoe werkt Niste – Woningmatch voor iedereen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream:  #F6F1E9;
+      --warm:   #EDE5D4;
+      --sand:   #D9CEBC;
+      --forest: #2A4A3E;
+      --moss:   #3D6B5C;
+      --gold:   #C49A4A;
+      --gold-lt:#E8C97A;
+      --gold-pale: #F5EDD6;
+      --rust:   #B85C38;
+      --dark:   #1A1A16;
+      --mid:    #5A5A50;
+      --light:  #9A9A8E;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--cream);
+      color: var(--dark);
+    }
+
+    /* ── NAV ── */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1.3rem 3rem;
+      border-bottom: 1px solid rgba(42,74,62,.08);
+      background: rgba(246,241,233,.95);
+      backdrop-filter: blur(20px);
+      position: sticky; top: 0; z-index: 50;
+    }
+    .nav-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.75rem; font-weight: 600;
+      color: var(--forest); text-decoration: none;
+      display: flex; align-items: center;
+    }
+    .logo-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--gold); display: inline-block;
+      animation: pulse 2.2s ease-in-out infinite; margin-left: 1px;
+    }
+    @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.5);opacity:.6} }
+    .nav-links {
+      display: flex; align-items: center; gap: 2rem;
+    }
+    .nav-link {
+      font-size: .78rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      color: var(--mid); text-decoration: none;
+      transition: color .2s;
+    }
+    .nav-link:hover { color: var(--forest); }
+    .nav-link.active { color: var(--forest); }
+    .nav-cta {
+      background: var(--forest); color: var(--cream);
+      border: none; border-radius: 100px;
+      padding: .6rem 1.4rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: .75rem; font-weight: 700;
+      letter-spacing: .07em; text-transform: uppercase;
+      text-decoration: none;
+      cursor: pointer; transition: background .2s, transform .2s;
+      box-shadow: 0 4px 14px rgba(42,74,62,.22);
+    }
+    .nav-cta:hover { background: var(--moss); transform: translateY(-1px); }
+
+    /* ── HERO ── */
+    .hero {
+      background: var(--forest);
+      padding: 7rem 3rem 5rem;
+      position: relative; overflow: hidden;
+      text-align: center;
+    }
+    .hero-blob {
+      position: absolute; border-radius: 50%;
+      filter: blur(80px); pointer-events: none;
+    }
+    .hero-blob-1 {
+      width: 500px; height: 500px;
+      background: rgba(196,154,74,.12);
+      top: -15%; left: 50%; transform: translateX(-50%);
+    }
+    .hero-blob-2 {
+      width: 300px; height: 300px;
+      background: rgba(61,107,92,.4);
+      bottom: -5%; right: 5%;
+    }
+    .hero-blob-3 {
+      width: 250px; height: 250px;
+      background: rgba(61,107,92,.35);
+      bottom: -5%; left: 5%;
+    }
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(246,241,233,.1);
+      border: 1px solid rgba(246,241,233,.15);
+      border-radius: 100px;
+      padding: .35rem .9rem;
+      font-size: .68rem; font-weight: 700;
+      letter-spacing: .12em; text-transform: uppercase;
+      color: rgba(246,241,233,.6);
+      margin-bottom: 2rem;
+      position: relative; z-index: 1;
+    }
+    .hero-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); }
+    .hero h1 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2.6rem, 5.5vw, 5rem);
+      font-weight: 300; line-height: 1.05;
+      color: var(--cream);
+      max-width: 800px; margin: 0 auto 1.6rem;
+      position: relative; z-index: 1;
+    }
+    .hero h1 em { font-style: italic; color: var(--gold-lt); }
+    .hero-lead {
+      font-size: clamp(.9rem, 1.5vw, 1.05rem);
+      line-height: 1.8; color: rgba(246,241,233,.65);
+      max-width: 600px; margin: 0 auto 3rem;
+      position: relative; z-index: 1;
+    }
+    .hero-stat-row {
+      display: flex; justify-content: center; gap: 3rem;
+      position: relative; z-index: 1;
+      padding-top: 2.8rem;
+      border-top: 1px solid rgba(246,241,233,.08);
+      max-width: 600px; margin: 0 auto;
+    }
+    .hero-stat-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.4rem; font-weight: 600;
+      color: var(--gold); line-height: 1;
+    }
+    .hero-stat-lbl {
+      font-size: .65rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: rgba(246,241,233,.35); margin-top: .3rem;
+    }
+
+    /* ── SECTION CHROME ── */
+    section { padding: 6rem 3rem; }
+    .section-inner { max-width: 1100px; margin: 0 auto; }
+    .section-eyebrow {
+      display: inline-flex; align-items: center; gap: .45rem;
+      font-size: .65rem; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--gold); margin-bottom: 1rem;
+    }
+    .section-eyebrow-line {
+      width: 24px; height: 1px; background: var(--gold); opacity: .6;
+    }
+    .section-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(2rem, 3.5vw, 3.2rem);
+      font-weight: 300; line-height: 1.1;
+      color: var(--dark); margin-bottom: 1rem;
+    }
+    .section-title em { font-style: italic; color: var(--forest); }
+    .section-lead {
+      font-size: .95rem; line-height: 1.8;
+      color: var(--mid); max-width: 580px;
+    }
+
+    /* ── SECTION: PROBLEEM ── */
+    .problem-section { background: var(--cream); }
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5rem;
+      align-items: center;
+      margin-top: 4rem;
+    }
+    .problem-text-col {}
+    .problem-text-col p {
+      font-size: .92rem; line-height: 1.85;
+      color: var(--mid); margin-bottom: 1.2rem;
+    }
+    .problem-text-col p strong { color: var(--dark); font-weight: 700; }
+
+    .problem-visual {
+      display: flex; flex-direction: column; gap: 1px;
+    }
+    .impasse-card {
+      background: white;
+      border: 1px solid rgba(42,74,62,.08);
+      border-radius: 18px;
+      padding: 1.5rem 1.8rem;
+      position: relative;
+    }
+    .impasse-card-label {
+      font-size: .62rem; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--light); margin-bottom: .6rem;
+    }
+    .impasse-card-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.3rem; font-weight: 400;
+      color: var(--dark); margin-bottom: .4rem;
+    }
+    .impasse-card-body {
+      font-size: .8rem; line-height: 1.6; color: var(--mid);
+    }
+    .impasse-connector {
+      display: flex; align-items: center; justify-content: center;
+      height: 36px; position: relative;
+    }
+    .impasse-connector::before {
+      content: ''; position: absolute;
+      top: 0; bottom: 0; left: 50%;
+      width: 1px; background: rgba(42,74,62,.12);
+    }
+    .impasse-connector-icon {
+      width: 28px; height: 28px;
+      background: var(--cream);
+      border: 1px solid rgba(42,74,62,.12);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .75rem; position: relative; z-index: 1;
+    }
+    .impasse-solution {
+      background: var(--forest);
+      border-radius: 18px; padding: 1.5rem 1.8rem;
+      margin-top: 1px;
+    }
+    .impasse-solution .impasse-card-label { color: rgba(246,241,233,.35); }
+    .impasse-solution .impasse-card-title { color: var(--gold-lt); }
+    .impasse-solution .impasse-card-body { color: rgba(246,241,233,.6); }
+
+    /* ── SECTION: HOE WERKT HET ── */
+    .how-section { background: var(--warm); }
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+      margin-top: 4rem;
+      position: relative;
+    }
+    .steps-grid::before {
+      content: '';
+      position: absolute;
+      top: 2.2rem; left: calc(12.5% + 1rem); right: calc(12.5% + 1rem);
+      height: 1px; background: rgba(42,74,62,.1);
+      z-index: 0;
+    }
+    .step-card {
+      background: white;
+      border: 1px solid rgba(42,74,62,.07);
+      border-radius: 20px; padding: 1.8rem 1.5rem;
+      position: relative; z-index: 1;
+      transition: transform .25s, box-shadow .25s;
+    }
+    .step-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(42,74,62,.1); }
+    .step-number {
+      width: 44px; height: 44px; border-radius: 50%;
+      background: var(--forest); color: var(--cream);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem; font-weight: 600;
+      margin-bottom: 1.2rem;
+    }
+    .step-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.25rem; font-weight: 400;
+      color: var(--dark); margin-bottom: .6rem;
+    }
+    .step-body {
+      font-size: .8rem; line-height: 1.65; color: var(--mid);
+    }
+    .step-tag {
+      display: inline-block; margin-top: 1rem;
+      background: rgba(42,74,62,.07);
+      border-radius: 100px; padding: .25rem .7rem;
+      font-size: .62rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--forest);
+    }
+
+    /* ── SECTION: VOOR WIE ── */
+    .audience-section { background: var(--cream); }
+    .audience-tabs {
+      display: flex; gap: .5rem;
+      margin: 3rem 0 2rem;
+      border-bottom: 1px solid rgba(42,74,62,.1);
+      padding-bottom: 0;
+    }
+    .audience-tab {
+      padding: .75rem 1.4rem;
+      border: none; background: transparent;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: .8rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      color: var(--light); cursor: pointer;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+      transition: all .2s;
+    }
+    .audience-tab.active {
+      color: var(--forest);
+      border-bottom-color: var(--forest);
+    }
+    .audience-panel { display: none; }
+    .audience-panel.active { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+
+    .audience-text h3 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2rem; font-weight: 300;
+      color: var(--dark); margin-bottom: .5rem;
+    }
+    .audience-text h3 em { font-style: italic; color: var(--forest); }
+    .audience-text .audience-intro {
+      font-size: .9rem; line-height: 1.8;
+      color: var(--mid); margin-bottom: 2rem;
+    }
+    .audience-benefits {
+      display: flex; flex-direction: column; gap: .75rem;
+    }
+    .benefit-row {
+      display: flex; align-items: flex-start; gap: .9rem;
+      padding: 1rem 1.1rem;
+      background: white;
+      border: 1px solid rgba(42,74,62,.07);
+      border-radius: 14px;
+    }
+    .benefit-icon {
+      width: 32px; height: 32px; border-radius: 10px;
+      background: rgba(42,74,62,.06);
+      display: flex; align-items: center; justify-content: center;
+      font-size: .85rem; flex-shrink: 0;
+    }
+    .benefit-text strong {
+      display: block; font-size: .82rem; font-weight: 700;
+      color: var(--dark); margin-bottom: 2px;
+    }
+    .benefit-text span {
+      font-size: .77rem; color: var(--mid); line-height: 1.5;
+    }
+
+    .audience-quote {
+      background: var(--forest);
+      border-radius: 24px; padding: 2.4rem;
+      position: relative; overflow: hidden;
+    }
+    .audience-quote::before {
+      content: '\201C';
+      position: absolute; top: -1rem; left: 1.5rem;
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 8rem; line-height: 1;
+      color: rgba(196,154,74,.2); pointer-events: none;
+    }
+    .audience-quote-text {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem; font-weight: 300;
+      font-style: italic; line-height: 1.5;
+      color: var(--cream); margin-bottom: 1.2rem;
+      position: relative;
+    }
+    .audience-quote-source {
+      font-size: .72rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: rgba(246,241,233,.35);
+    }
+    .audience-quote-chips {
+      display: flex; flex-wrap: wrap; gap: .5rem; margin-top: 1.6rem;
+    }
+    .audience-quote-chip {
+      background: rgba(246,241,233,.08);
+      border: 1px solid rgba(246,241,233,.12);
+      border-radius: 100px; padding: .3rem .8rem;
+      font-size: .68rem; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase;
+      color: rgba(246,241,233,.55);
+    }
+
+    /* ── SECTION: DOORSTROOMKETEN ── */
+    .chain-section { background: var(--forest); }
+    .chain-section .section-title { color: var(--cream); }
+    .chain-section .section-title em { color: var(--gold-lt); }
+    .chain-section .section-lead { color: rgba(246,241,233,.6); }
+    .chain-section .section-eyebrow { color: var(--gold); }
+
+    .chain-visual {
+      margin-top: 4rem;
+      display: flex; align-items: stretch; gap: 0;
+      overflow-x: auto; padding-bottom: 1rem;
+    }
+    .chain-node {
+      flex: 1; min-width: 180px;
+      background: rgba(246,241,233,.06);
+      border: 1px solid rgba(246,241,233,.09);
+      border-radius: 20px; padding: 1.8rem 1.5rem;
+      display: flex; flex-direction: column;
+      gap: .75rem;
+    }
+    .chain-node-emoji { font-size: 1.8rem; }
+    .chain-node-who {
+      font-size: .62rem; font-weight: 700;
+      letter-spacing: .14em; text-transform: uppercase;
+      color: var(--gold); opacity: .8;
+    }
+    .chain-node-label {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.2rem; color: var(--cream); line-height: 1.2;
+    }
+    .chain-node-desc {
+      font-size: .76rem; line-height: 1.6;
+      color: rgba(246,241,233,.5);
+    }
+    .chain-arrow {
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 .75rem; flex-shrink: 0;
+    }
+    .chain-arrow svg { opacity: .35; }
+
+    .chain-impact-row {
+      display: grid; grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem; margin-top: 3rem;
+    }
+    .chain-impact-card {
+      background: rgba(246,241,233,.06);
+      border: 1px solid rgba(246,241,233,.08);
+      border-radius: 18px; padding: 1.6rem;
+      text-align: center;
+    }
+    .chain-impact-val {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.6rem; font-weight: 600;
+      color: var(--gold); line-height: 1; margin-bottom: .4rem;
+    }
+    .chain-impact-label {
+      font-size: .72rem; line-height: 1.55;
+      color: rgba(246,241,233,.45);
+    }
+
+    /* ── SECTION: PRIVACY ── */
+    .privacy-section { background: var(--warm); }
+    .privacy-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 5rem; margin-top: 4rem; align-items: start;
+    }
+    .privacy-principles {
+      display: flex; flex-direction: column; gap: 1rem;
+    }
+    .privacy-principle {
+      display: flex; gap: 1.2rem; align-items: flex-start;
+      padding: 1.3rem 1.4rem;
+      background: white;
+      border: 1px solid rgba(42,74,62,.07);
+      border-radius: 16px;
+    }
+    .privacy-principle-num {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; font-weight: 600;
+      color: var(--gold); line-height: 1;
+      flex-shrink: 0; width: 28px;
+    }
+    .privacy-principle strong {
+      display: block; font-size: .84rem; font-weight: 700;
+      color: var(--dark); margin-bottom: .3rem;
+    }
+    .privacy-principle span {
+      font-size: .78rem; line-height: 1.6; color: var(--mid);
+    }
+    .privacy-badges {
+      display: flex; flex-direction: column; gap: 1.5rem;
+      justify-content: center;
+    }
+    .privacy-badge-block {
+      background: white;
+      border: 1px solid rgba(42,74,62,.07);
+      border-radius: 20px; padding: 2rem;
+    }
+    .privacy-badge-title {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.5rem; font-weight: 400;
+      color: var(--forest); margin-bottom: .5rem;
+    }
+    .privacy-badge-body {
+      font-size: .82rem; line-height: 1.7; color: var(--mid);
+    }
+    .privacy-badge-tags {
+      display: flex; flex-wrap: wrap; gap: .4rem; margin-top: 1rem;
+    }
+    .privacy-badge-tag {
+      background: rgba(42,74,62,.07);
+      border-radius: 100px; padding: .22rem .65rem;
+      font-size: .63rem; font-weight: 700;
+      letter-spacing: .09em; text-transform: uppercase;
+      color: var(--forest);
+    }
+
+    /* ── SECTION: CTA ── */
+    .cta-section {
+      background: var(--cream);
+      padding: 6rem 3rem;
+      text-align: center;
+    }
+    .cta-inner { max-width: 640px; margin: 0 auto; }
+    .cta-inner .section-eyebrow { justify-content: center; }
+    .cta-inner .section-title { text-align: center; margin-bottom: .8rem; }
+    .cta-inner .section-lead {
+      text-align: center; margin: 0 auto 2.8rem;
+    }
+    .cta-buttons {
+      display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;
+    }
+    .btn-primary {
+      background: var(--forest); color: var(--cream);
+      border: none; border-radius: 100px;
+      padding: 1rem 2rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: .85rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      text-decoration: none; cursor: pointer;
+      transition: background .2s, transform .2s, box-shadow .25s;
+      box-shadow: 0 5px 20px rgba(42,74,62,.26);
+      display: inline-flex; align-items: center; gap: .5rem;
+    }
+    .btn-primary:hover { background: var(--moss); transform: translateY(-2px); box-shadow: 0 10px 28px rgba(42,74,62,.32); }
+    .btn-secondary {
+      background: transparent; color: var(--forest);
+      border: 1.5px solid rgba(42,74,62,.2);
+      border-radius: 100px; padding: 1rem 2rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: .85rem; font-weight: 700;
+      letter-spacing: .06em; text-transform: uppercase;
+      text-decoration: none; cursor: pointer;
+      transition: all .2s;
+      display: inline-flex; align-items: center; gap: .5rem;
+    }
+    .btn-secondary:hover { border-color: var(--forest); background: rgba(42,74,62,.04); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--dark);
+      padding: 2.5rem 3rem;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem; flex-wrap: wrap;
+    }
+    .footer-logo {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.4rem; font-weight: 600;
+      color: rgba(246,241,233,.7); text-decoration: none;
+    }
+    .footer-meta {
+      font-size: .72rem; color: rgba(246,241,233,.3);
+      line-height: 1.6;
+    }
+    .footer-links {
+      display: flex; gap: 1.4rem;
+    }
+    .footer-link {
+      font-size: .7rem; font-weight: 700;
+      letter-spacing: .08em; text-transform: uppercase;
+      color: rgba(246,241,233,.3); text-decoration: none;
+      transition: color .2s;
+    }
+    .footer-link:hover { color: rgba(246,241,233,.6); }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 1rem 1.4rem; }
+      .nav-links { display: none; }
+      section { padding: 4rem 1.4rem; }
+      .hero { padding: 5rem 1.4rem 4rem; }
+      .hero-stat-row { gap: 1.8rem; }
+      .problem-grid,
+      .privacy-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+      .audience-panel.active { grid-template-columns: 1fr; gap: 2rem; }
+      .steps-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+      .steps-grid::before { display: none; }
+      .chain-impact-row { grid-template-columns: 1fr; }
+      .cta-section { padding: 4rem 1.4rem; }
+      footer { padding: 2rem 1.4rem; }
+      .footer-links { display: none; }
+    }
+    @media (max-width: 560px) {
+      .steps-grid { grid-template-columns: 1fr; }
+      .audience-tabs { overflow-x: auto; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <a href="index.html" class="nav-logo">niste<span class="logo-dot"></span></a>
+  <div class="nav-links">
+    <a href="over.html" class="nav-link active">Hoe het werkt</a>
+    <a href="privacy.html" class="nav-link">Privacy</a>
+    <a href="index.html" class="nav-cta">Aanmelden</a>
+  </div>
+</nav>
+
+
+<!-- ══════════════════════════════════════════════════
+     HERO
+══════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-blob hero-blob-1"></div>
+  <div class="hero-blob hero-blob-2"></div>
+  <div class="hero-blob hero-blob-3"></div>
+
+  <div class="hero-eyebrow">
+    <span class="hero-dot"></span>
+    Noord-Brabant · Pilot 2026
+  </div>
+
+  <h1>
+    De woningmarkt zit vast.<br>
+    <em>Niste maakt haar los.</em>
+  </h1>
+
+  <p class="hero-lead">
+    Niet door nieuwe woningen te bouwen, maar door te laten zien welke verhuismogelijkheden er al zijn. Veilig, anoniem en zonder verkoopdruk.
+  </p>
+
+  <div class="hero-stat-row">
+    <div>
+      <div class="hero-stat-val">2,5 mln</div>
+      <div class="hero-stat-lbl">65+ huishoudens in NL</div>
+    </div>
+    <div>
+      <div class="hero-stat-val">750.000</div>
+      <div class="hero-stat-lbl">Potentieel te groot gehuisvest</div>
+    </div>
+    <div>
+      <div class="hero-stat-val">400.000</div>
+      <div class="hero-stat-lbl">Woningtekort Nederland</div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     HET PROBLEEM
+══════════════════════════════════════════════════ -->
+<section class="problem-section">
+  <div class="section-inner">
+    <div class="section-eyebrow">
+      <span class="section-eyebrow-line"></span>
+      Het probleem
+    </div>
+    <h2 class="section-title">De woningmarkt zit in<br><em>een klassieke impasse</em></h2>
+    <p class="section-lead">Er is geen tekort aan woningen in de zin dat ze er niet zijn. Het probleem is dat ze op het verkeerde moment, op de verkeerde plek bezet zijn.</p>
+
+    <div class="problem-grid">
+      <div class="problem-text-col">
+        <p>Veel <strong>senioren wonen in ruime gezinswoningen</strong> die ze ooit voor het hele gezin kochten. De kinderen zijn uit huis, de bovenkamer staat leeg, maar verhuizen is een grote stap zonder zekerheid over een alternatief.</p>
+        <p>Tegelijkertijd zoeken <strong>gezinnen naar meer ruimte</strong>, liefst in de wijk waar ze al wortels hebben. Ze vinden niets — want die ruimere woningen staan simpelweg niet te koop.</p>
+        <p>En <strong>starters</strong> staan aan de zijlijn. Ze kunnen geen woning kopen zolang gezinnen niet doorstromen naar de ruimere woningen die senioren achterlaten.</p>
+        <p>Het gevolg is een <strong>impasse die zichzelf in stand houdt</strong>: niemand verhuist, want niemand kan verhuizen. Niet door gebrek aan wil, maar door gebrek aan overzicht.</p>
+      </div>
+
+      <div class="problem-visual">
+        <div class="impasse-card">
+          <div class="impasse-card-label">Woningmarkt vandaag</div>
+          <div class="impasse-card-title">Senioren wachten</div>
+          <div class="impasse-card-body">Ze staan open voor verandering, maar zien geen alternatief dat bij hen past — dus zetten ze hun woning niet te koop.</div>
+        </div>
+
+        <div class="impasse-connector">
+          <div class="impasse-connector-icon">⟳</div>
+        </div>
+
+        <div class="impasse-card">
+          <div class="impasse-card-label">Gevolg</div>
+          <div class="impasse-card-title">Gezinnen blijven wachten</div>
+          <div class="impasse-card-body">Ruimere woningen verschijnen niet op Funda, dus gezinnen vinden geen woning in hun eigen wijk.</div>
+        </div>
+
+        <div class="impasse-connector">
+          <div class="impasse-connector-icon">⟳</div>
+        </div>
+
+        <div class="impasse-card">
+          <div class="impasse-card-label">Eindresultaat</div>
+          <div class="impasse-card-title">Starters komen niet aan de beurt</div>
+          <div class="impasse-card-body">Omdat gezinnen niet doorstromen, komt er geen kleinere woning vrij voor starters. De keten staat volledig stil.</div>
+        </div>
+
+        <div class="impasse-connector">
+          <div class="impasse-connector-icon">→</div>
+        </div>
+
+        <div class="impasse-solution">
+          <div class="impasse-card-label">De Niste-aanpak</div>
+          <div class="impasse-card-title">Zichtbaar maken wat verborgen blijft</div>
+          <div class="impasse-card-body">Door latente verhuisintenties anoniem te matchen, doorbreekt Niste de impasse — voordat woningen op de markt hoeven te komen.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     HOE WERKT HET
+══════════════════════════════════════════════════ -->
+<section class="how-section">
+  <div class="section-inner">
+    <div class="section-eyebrow">
+      <span class="section-eyebrow-line"></span>
+      Hoe het werkt
+    </div>
+    <h2 class="section-title">Vier stappen naar<br><em>een concrete kans</em></h2>
+    <p class="section-lead">Het platform werkt zonder dat je je woning te koop hoeft te zetten. Alles begint met kijken.</p>
+
+    <div class="steps-grid">
+
+      <div class="step-card">
+        <div class="step-number">1</div>
+        <div class="step-title">Wooncheck invullen</div>
+        <div class="step-body">Je beantwoordt een korte vragenlijst over je huidige woning en je woonwensen. Hoeveel kamers gebruik je echt? Wat wil je in de toekomst? Het kost minder dan vijf minuten.</div>
+        <span class="step-tag">Anoniem</span>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">2</div>
+        <div class="step-title">Jouw woonprofiel</div>
+        <div class="step-body">Op basis van jouw antwoorden maakt het platform een woonprofiel aan. Geen adres, geen persoonlijke gegevens — alleen een indicatie van je woonsituatie en woonwensen.</div>
+        <span class="step-tag">Privacyveilig</span>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">3</div>
+        <div class="step-title">Anonieme match</div>
+        <div class="step-body">Als er een huishouden in jouw omgeving is dat mogelijk de andere kant van jouw verhaal is, ontvang je een melding. Je ziet een algemeen profiel — geen naam, geen adres.</div>
+        <span class="step-tag">Dubbele toestemming</span>
+      </div>
+
+      <div class="step-card">
+        <div class="step-number">4</div>
+        <div class="step-title">Contact op jouw moment</div>
+        <div class="step-body">Pas als beide partijen aangeven dat ze willen kennismaken, wordt contact mogelijk. Jij houdt altijd de controle. Geen makelaar die belt, geen druk om te beslissen.</div>
+        <span class="step-tag">Vrijblijvend</span>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     VOOR WIE
+══════════════════════════════════════════════════ -->
+<section class="audience-section">
+  <div class="section-inner">
+    <div class="section-eyebrow">
+      <span class="section-eyebrow-line"></span>
+      Voor wie
+    </div>
+    <h2 class="section-title">Niste is voor iedereen<br><em>die open staat voor verandering</em></h2>
+    <p class="section-lead">Je hoeft niet actief te zoeken. Je hoeft alleen open te staan voor de vraag: zou ik misschien beter af zijn in een andere woning?</p>
+
+    <!-- TABS -->
+    <div class="audience-tabs">
+      <button class="audience-tab active" onclick="showAudience('senior')">Senioren</button>
+      <button class="audience-tab" onclick="showAudience('gezin')">Gezinnen</button>
+      <button class="audience-tab" onclick="showAudience('gemeente')">Gemeenten &amp; corporaties</button>
+    </div>
+
+    <!-- ── SENIOR ── -->
+    <div class="audience-panel active" id="panel-senior">
+      <div class="audience-text">
+        <h3>U staat misschien al<br><em>langer bij stil</em></h3>
+        <p class="audience-intro">
+          De kinderen zijn allang het huis uit. De trap voelt zwaarder dan vroeger. U gebruikt misschien nog maar twee of drie kamers. De gedachte aan een andere, passender woning heeft u al vaker gehad — maar wat dan? Waar naartoe? En wat als u uw woning verkoopt terwijl er nog niets anders is?
+        </p>
+        <div class="audience-benefits">
+          <div class="benefit-row">
+            <div class="benefit-icon">👀</div>
+            <div class="benefit-text">
+              <strong>Eerst kijken, dan beslissen</strong>
+              <span>U ziet mogelijkheden voordat u ook maar één stap hoeft te zetten. Geen makelaar, geen verkoopdruk.</span>
+            </div>
+          </div>
+          <div class="benefit-row">
+            <div class="benefit-icon">🔒</div>
+            <div class="benefit-text">
+              <strong>Uw adres blijft privé</strong>
+              <span>Zolang u dat wilt, weet niemand wie u bent of waar u woont. Pas bij wederzijdse interesse wordt contact mogelijk.</span>
+            </div>
+          </div>
+          <div class="benefit-row">
+            <div class="benefit-icon">🏡</div>
+            <div class="benefit-text">
+              <strong>In uw eigen buurt blijven</strong>
+              <span>Niste zoekt matches in uw directe omgeving. Uw sociale netwerk, uw vertrouwde wijk — dat hoeft niet te verdwijnen.</span>
+            </div>
+          </div>
+          <div class="benefit-row">
+            <div class="benefit-icon">✋</div>
+            <div class="benefit-text">
+              <strong>Altijd vrijblijvend</strong>
+              <span>Geen verplichtingen. Als het niets voor u is, stopt u gewoon. Uw account en gegevens worden volledig verwijderd.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="audience-quote">
+        <p class="audience-quote-text">
+          "Ik wilde best eens kijken, maar het idee om mijn huis op Funda te zetten terwijl ik nog niets anders heb — dat voelt niet goed. Hier kan ik eerst gewoon eens kijken."
+        </p>
+        <div class="audience-quote-source">Herkenbaar voor veel 65+ bewoners</div>
+        <div class="audience-quote-chips">
+          <span class="audience-quote-chip">Gelijkvloers wonen</span>
+          <span class="audience-quote-chip">Kleiner &amp; makkelijker</span>
+          <span class="audience-quote-chip">Buurt behouden</span>
+          <span class="audience-quote-chip">Geen haast</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── GEZIN ── -->
+    <div class="audience-panel" id="panel-gezin">
+      <div class="audience-text">
+        <h3>De woning die jullie<br><em>zoeken bestaat al</em></h3>
+        <p class="audience-intro">
+          Jullie gezin is gegroeid maar de woning niet mee. Jullie willen meer ruimte, een tuin, een extra kamer — maar het liefst blijven jullie in dezelfde wijk, bij dezelfde school, bij hetzelfde netwerk. Op Funda staat er niets. Toch zijn die woningen er wél. Ze staan alleen niet te koop — nog niet.
+        </p>
+        <div class="audience-benefits">
+          <div class="benefit-row">
+            <div class="benefit-icon">🔍</div>
+            <div class="benefit-text">
+              <strong>Woningen die nog niet op Funda staan</strong>
+              <span>Niste legt contact met huishoudens die mogelijk open staan voor een verhuizing — voor ze hun woning te koop zetten.</span>
+            </div>
+          </div>
+          <div class="benefit-row">
+            <div class="benefit-icon">📍</div>
+            <div class="benefit-text">
+              <strong>In jouw eigen wijk</strong>
+              <span>Matching gebeurt op basis van locatievoorkeuren. Zo vergroot je de kans op een woning dicht bij wat jullie kennen en waarderen.</span>
+            </div>
+          </div>
+          <div class="benefit-row">
+            <div class="benefit-icon">⚡</div>
+            <div class="benefit-text">
+              <strong>Geen concurrentiestrijd</strong>
+              <span>Omdat de woning nog niet openbaar is, bied je niet mee op een overboden markt. Je praat direct met de bewoner.</span>
+            </div>
+          </div>
+          <div class="benefit-row">
+            <div class="benefit-icon">🤝</div>
+            <div class="benefit-text">
+              <strong>Alleen contact bij echte match</strong>
+              <span>Je krijgt alleen een melding als er een reëel woonprofiel is dat bij jullie past. Geen loze suggesties.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="audience-quote">
+        <p class="audience-quote-text">
+          "We zoeken al twee jaar naar iets groters in onze wijk. Op Funda staat nooit iets. We wisten niet dat we ook konden kijken naar woningen die misschien binnenkort beschikbaar komen."
+        </p>
+        <div class="audience-quote-source">Herkenbaar voor doorstromende gezinnen</div>
+        <div class="audience-quote-chips">
+          <span class="audience-quote-chip">Meer kamers</span>
+          <span class="audience-quote-chip">Tuin of buitenruimte</span>
+          <span class="audience-quote-chip">Zelfde school, zelfde buurt</span>
+          <span class="audience-quote-chip">Pre-market</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── GEMEENTE / CORPORATIE ── -->
+    <div class="audience-panel" id="panel-gemeente">
+      <div class="audience-text">
+        <h3>Inzicht in wat<br><em>nog verborgen is</em></h3>
+        <p class="audience-intro">
+          Gemeenten en woningcorporaties zoeken naar manieren om de bestaande voorraad beter te benutten. Doorstroming staat hoog op de beleidsagenda — maar de data over latente verhuisbereidheid ontbreekt. Niste maakt zichtbaar wat er al is.
+        </p>
+        <div class="audience-benefits">
+          <div class="benefit-row">
+            <div class="benefit-icon">📊</div>
+            <div class="benefit-text">
+              <strong>Inzicht in woningmismatch per wijk</strong>
+              <span>Het dashboard laat zien waar senioren met overruimte wonen en waar gezinnen ruimte tekortkomen — op wijkniveau.</span>
+            </div>
+          </div>
+          <div class="benefit-row">
+            <div class="benefit-icon">🗺</div>
+            <div class="benefit-text">
+              <strong>Heatmap van latente verhuisintentie</strong>
+              <span>Visualiseer waar doorstroompotentieel het grootst is. Gebruik dat als onderbouwing voor woonbeleid en nieuwbouwplanning.</span>
+            </div>
+          </div>
+          <div class="benefit-row">
+            <div class="benefit-icon">🔗</div>
+            <div class="benefit-text">
+              <strong>Doorstroomketens in kaart brengen</strong>
+              <span>Eén verhuizing zet gemiddeld 2,5 verhuizingen in gang. Niste berekent welke ketens in uw gemeente mogelijk zijn.</span>
+            </div>
+          </div>
+          <div class="benefit-row">
+            <div class="benefit-icon">📋</div>
+            <div class="benefit-text">
+              <strong>Pilot-instapmodel</strong>
+              <span>Start met een afgebakende pilot in één wijk of gemeente. Geen langlopend contract, wel concrete data en resultaten.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="audience-quote">
+        <p class="audience-quote-text">
+          "We weten dat er doorstroompotentieel is in onze gemeente, maar we hebben geen instrument om dat zichtbaar te maken. Dat is precies waar we behoefte aan hebben."
+        </p>
+        <div class="audience-quote-source">Herkenbaar voor woonbeleidsmedewerkers</div>
+        <div class="audience-quote-chips">
+          <span class="audience-quote-chip">Wijkrapportages</span>
+          <span class="audience-quote-chip">AVG-conform</span>
+          <span class="audience-quote-chip">B2G dashboard</span>
+          <span class="audience-quote-chip">Pilotklaar</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     DOORSTROOMKETEN
+══════════════════════════════════════════════════ -->
+<section class="chain-section">
+  <div class="section-inner">
+    <div class="section-eyebrow">
+      <span class="section-eyebrow-line"></span>
+      Het dominostenen-effect
+    </div>
+    <h2 class="section-title">Eén verhuizing zet<br><em>een keten in beweging</em></h2>
+    <p class="section-lead">Woningonderzoek laat zien dat één verhuizing gemiddeld 2,5 verhuizingen veroorzaakt. Niste berekent en activeert deze ketens.</p>
+
+    <div class="chain-visual">
+      <div class="chain-node">
+        <div class="chain-node-emoji">👴👵</div>
+        <div class="chain-node-who">Senior</div>
+        <div class="chain-node-label">Verhuist naar een appartement op maat</div>
+        <div class="chain-node-desc">Gelijkvloers, dichter bij voorzieningen. Precies wat past bij deze levensfase.</div>
+      </div>
+      <div class="chain-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M5 12h14M14 6l6 6-6 6" stroke="rgba(246,241,233,.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="chain-node">
+        <div class="chain-node-emoji">👨‍👩‍👧‍👦</div>
+        <div class="chain-node-who">Gezin</div>
+        <div class="chain-node-label">Trekt in de nu vrijgekomen gezinswoning</div>
+        <div class="chain-node-desc">Meer ruimte, tuin, in de vertrouwde wijk. Zonder concurrentiestrijd.</div>
+      </div>
+      <div class="chain-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M5 12h14M14 6l6 6-6 6" stroke="rgba(246,241,233,.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="chain-node">
+        <div class="chain-node-emoji">👩‍💼</div>
+        <div class="chain-node-who">Starter</div>
+        <div class="chain-node-label">Koopt de achtergelaten tussenwoningvan het gezin</div>
+        <div class="chain-node-desc">Eindelijk een betaalbare eerste woning — die eerder onbereikbaar leek.</div>
+      </div>
+      <div class="chain-arrow">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+          <path d="M5 12h14M14 6l6 6-6 6" stroke="rgba(246,241,233,.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="chain-node" style="background: rgba(196,154,74,.12); border-color: rgba(196,154,74,.2);">
+        <div class="chain-node-emoji">🏘</div>
+        <div class="chain-node-who">Resultaat</div>
+        <div class="chain-node-label">Drie huishoudens beter gehuisvest</div>
+        <div class="chain-node-desc">Zonder één nieuwe woning te bouwen. Alleen door bestaande woonruimte beter te benutten.</div>
+      </div>
+    </div>
+
+    <div class="chain-impact-row">
+      <div class="chain-impact-card">
+        <div class="chain-impact-val">1%</div>
+        <div class="chain-impact-label">Van de 750.000 senioren met overruimte verhuist → <strong style="color:rgba(246,241,233,.7)">≈ 18.750 verhuizingen</strong></div>
+      </div>
+      <div class="chain-impact-card">
+        <div class="chain-impact-val">2,5×</div>
+        <div class="chain-impact-label">Is de gemiddelde ketenlengte per starttransactie volgens woningmarktonderzoek</div>
+      </div>
+      <div class="chain-impact-card">
+        <div class="chain-impact-val">50%</div>
+        <div class="chain-impact-label">Van het woningtekort kan via doorstroming worden opgelost — zonder nieuwbouw</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     PRIVACY & VERTROUWEN
+══════════════════════════════════════════════════ -->
+<section class="privacy-section">
+  <div class="section-inner">
+    <div class="section-eyebrow">
+      <span class="section-eyebrow-line"></span>
+      Privacy &amp; vertrouwen
+    </div>
+    <h2 class="section-title">Jouw gegevens zijn van<br><em>jou — niet van ons</em></h2>
+    <p class="section-lead">Niste werkt alleen als mensen het platform vertrouwen. Dat vertrouwen verdienen we door te laten zien hoe we omgaan met jouw gegevens.</p>
+
+    <div class="privacy-grid">
+      <div class="privacy-principles">
+
+        <div class="privacy-principle">
+          <div class="privacy-principle-num">1</div>
+          <div>
+            <strong>Adressen worden nooit gedeeld</strong>
+            <span>Jouw exacte adres is niet zichtbaar in het platform. Matches zien alleen een indicatieve locatie, nooit jouw straat of huisnummer.</span>
+          </div>
+        </div>
+
+        <div class="privacy-principle">
+          <div class="privacy-principle-num">2</div>
+          <div>
+            <strong>Dubbele toestemming, altijd</strong>
+            <span>Contact is alleen mogelijk als beide partijen expliciet aangeven dat ze dat willen. Er wordt nooit eenzijdig informatie gedeeld.</span>
+          </div>
+        </div>
+
+        <div class="privacy-principle">
+          <div class="privacy-principle-num">3</div>
+          <div>
+            <strong>Minimale dataverzameling</strong>
+            <span>We vragen alleen wat nodig is voor matching. Geen onnodige velden, geen profilering, geen data voor advertenties.</span>
+          </div>
+        </div>
+
+        <div class="privacy-principle">
+          <div class="privacy-principle-num">4</div>
+          <div>
+            <strong>Recht op verwijdering</strong>
+            <span>Je kunt op elk moment je volledige account verwijderen. Alle gegevens en matches verdwijnen dan permanent uit onze systemen.</span>
+          </div>
+        </div>
+
+        <div class="privacy-principle">
+          <div class="privacy-principle-num">5</div>
+          <div>
+            <strong>Geen verkoop aan derden</strong>
+            <span>Jouw gegevens worden nooit verkocht of gedeeld met makelaars, adverteerders of andere commerciële partijen zonder jouw toestemming.</span>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="privacy-badges">
+        <div class="privacy-badge-block">
+          <div class="privacy-badge-title">AVG-conform by design</div>
+          <div class="privacy-badge-body">
+            Het platform is gebouwd met privacy als uitgangspunt, niet als nagedachte. Gegevensminimalisatie, anonimisering en toestemmingsbeheer zijn onderdeel van de architectuur — niet een laag die er later overheen is gelegd.
+          </div>
+          <div class="privacy-badge-tags">
+            <span class="privacy-badge-tag">GDPR / AVG</span>
+            <span class="privacy-badge-tag">Privacy by design</span>
+            <span class="privacy-badge-tag">Opt-in only</span>
+          </div>
+        </div>
+
+        <div class="privacy-badge-block">
+          <div class="privacy-badge-title">Transparantie over gebruik</div>
+          <div class="privacy-badge-body">
+            We leggen in begrijpelijke taal uit wat we bewaren, waarom en hoe lang. Geen juridische kleinlettertjes die niemand leest. Je kunt altijd een overzicht opvragen van wat we over jou hebben.
+          </div>
+          <div class="privacy-badge-tags">
+            <span class="privacy-badge-tag">Inzagerecht</span>
+            <span class="privacy-badge-tag">Verwijderrecht</span>
+            <span class="privacy-badge-tag">Geen tracking</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════════════════════
+     CTA
+══════════════════════════════════════════════════ -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div class="section-eyebrow" style="justify-content:center;">
+      <span class="section-eyebrow-line"></span>
+      Doe mee
+      <span class="section-eyebrow-line"></span>
+    </div>
+    <h2 class="section-title">Klaar om te kijken<br><em>wat er mogelijk is?</em></h2>
+    <p class="section-lead">
+      Aanmelden voor de pilot kost niets en verplicht tot niets. Je vult een korte wooncheck in, en wij laten je weten of er een match is in jouw buurt.
+    </p>
+    <div class="cta-buttons">
+      <a href="index.html" class="btn-primary">
+        Aanmelden voor de pilot
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+      <a href="privacy.html" class="btn-secondary">
+        Privacyverklaring lezen
+      </a>
+    </div>
+  </div>
+</section>
+
+
+<!-- ── FOOTER ── -->
+<footer>
+  <a href="index.html" class="footer-logo">niste·</a>
+  <p class="footer-meta">Pilot 2026 · Noord-Brabant · Woningmatch op basis van latente verhuisintentie</p>
+  <div class="footer-links">
+    <a href="over.html" class="footer-link">Hoe het werkt</a>
+    <a href="privacy.html" class="footer-link">Privacy</a>
+    <a href="index.html" class="footer-link">Aanmelden</a>
+  </div>
+</footer>
+
+
+<!-- ── SCRIPTS ── -->
+<script>
+  function showAudience(id) {
+    document.querySelectorAll('.audience-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.audience-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + id).classList.add('active');
+    event.target.classList.add('active');
+  }
+</script>
+</body>
+</html>
