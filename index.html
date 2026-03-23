@@ -1,122 +1,184 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Niste – Jouw nieuwe stek</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Niste – Jouw nieuwe stek</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-<style>
-body { font-family: 'Plus Jakarta Sans', sans-serif; margin:0; background:#F6F1E9; }
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      margin:0;
+      background:#F6F1E9;
+      color:#1A1A16;
+    }
 
-nav {
-  position:fixed; top:0; width:100%; padding:20px 40px;
-  background:rgba(255,255,255,0.9); display:flex; justify-content:space-between;
-}
+    nav {
+      display:flex;
+      justify-content:space-between;
+      padding:20px 40px;
+      background:white;
+      position:fixed;
+      width:100%;
+      top:0;
+      z-index:10;
+    }
 
-.hero { padding:120px 40px; }
+    .logo {
+      font-family:'Cormorant Garamond', serif;
+      font-size:28px;
+      color:#2A4A3E;
+    }
 
-.btn {
-  background:#2A4A3E; color:white; padding:12px 20px;
-  border-radius:999px; cursor:pointer; border:none;
-}
+    .nav-links a {
+      margin-left:20px;
+      text-decoration:none;
+      color:#555;
+      font-weight:600;
+    }
 
-.login-box {
-  background:white; padding:20px; border-radius:12px;
-  max-width:300px;
-}
-</style>
+    .cta {
+      background:#2A4A3E;
+      color:white;
+      padding:10px 20px;
+      border-radius:20px;
+    }
+
+    .hero {
+      padding:120px 40px;
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:40px;
+    }
+
+    .hero h1 {
+      font-family:'Cormorant Garamond', serif;
+      font-size:60px;
+      line-height:1.1;
+    }
+
+    .hero em {
+      color:#2A4A3E;
+    }
+
+    .btn {
+      display:inline-block;
+      margin-top:20px;
+      padding:14px 24px;
+      background:#2A4A3E;
+      color:white;
+      border-radius:30px;
+      text-decoration:none;
+    }
+
+    .card {
+      background:#2A4A3E;
+      color:white;
+      padding:30px;
+      border-radius:20px;
+    }
+
+    section {
+      padding:80px 40px;
+    }
+
+    .steps {
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:20px;
+    }
+
+    .step {
+      background:white;
+      padding:20px;
+      border-radius:16px;
+    }
+
+    footer {
+      background:#1A1A16;
+      color:white;
+      padding:40px;
+      text-align:center;
+    }
+
+    @media(max-width:900px){
+      .hero {grid-template-columns:1fr;}
+      .steps {grid-template-columns:1fr;}
+    }
+  </style>
 </head>
 
 <body>
 
 <nav>
-  <div><strong>Niste</strong></div>
-  <div>
-    <a href="#aanmelden">Aanmelden</a>
+  <div class="logo">niste</div>
+  <div class="nav-links">
+    <a href="#hoe">Hoe het werkt</a>
+    <a href="#waarom">Waarom</a>
+    <a href="intake.html" class="cta">Meld je aan</a>
   </div>
 </nav>
 
 <section class="hero">
-  <h1>Jouw volgende thuis</h1>
-  <p>Vind je perfecte woningruil</p>
-</section>
+  <div>
+    <h1>
+      Jouw volgende <br>
+      <em>thuis</em> wacht op <br>
+      de perfecte ruil
+    </h1>
 
-<!-- LOGIN -->
-<section id="aanmelden" style="padding:40px;">
-  <div class="login-box">
+    <p>
+      Slimme woningruil zonder makelaar.
+    </p>
 
-    <div id="status">Niet ingelogd</div>
+    <a href="intake.html" class="btn">
+      Vind mijn match
+    </a>
+  </div>
 
-    <input id="email" placeholder="Email"><br><br>
-    <input id="password" type="password" placeholder="Wachtwoord"><br><br>
-
-    <button class="btn" onclick="register()">Account maken</button><br><br>
-    <button class="btn" onclick="login()">Login</button><br><br>
-    <button class="btn" onclick="loginGoogle()">Google login</button>
-
+  <div class="card">
+    <h3>Jouw woning</h3>
+    <p>Herenlaan 14<br>Aarle-Rixtel</p>
+    <p>5 kamers · 165 m²</p>
   </div>
 </section>
 
-<!-- FIREBASE -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  GoogleAuthProvider,
-  signInWithPopup,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+<section id="hoe">
+  <h2>Hoe werkt het</h2>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyDkrkHrPW4pPu0_ZVKGma-AVF4-gTtk9R8",
-  authDomain: "niste-1113e.firebaseapp.com",
-  projectId: "niste-1113e",
-};
+  <div class="steps">
+    <div class="step">
+      <h3>1. Profiel</h3>
+      <p>Vul je woning en wensen in</p>
+    </div>
 
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+    <div class="step">
+      <h3>2. Matching</h3>
+      <p>Wij vinden de beste match</p>
+    </div>
 
-window.register = async () => {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+    <div class="step">
+      <h3>3. Verhuizen</h3>
+      <p>Wij begeleiden het proces</p>
+    </div>
+  </div>
+</section>
 
-  await createUserWithEmailAndPassword(auth, email, password);
+<section id="waarom">
+  <h2>Waarom Niste</h2>
 
-  // 👉 DIRECT NAAR INTAKE (FIXED)
-  window.location.href = "intake.html";
-};
+  <p>
+    De woningmarkt zit vast. Wij maken hem weer vloeibaar door slimme woningruil.
+  </p>
+</section>
 
-window.login = async () => {
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  await signInWithEmailAndPassword(auth, email, password);
-
-  // 👉 DIRECT NAAR DASHBOARD (FIXED)
-  window.location.href = "dashboard.html";
-};
-
-window.loginGoogle = async () => {
-  const provider = new GoogleAuthProvider();
-  await signInWithPopup(auth, provider);
-
-  window.location.href = "intake.html";
-};
-
-onAuthStateChanged(auth, user => {
-  const status = document.getElementById("status");
-
-  if (user) {
-    status.innerHTML = "Ingelogd als " + user.email;
-  } else {
-    status.innerHTML = "Niet ingelogd";
-  }
-});
-</script>
+<footer>
+  <p>© 2025 Niste</p>
+</footer>
 
 </body>
 </html>
