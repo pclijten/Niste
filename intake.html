@@ -3,323 +3,211 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Niste – Diepgaande woonintake</title>
+<title>Niste – Intake</title>
 
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
-body{font-family:"Plus Jakarta Sans";background:#f6f2ed;margin:0;}
-.container{max-width:1100px;margin:40px auto;padding:20px;}
-.section{background:#fff;border-radius:16px;padding:24px;margin-bottom:20px;}
-h1,h2{font-family:"Cormorant Garamond";}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.full{grid-column:1/-1;}
-input,select,textarea{padding:12px;border-radius:10px;border:1px solid #ddd;width:100%;}
-textarea{min-height:100px;}
-button{background:#8a6a45;color:white;padding:14px;border:none;border-radius:12px;}
-.summary{background:#eee;padding:15px;border-radius:10px;}
+body {
+  margin: 0;
+  font-family: 'Plus Jakarta Sans';
+  background: #F5F0E8;
+}
+
+.container {
+  padding: 20px;
+  max-width: 600px;
+  margin: auto;
+}
+
+.step { display:none; }
+.step.active { display:block; }
+
+input, select, textarea {
+  width:100%;
+  padding:14px;
+  margin-bottom:16px;
+  border-radius:10px;
+  border:1px solid #ddd;
+}
+
+button {
+  width:100%;
+  padding:14px;
+  border:none;
+  border-radius:12px;
+  background:#1E2A38;
+  color:white;
+}
+
+.progress {
+  height:6px;
+  background:#ddd;
+  margin-bottom:20px;
+}
+
+.bar {
+  height:6px;
+  background:#C6A87D;
+  width:0%;
+}
 </style>
 </head>
 
 <body>
+
 <div class="container">
+<h1>Intake</h1>
+<div class="progress"><div class="bar" id="bar"></div></div>
 
-<h1>Niste – Woning & Woonbehoefte intake</h1>
+<!-- STEP 1 -->
+<div class="step active">
+<h2>Woning basis</h2>
 
-<form id="form">
-
-<!-- ===================== -->
-<!-- HUISHOUDEN -->
-<!-- ===================== -->
-<div class="section">
-<h2>Huishouden</h2>
-<div class="grid">
-<input id="age" placeholder="Leeftijd hoofdbewoner">
-<input id="household" placeholder="Aantal personen huishouden">
-<input id="children" placeholder="Aantal kinderen">
-<input id="lifeStage" placeholder="Levensfase (starter / gezin / empty nester)">
-<textarea id="changes" class="full" placeholder="Welke veranderingen verwacht je komende 5 jaar?"></textarea>
-</div>
-</div>
-
-<!-- ===================== -->
-<!-- HUIDIGE WONING -->
-<!-- ===================== -->
-<div class="section">
-<h2>Huidige woning (objectief + gevoel)</h2>
-<div class="grid">
-
-<input id="city" placeholder="Plaats">
-<input id="type" placeholder="Type woning">
-
-<input id="m2" placeholder="m²">
-<input id="rooms" placeholder="kamers">
-
-<select id="energy">
-<option>Energielabel</option>
-<option>A</option><option>B</option><option>C</option>
-<option>D</option><option>E</option><option>F</option>
-</select>
-
-<select id="satisfaction">
-<option>Tevredenheid woning</option>
-<option>1 - slecht</option>
-<option>2</option>
-<option>3</option>
-<option>4</option>
-<option>5 - perfect</option>
-</select>
-
-<textarea id="likes" class="full" placeholder="Wat waardeer je het meest aan je woning?"></textarea>
-<textarea id="pain" class="full" placeholder="Wat zijn de grootste frustraties?"></textarea>
-
-<textarea id="emotion" class="full" placeholder="Wat betekent deze woning emotioneel voor je?"></textarea>
-
-</div>
-</div>
-
-<!-- ===================== -->
-<!-- VERHUISREDEN -->
-<!-- ===================== -->
-<div class="section">
-<h2>Waarom wil je veranderen?</h2>
-<div class="grid">
-
-<select id="trigger">
-<option>Hoofdreden</option>
-<option>Te groot</option>
-<option>Te klein</option>
-<option>Onderhoud</option>
-<option>Locatie</option>
-<option>Financieel</option>
-</select>
-
-<textarea id="realReason" class="full" placeholder="Wat is de échte reden achter je verhuiswens?"></textarea>
-
-<select id="urgency">
-<option>Urgentie</option>
-<option>Laag</option>
-<option>Middel</option>
-<option>Hoog</option>
-</select>
-
-</div>
-</div>
-
-<!-- ===================== -->
-<!-- WOONWENSEN -->
-<!-- ===================== -->
-<div class="section">
-<h2>Ideale woning</h2>
-<div class="grid">
-
-<input id="desiredM2" placeholder="Gewenste m²">
-<input id="desiredRooms" placeholder="Gewenste kamers">
-
-<select id="desiredType">
-<option>Type woning</option>
+<label>Type</label>
+<select id="type">
+<option>Tussenwoning</option>
+<option>Hoekwoning</option>
+<option>Vrijstaand</option>
 <option>Appartement</option>
-<option>Huis</option>
-<option>Seniorenwoning</option>
 </select>
 
-<select id="mustHave">
-<option>Belangrijkste must-have</option>
-<option>Tuin</option>
-<option>Gelijkvloers</option>
-<option>Locatie</option>
-<option>Prijs</option>
+<label>Bouwjaar</label>
+<input id="bouwjaar" type="number">
+
+<label>m²</label>
+<input id="m2" type="number">
+
+<button onclick="next()">Volgende</button>
+</div>
+
+<!-- STEP 2 -->
+<div class="step">
+<h2>Techniek</h2>
+
+<label>Energielabel</label>
+<select id="label">
+<option>A</option><option>B</option><option>C</option>
+<option>D</option><option>E</option>
 </select>
 
-<textarea id="dream" class="full" placeholder="Beschrijf je ideale woning zo concreet mogelijk"></textarea>
+<label>Zonnepanelen (aantal)</label>
+<input id="panelen" type="number">
 
-</div>
-</div>
-
-<!-- ===================== -->
-<!-- LOCATIE -->
-<!-- ===================== -->
-<div class="section">
-<h2>Locatievoorkeur</h2>
-<div class="grid">
-
-<input id="preferredCity" placeholder="Voorkeursplaats">
-<input id="radius" placeholder="Max afstand (km)">
-
-<select id="mustStay">
-<option>Moet je in dezelfde plaats blijven?</option>
-<option>Ja</option>
-<option>Nee</option>
+<label>Isolatie</label>
+<select id="isolatie">
+<option>Goed</option>
+<option>Gemiddeld</option>
+<option>Slecht</option>
 </select>
 
-<textarea id="locationWhy" class="full" placeholder="Waarom deze locatie?"></textarea>
-
-</div>
-</div>
-
-<!-- ===================== -->
-<!-- FINANCIEEL -->
-<!-- ===================== -->
-<div class="section">
-<h2>Financieel</h2>
-<div class="grid">
-
-<input id="budget" placeholder="Budget">
-<input id="equity" placeholder="Overwaarde (inschatting)">
-
-<select id="flexibility">
-<option>Financiële flexibiliteit</option>
-<option>Strak budget</option>
-<option>Enigszins flexibel</option>
-<option>Flexibel</option>
+<label>CV / Warmtepomp</label>
+<select id="verwarming">
+<option>CV</option>
+<option>Warmtepomp</option>
 </select>
 
-</div>
-</div>
-
-<!-- ===================== -->
-<!-- DOORSTROOM -->
-<!-- ===================== -->
-<div class="section">
-<h2>Doorstroom (belangrijk!)</h2>
-<div class="grid">
-
-<select id="sell">
-<option>Ga je verkopen?</option>
-<option>Ja</option>
-<option>Nee</option>
+<label>Elektra vernieuwd?</label>
+<select id="elektra">
+<option>Ja</option><option>Nee</option>
 </select>
 
-<select id="timeline">
-<option>Tijdlijn verkoop</option>
-<option>Direct</option>
-<option>6 maanden</option>
-<option>1 jaar</option>
+<button onclick="next()">Volgende</button>
+</div>
+
+<!-- STEP 3 -->
+<div class="step">
+<h2>Onderhoud</h2>
+
+<label>Laatste renovatie</label>
+<input id="renovatie">
+
+<label>Keuken staat</label>
+<select id="keuken">
+<option>Nieuw</option>
+<option>Redelijk</option>
+<option>Oud</option>
 </select>
 
-<textarea id="barrier" class="full" placeholder="Wat houdt je nu tegen om te verhuizen?"></textarea>
+<label>Badkamer staat</label>
+<select id="badkamer">
+<option>Nieuw</option>
+<option>Redelijk</option>
+<option>Oud</option>
+</select>
 
-</div>
-</div>
-
-<!-- ===================== -->
-<!-- SAMENVATTING -->
-<!-- ===================== -->
-<div class="section">
-<h2>Profiel & samenvatting</h2>
-<div id="summary" class="summary"></div>
-<br>
-<button type="submit">Opslaan</button>
+<button onclick="next()">Volgende</button>
 </div>
 
-</form>
+<!-- STEP 4 -->
+<div class="step">
+<h2>Wensen</h2>
+
+<label>Gewenste plaats</label>
+<input id="plaats">
+
+<label>Budget max</label>
+<input id="budget">
+
+<label>Min m²</label>
+<input id="minm2">
+
+<label>Must-haves</label>
+<textarea id="must"></textarea>
+
+<button onclick="save()">Opslaan</button>
+</div>
+
 </div>
 
 <script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey:"VUL_IN",
-  authDomain:"VUL_IN",
-  projectId:"VUL_IN"
+  apiKey: "JOUW_KEY",
+  projectId: "JOUW_PROJECT"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-const form = document.getElementById("form");
-const summary = document.getElementById("summary");
-
-function g(id){return document.getElementById(id).value;}
-
-function update(){
-
-const profile = `
-Profiel:
-${g("lifeStage")} huishouden van ${g("household")} personen.
-
-Huidige woning:
-${g("type")} in ${g("city")} (${g("m2")}m²).
-Tevredenheid: ${g("satisfaction")}
-
-Probleem:
-${g("realReason")}
-
-Wens:
-${g("desiredType")} van ${g("desiredM2")}m² in ${g("preferredCity")}
-
-Barrière:
-${g("barrier")}
-`;
-
-summary.innerText = profile;
-}
-
-document.querySelectorAll("input,select,textarea").forEach(el=>{
-  el.addEventListener("input",update);
-});
-
-form.addEventListener("submit", async(e)=>{
-  e.preventDefault();
-
+window.save = async function() {
   const data = {
-    household:{
-      age:g("age"),
-      size:g("household"),
-      children:g("children"),
-      lifeStage:g("lifeStage"),
-      future:g("changes")
-    },
-    current:{
-      city:g("city"),
-      type:g("type"),
-      m2:g("m2"),
-      rooms:g("rooms"),
-      energy:g("energy"),
-      satisfaction:g("satisfaction"),
-      likes:g("likes"),
-      pain:g("pain"),
-      emotion:g("emotion")
-    },
-    motivation:{
-      trigger:g("trigger"),
-      realReason:g("realReason"),
-      urgency:g("urgency")
-    },
-    needs:{
-      desiredM2:g("desiredM2"),
-      desiredRooms:g("desiredRooms"),
-      type:g("desiredType"),
-      must:g("mustHave"),
-      dream:g("dream")
-    },
-    location:{
-      preferred:g("preferredCity"),
-      radius:g("radius"),
-      mustStay:g("mustStay"),
-      reason:g("locationWhy")
-    },
-    financial:{
-      budget:g("budget"),
-      equity:g("equity"),
-      flexibility:g("flexibility")
-    },
-    flow:{
-      sell:g("sell"),
-      timeline:g("timeline"),
-      barrier:g("barrier")
-    },
-    summary:summary.innerText,
-    createdAt:serverTimestamp()
+    type: type.value,
+    bouwjaar: bouwjaar.value,
+    m2: m2.value,
+    label: label.value,
+    panelen: panelen.value,
+    isolatie: isolatie.value,
+    verwarming: verwarming.value,
+    elektra: elektra.value,
+    renovatie: renovatie.value,
+    keuken: keuken.value,
+    badkamer: badkamer.value,
+    plaats: plaats.value,
+    budget: budget.value,
+    minm2: minm2.value,
+    must: must.value,
+    created: new Date()
   };
 
-  await addDoc(collection(db,"intakes"),data);
+  await addDoc(collection(db, "intakes"), data);
 
-  alert("Opgeslagen 🚀");
-});
+  window.location.href = "dashboard.html";
+}
+</script>
 
+<script>
+let i=0;
+const steps=document.querySelectorAll(".step");
+
+function next(){
+  steps[i].classList.remove("active");
+  i++;
+  steps[i].classList.add("active");
+  document.getElementById("bar").style.width=((i+1)/steps.length*100)+"%";
+}
 </script>
 
 </body>
