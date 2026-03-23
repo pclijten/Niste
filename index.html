@@ -924,75 +924,40 @@
   });
 </script>
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, GoogleAuthProvider, signInWithPopup, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { auth } from './firebase.js';
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyDkrkHrPW4pPu0_ZVKGma-AVF4-gTtk9R8",
-    authDomain: "niste-1113e.firebaseapp.com",
-    projectId: "niste-1113e",
-    storageBucket: "niste-1113e.firebasestorage.app",
-    messagingSenderId: "292138618317",
-    appId: "1:292138618317:web:50984a6bff31725d6a0884"
-  };
+window.register = async () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
+  await createUserWithEmailAndPassword(auth, email, password);
+  window.location.href = "/intake.html";
+};
 
-  // 👉 Register
-  window.register = async () => {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+window.login = async () => {
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-    try {
-      await createUserWithEmailAndPassword(auth, email, password);
-      alert("Account aangemaakt 🎉");
-    } catch (e) {
-      alert(e.message);
-    }
-  };
+  await signInWithEmailAndPassword(auth, email, password);
+  window.location.href = "/dashboard.html";
+};
 
-  // 👉 Login
-  window.login = async () => {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
+window.googleLogin = async () => {
+  const provider = new GoogleAuthProvider();
+  await signInWithPopup(auth, provider);
+  window.location.href = "/intake.html";
+};
 
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
-      alert("Ingelogd ✅");
-    } catch (e) {
-      alert(e.message);
-    }
-  };
-
-  // 👉 Google login
-  window.loginGoogle = async () => {
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithPopup(auth, provider);
-    } catch (e) {
-      alert(e.message);
-    }
-  };
-
-  // 👉 Logout
-  window.logout = async () => {
-    await signOut(auth);
-  };
-
-  // 👉 UI status
-  onAuthStateChanged(auth, user => {
-    const status = document.getElementById("user-status");
-
-    if (user) {
-      status.innerHTML = `
-        Ingelogd als ${user.email}
-        <button onclick="logout()">Uitloggen</button>
-      `;
-    } else {
-      status.innerHTML = "Niet ingelogd";
-    }
-  });
+onAuthStateChanged(auth, user => {
+  if (user) console.log("ingelogd", user.email);
+});
 </script>
 </body>
 </html>
