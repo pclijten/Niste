@@ -546,6 +546,35 @@
     width: 100%;
   }
 }
+    .brand-features {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-bottom: 2.2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.brand-feature {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: rgba(246,241,233,.06);
+  border: 1px solid rgba(246,241,233,.08);
+  backdrop-filter: blur(6px);
+}
+
+.brand-feature strong {
+  display: block;
+  font-size: .85rem;
+  color: var(--cream);
+  margin-bottom: 4px;
+}
+
+.brand-feature span {
+  font-size: .75rem;
+  color: rgba(246,241,233,.6);
+  line-height: 1.5;
+}
   </style>
 </head>
 <body>
@@ -559,33 +588,57 @@
 <!-- MAIN -->
 <main>
    <!-- BRAND PANEL -->
-  <div class="auth-brand">
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-    <div class="brand-badge"><span class="brand-dot"></span>Unlocking Hidden Housing Mobility</div>
-    <h1 class="brand-headline">
-      Jouw volgende<br>
-      <em>thuis</em> begint<br>
-      hier
-    </h1>
-    <p class="brand-sub">
-      Niste koppelt woningzoekenden die elkaars situatie begrijpen. Slim, persoonlijk en zonder gedoe.
-    </p>
-    <div class="brand-stats">
-      <div>
-        <div class="brand-stat-val">87%</div>
-        <div class="brand-stat-lbl">Matchkans</div>
-      </div>
-      <div>
-        <div class="brand-stat-val">2–6wk</div>
-        <div class="brand-stat-lbl">Doorlooptijd</div>
-      </div>
-      <div>
-        <div class="brand-stat-val">€ 0,–</div>
-        <div class="brand-stat-lbl">Kosten pilot</div>
-      </div>
+<div class="auth-brand">
+  <div class="blob blob-1"></div>
+  <div class="blob blob-2"></div>
+
+  <div class="brand-badge">
+    <span class="brand-dot"></span>
+    Unlocking Hidden Housing Mobility
+  </div>
+
+  <h1 class="brand-headline">
+    Jouw volgende<br>
+    <em>thuis</em> begint<br>
+    hier
+  </h1>
+
+  <p class="brand-sub">
+    Niste maakt verborgen woonkansen zichtbaar door woningzoekenden slim aan elkaar te koppelen.
+    Niet alleen op basis van wensen, maar op basis van échte verhuismogelijkheden.
+  </p>
+
+  <!-- NIEUW: USP BLOKKEN -->
+  <div class="brand-features">
+    <div class="brand-feature">
+      <strong>AI matching</strong>
+      <span>Persoonlijke koppelingen op basis van situatie en potentie</span>
+    </div>
+    <div class="brand-feature">
+      <strong>Doorstroomketens</strong>
+      <span>Eén match kan meerdere verhuizingen mogelijk maken</span>
+    </div>
+    <div class="brand-feature">
+      <strong>Sneller resultaat</strong>
+      <span>Concrete kansen in weken in plaats van maanden</span>
     </div>
   </div>
+
+  <div class="brand-stats">
+    <div>
+      <div class="brand-stat-val">87%</div>
+      <div class="brand-stat-lbl">Matchkans</div>
+    </div>
+    <div>
+      <div class="brand-stat-val">2–6wk</div>
+      <div class="brand-stat-lbl">Doorlooptijd</div>
+    </div>
+    <div>
+      <div class="brand-stat-val">€ 0,–</div>
+      <div class="brand-stat-lbl">Kosten pilot</div>
+    </div>
+  </div>
+</div>
 
   <!-- AUTH PANEL -->
   <div class="auth-panel">
