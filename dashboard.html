@@ -353,9 +353,9 @@
     <button class="nav-item" onclick="showPage('status')" id="nav-status">
       <span class="nav-icon">📍</span> Mijn status
     </button>
-    <button class="nav-item" onclick="showPage('profile')" id="nav-profile">
-      <span class="nav-icon">✏️</span> Profiel &amp; wensen
-    </button>
+<button class="nav-item" onclick="showPage('intake')" id="nav-intake">
+  <span class="nav-icon">✏️</span> Profiel &amp; wensen
+</button>
 
     <span class="sidebar-label">Account</span>
     <a href="privacy.html" class="nav-item" target="_blank">
@@ -406,7 +406,7 @@
         <h3>Vul je woonwensen in</h3>
         <p>Hoe meer we weten, hoe beter we kunnen matchen. Vul je profiel en voorkeuren in om de kans op een goede match te vergroten.</p>
         <div style="margin-top:1.2rem">
-          <button class="btn-primary" onclick="showPage('profile')">Profiel invullen →</button>
+          <button class="btn-primary" onclick="showPage('intake')">Profiel invullen →</button>
         </div>
       </div>
     </div>
@@ -466,7 +466,14 @@
         <div class="page-eyebrow">Jouw gegevens</div>
         <h1 class="page-title">Profiel &amp; <em>wensen</em></h1>
       </div>
-
+<!-- ── INTAKE PAGE ── -->
+<div class="dash-page" id="page-intake">
+  <iframe 
+    src="intake.html" 
+    style="width:100%; height:calc(100vh - 120px); border:none; border-radius:20px; display:block;">
+  </iframe>
+</div>
+      
       <div class="msg-box" id="profile-msg"></div>
 
       <div class="card">
