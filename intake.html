@@ -1,57 +1,2032 @@
 <!DOCTYPE html>
-<html>
+<html lang="nl">
 <head>
-  <title>Niste Intake</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Niste – Slimme intake vastgoedinitiatief</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#f8f4ee;
+      --paper:#fffdf9;
+      --card:#ffffff;
+      --line:#e7ddd0;
+      --text:#2d241d;
+      --muted:#7a6e64;
+      --accent:#8a6a45;
+      --accent-dark:#6f5234;
+      --accent-soft:#efe4d7;
+      --ok:#2f7d4c;
+      --warn:#b7791f;
+      --bad:#b83232;
+      --shadow:0 20px 60px rgba(45,36,29,.08);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      background:
+        radial-gradient(circle at top left, rgba(138,106,69,.06), transparent 35%),
+        linear-gradient(180deg, #fbf8f3 0%, #f6f1ea 100%);
+      color:var(--text);
+      font-family:"Plus Jakarta Sans",sans-serif;
+      line-height:1.5;
+    }
+
+    .container{
+      width:min(1200px, calc(100% - 32px));
+      margin:0 auto;
+    }
+
+    .hero{
+      padding:48px 0 26px;
+    }
+
+    .hero-card{
+      background:linear-gradient(135deg, rgba(255,255,255,.96), rgba(250,245,238,.94));
+      border:1px solid rgba(138,106,69,.14);
+      border-radius:32px;
+      padding:34px;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero-card::after{
+      content:"";
+      position:absolute;
+      right:-80px;
+      top:-80px;
+      width:240px;
+      height:240px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(138,106,69,.15), transparent 70%);
+      pointer-events:none;
+    }
+
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:10px;
+      padding:8px 14px;
+      border-radius:999px;
+      background:var(--accent-soft);
+      color:var(--accent-dark);
+      font-size:13px;
+      font-weight:700;
+      letter-spacing:.02em;
+      margin-bottom:18px;
+    }
+
+    h1, h2, h3{
+      font-family:"Cormorant Garamond",serif;
+      line-height:1.05;
+      margin:0;
+    }
+
+    h1{
+      font-size:clamp(40px, 6vw, 72px);
+      margin-bottom:12px;
+      font-weight:600;
+    }
+
+    .hero p{
+      max-width:880px;
+      color:var(--muted);
+      font-size:16px;
+      margin:0 0 14px;
+    }
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 1.25fr .75fr;
+      gap:18px;
+      align-items:start;
+      margin-top:26px;
+    }
+
+    .mini-panel{
+      background:rgba(255,255,255,.75);
+      border:1px solid var(--line);
+      border-radius:22px;
+      padding:18px;
+    }
+
+    .mini-panel h3{
+      font-size:28px;
+      margin-bottom:10px;
+    }
+
+    .mini-list{
+      display:grid;
+      gap:10px;
+      margin:0;
+      padding:0;
+      list-style:none;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .mini-list li{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+
+    .mini-list li::before{
+      content:"•";
+      color:var(--accent);
+      font-weight:800;
+      margin-top:-1px;
+    }
+
+    .layout{
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      gap:24px;
+      align-items:start;
+      padding-bottom:56px;
+    }
+
+    .sidebar{
+      position:sticky;
+      top:20px;
+      display:grid;
+      gap:16px;
+    }
+
+    .side-card{
+      background:rgba(255,255,255,.9);
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:18px;
+      box-shadow:var(--shadow);
+    }
+
+    .progress-shell{
+      width:100%;
+      height:10px;
+      background:#efe6da;
+      border-radius:999px;
+      overflow:hidden;
+      margin-top:12px;
+    }
+
+    .progress-bar{
+      width:0%;
+      height:100%;
+      background:linear-gradient(90deg, var(--accent), #b89063);
+      transition:width .25s ease;
+    }
+
+    .step-list{
+      display:grid;
+      gap:8px;
+      margin-top:12px;
+    }
+
+    .step-item{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding:9px 10px;
+      border-radius:14px;
+      font-size:13px;
+      color:var(--muted);
+      background:#fcfaf7;
+      border:1px solid transparent;
+      transition:.2s ease;
+      cursor:pointer;
+    }
+
+    .step-item.active{
+      background:var(--accent-soft);
+      color:var(--accent-dark);
+      border-color:rgba(138,106,69,.18);
+      font-weight:700;
+    }
+
+    .step-badge{
+      width:24px;
+      height:24px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      background:#eee4d7;
+      color:var(--accent-dark);
+      font-size:12px;
+      font-weight:700;
+      flex:0 0 auto;
+    }
+
+    form{
+      display:grid;
+      gap:18px;
+    }
+
+    .section{
+      background:rgba(255,255,255,.96);
+      border:1px solid var(--line);
+      border-radius:28px;
+      padding:28px;
+      box-shadow:var(--shadow);
+      scroll-margin-top:24px;
+    }
+
+    .section-header{
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      align-items:flex-start;
+      margin-bottom:20px;
+    }
+
+    .section-header h2{
+      font-size:38px;
+      font-weight:600;
+      margin-bottom:6px;
+    }
+
+    .section-header p{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      max-width:780px;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      white-space:nowrap;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:10px 14px;
+      font-size:12px;
+      font-weight:700;
+      color:var(--accent-dark);
+      background:#fcfaf7;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(12, 1fr);
+      gap:16px;
+    }
+
+    .field{
+      grid-column:span 12;
+      display:grid;
+      gap:8px;
+    }
+
+    .field.half{grid-column:span 6}
+    .field.third{grid-column:span 4}
+    .field.two-third{grid-column:span 8}
+    .field.quarter{grid-column:span 3}
+    .field.three-quarter{grid-column:span 9}
+
+    label{
+      font-size:13px;
+      font-weight:700;
+      color:var(--text);
+    }
+
+    .hint{
+      font-size:12px;
+      color:var(--muted);
+      margin-top:-3px;
+    }
+
+    input, select, textarea{
+      width:100%;
+      border:1px solid #d9cdbf;
+      background:#fffefb;
+      color:var(--text);
+      border-radius:16px;
+      padding:14px 15px;
+      font:inherit;
+      outline:none;
+      transition:border-color .2s ease, box-shadow .2s ease, background .2s ease;
+    }
+
+    input:focus, select:focus, textarea:focus{
+      border-color:var(--accent);
+      box-shadow:0 0 0 4px rgba(138,106,69,.10);
+      background:#fff;
+    }
+
+    textarea{min-height:120px; resize:vertical}
+
+    .switch-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(180px, 1fr));
+      gap:10px;
+    }
+
+    .option{
+      position:relative;
+    }
+
+    .option input{
+      position:absolute;
+      inset:0;
+      opacity:0;
+      cursor:pointer;
+    }
+
+    .option label{
+      height:100%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+      padding:14px 12px;
+      border-radius:16px;
+      border:1px solid #dbcfc1;
+      background:#fffefb;
+      color:var(--text);
+      font-size:14px;
+      font-weight:600;
+      cursor:pointer;
+      transition:.2s ease;
+      min-height:56px;
+    }
+
+    .option input:checked + label{
+      background:var(--accent-soft);
+      border-color:rgba(138,106,69,.35);
+      color:var(--accent-dark);
+      box-shadow:0 10px 25px rgba(138,106,69,.08);
+    }
+
+    .inline-note{
+      padding:14px 16px;
+      background:#fbf7f1;
+      border:1px dashed #dacdbf;
+      border-radius:16px;
+      color:var(--muted);
+      font-size:13px;
+    }
+
+    .alert{
+      border-radius:18px;
+      padding:16px 18px;
+      font-size:14px;
+      border:1px solid;
+    }
+
+    .alert.ok{background:#edf8f1; border-color:#bfe1ca; color:#25613b}
+    .alert.warn{background:#fff8eb; border-color:#efd19b; color:#8c6517}
+    .alert.bad{background:#fff0f0; border-color:#efb6b6; color:#9d2d2d}
+
+    .smart-cards{
+      display:grid;
+      grid-template-columns:repeat(3, 1fr);
+      gap:14px;
+    }
+
+    .smart-card{
+      border-radius:18px;
+      border:1px solid var(--line);
+      background:#fffdf9;
+      padding:16px;
+    }
+
+    .smart-card h4{
+      margin:0 0 6px;
+      font-size:15px;
+    }
+
+    .smart-card p{
+      margin:0;
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .status{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border-radius:999px;
+      padding:7px 11px;
+      font-size:12px;
+      font-weight:800;
+      margin-bottom:10px;
+    }
+
+    .status.ok{background:#edf8f1; color:#25613b}
+    .status.warn{background:#fff8eb; color:#8c6517}
+    .status.bad{background:#fff0f0; color:#9d2d2d}
+
+    .actions{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      justify-content:space-between;
+      align-items:center;
+      margin-top:10px;
+    }
+
+    .btn-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+    }
+
+    button{
+      border:none;
+      cursor:pointer;
+      border-radius:16px;
+      padding:14px 18px;
+      font:inherit;
+      font-weight:700;
+      transition:.2s ease;
+    }
+
+    .btn-primary{
+      background:linear-gradient(135deg, var(--accent), #b18758);
+      color:#fff;
+      box-shadow:0 15px 30px rgba(138,106,69,.18);
+    }
+
+    .btn-primary:hover{transform:translateY(-1px)}
+    .btn-secondary{
+      background:#fff;
+      color:var(--text);
+      border:1px solid #dbcfc1;
+    }
+
+    .meta{
+      font-size:12px;
+      color:var(--muted);
+    }
+
+    .success-box{
+      display:none;
+      margin-top:16px;
+      border-radius:18px;
+      padding:16px 18px;
+      background:#edf8f1;
+      border:1px solid #bfe1ca;
+      color:#25613b;
+    }
+
+    .error-box{
+      display:none;
+      margin-top:16px;
+      border-radius:18px;
+      padding:16px 18px;
+      background:#fff0f0;
+      border:1px solid #efb6b6;
+      color:#9d2d2d;
+    }
+
+    .hidden{
+      display:none !important;
+    }
+
+    .footer-space{
+      height:20px;
+    }
+
+    @media (max-width: 1080px){
+      .layout{
+        grid-template-columns:1fr;
+      }
+      .sidebar{
+        position:relative;
+        top:0;
+      }
+      .hero-grid{
+        grid-template-columns:1fr;
+      }
+      .smart-cards{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media (max-width: 760px){
+      .section{
+        padding:22px 18px;
+      }
+      .field.half,
+      .field.third,
+      .field.two-third,
+      .field.quarter,
+      .field.three-quarter{
+        grid-column:span 12;
+      }
+      .section-header{
+        flex-direction:column;
+      }
+      h1{
+        font-size:46px;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="container hero">
+    <div class="hero-card">
+      <div class="eyebrow">Niste • Slimme intake vastgoedinitiatief</div>
+      <h1>Uitgebreide intake voor splitsing, transformatie en herontwikkeling</h1>
+      <p>
+        Deze intake is ontworpen om een initiatief direct veel scherper te maken: inhoudelijk, beleidsmatig,
+        commercieel en technisch. Het formulier verzamelt niet alleen basisgegevens, maar ook de informatie die
+        nodig is om later sneller te toetsen, prioriteren en opvolgen.
+      </p>
+      <p>
+        Alles wordt opgeslagen in Firestore, inclusief een slimme samenvatting, haalbaarheidssignalen,
+        beleidsindicatoren en vervolgstappen.
+      </p>
 
-<h2>Jouw woning</h2>
+      <div class="hero-grid">
+        <div class="mini-panel">
+          <h3>Wat deze intake slim maakt</h3>
+          <ul class="mini-list">
+            <li>Meerdere initiatieftypes: woningsplitsing, transformatie, optoppen, herontwikkeling en verkoop-/ontwikkelkansen.</li>
+            <li>Automatische beleidschecks zoals minimale woningoppervlakte, splitsingsgrens, energielabelverbetering en parkeervraag.</li>
+            <li>Geschikt voor jouw premium vastgoedconcept en een latere match-/lead-routing workflow.</li>
+            <li>Opslag in Firestore met nette datastructuur, timestamp en gegenereerde intakecode.</li>
+          </ul>
+        </div>
+        <div class="mini-panel">
+          <h3>Opslagstructuur</h3>
+          <ul class="mini-list">
+            <li>Collectie: <strong>intakes</strong></li>
+            <li>Subsecties in één document: contact, locatie, pand, plan, beleid, duurzaamheid, omgeving, commercie</li>
+            <li>Extra: derived summary, intake score, flags en next steps</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
 
-<input id="type" placeholder="Type woning">
-<input id="size" placeholder="m²">
-<input id="rooms" placeholder="kamers">
-<input id="postcode" placeholder="postcode">
+  <div class="container layout">
+    <aside class="sidebar">
+      <div class="side-card">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;">
+          <strong>Voortgang</strong>
+          <span id="progressText" class="meta">0%</span>
+        </div>
+        <div class="progress-shell">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="step-list" id="stepList">
+          <div class="step-item" data-target="section-basics"><span class="step-badge">1</span> Basis & initiatief</div>
+          <div class="step-item" data-target="section-contact"><span class="step-badge">2</span> Contact</div>
+          <div class="step-item" data-target="section-location"><span class="step-badge">3</span> Locatie & pand</div>
+          <div class="step-item" data-target="section-plan"><span class="step-badge">4</span> Planinhoud</div>
+          <div class="step-item" data-target="section-program"><span class="step-badge">5</span> Woonprogramma</div>
+          <div class="step-item" data-target="section-policy"><span class="step-badge">6</span> Beleidscheck</div>
+          <div class="step-item" data-target="section-sustainability"><span class="step-badge">7</span> Duurzaamheid</div>
+          <div class="step-item" data-target="section-environment"><span class="step-badge">8</span> Omgeving</div>
+          <div class="step-item" data-target="section-commercial"><span class="step-badge">9</span> Commercieel</div>
+          <div class="step-item" data-target="section-summary"><span class="step-badge">10</span> Samenvatting</div>
+        </div>
+      </div>
 
-<h2>Jouw wensen</h2>
+      <div class="side-card">
+        <strong>Live intake-inschatting</strong>
+        <div id="quickSignals" style="margin-top:14px; display:grid; gap:10px;">
+          <div class="alert warn">Vul de intake in om slimme signalen te zien.</div>
+        </div>
+      </div>
 
-<input id="desired_type" placeholder="Type">
-<input id="desired_size" placeholder="m²">
-<input id="desired_rooms" placeholder="kamers">
-<input id="desired_location" placeholder="Regio">
+      <div class="side-card">
+        <strong>Autosave</strong>
+        <p class="meta" style="margin:10px 0 0;">
+          Ingevoerde data wordt tussentijds lokaal bewaard in je browser. Na verzenden wordt alles ook in Firestore opgeslagen.
+        </p>
+      </div>
+    </aside>
 
-<button onclick="save()">Opslaan</button>
+    <main>
+      <form id="intakeForm">
+        <section class="section" id="section-basics">
+          <div class="section-header">
+            <div>
+              <h2>Basis & initiatief</h2>
+              <p>Kies het type vraag en de fase waarin het initiatief zich bevindt. Dit bepaalt later routing, scoringslogica en opvolging.</p>
+            </div>
+            <div class="pill">Stap 1</div>
+          </div>
 
-<script type="module">
-import { auth, db } from './firebase.js';
-import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+          <div class="grid">
+            <div class="field">
+              <label>Type initiatief *</label>
+              <div class="switch-grid">
+                <div class="option">
+                  <input type="radio" id="type_split" name="initiativeType" value="woningsplitsing" required>
+                  <label for="type_split">Woningsplitsing</label>
+                </div>
+                <div class="option">
+                  <input type="radio" id="type_transform" name="initiativeType" value="transformatie">
+                  <label for="type_transform">Transformatie naar wonen</label>
+                </div>
+                <div class="option">
+                  <input type="radio" id="type_optoppen" name="initiativeType" value="optoppen">
+                  <label for="type_optoppen">Optoppen / uitbreiden</label>
+                </div>
+                <div class="option">
+                  <input type="radio" id="type_redevelopment" name="initiativeType" value="herontwikkeling">
+                  <label for="type_redevelopment">Herontwikkeling</label>
+                </div>
+                <div class="option">
+                  <input type="radio" id="type_orientatie" name="initiativeType" value="orientatie">
+                  <label for="type_orientatie">Oriëntatie / haalbaarheid</label>
+                </div>
+              </div>
+            </div>
 
-let currentUser;
+            <div class="field half">
+              <label for="projectTitle">Projectnaam / interne titel *</label>
+              <input id="projectTitle" name="projectTitle" type="text" required placeholder="Bijv. Dorpsstraat 14 – splitsing bovenwoning">
+            </div>
 
-onAuthStateChanged(auth, user => {
-  if (!user) window.location.href = "/";
-  currentUser = user;
-});
+            <div class="field half">
+              <label for="projectPhase">Fase *</label>
+              <select id="projectPhase" name="projectPhase" required>
+                <option value="">Kies een fase</option>
+                <option value="idee">Pril idee</option>
+                <option value="verkenning">Verkenning</option>
+                <option value="schetsplan">Schetsplan</option>
+                <option value="principeverzoek">Voorbereiding principeverzoek</option>
+                <option value="vergunning">Vergunningstraject</option>
+                <option value="realisatie">Realisatievoorbereiding</option>
+              </select>
+            </div>
 
-window.save = async () => {
-  await setDoc(doc(db, "users", currentUser.uid), {
-    woning: {
-      type: document.getElementById("type").value,
-      size: document.getElementById("size").value,
-      rooms: document.getElementById("rooms").value,
-      postcode: document.getElementById("postcode").value
-    },
-    wens: {
-      type: document.getElementById("desired_type").value,
-      size: document.getElementById("desired_size").value,
-      rooms: document.getElementById("desired_rooms").value,
-      location: document.getElementById("desired_location").value
+            <div class="field half">
+              <label for="leadSource">Leadbron</label>
+              <select id="leadSource" name="leadSource">
+                <option value="">Kies een bron</option>
+                <option value="website">Website</option>
+                <option value="gemeente">Gemeente</option>
+                <option value="makelaar">Makelaar</option>
+                <option value="architect">Architect</option>
+                <option value="netwerk">Netwerk / via-via</option>
+                <option value="social">Social media</option>
+                <option value="anders">Anders</option>
+              </select>
+            </div>
+
+            <div class="field half">
+              <label for="urgency">Urgentie *</label>
+              <select id="urgency" name="urgency" required>
+                <option value="">Kies urgentie</option>
+                <option value="laag">Laag – oriënterend</option>
+                <option value="middel">Middel – binnen 6 maanden</option>
+                <option value="hoog">Hoog – direct oppakken</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="goalStatement">Wat wil je precies bereiken? *</label>
+              <textarea id="goalStatement" name="goalStatement" required placeholder="Beschrijf het initiatief zo concreet mogelijk. Wat wil je ontwikkelen, waarom juist deze locatie, en wat is het gewenste eindresultaat?"></textarea>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="section-contact">
+          <div class="section-header">
+            <div>
+              <h2>Contact & rol</h2>
+              <p>We slaan niet alleen contactgegevens op, maar ook de rol van de indiener zodat opvolging slimmer kan worden ingericht.</p>
+            </div>
+            <div class="pill">Stap 2</div>
+          </div>
+
+          <div class="grid">
+            <div class="field half">
+              <label for="firstName">Voornaam *</label>
+              <input id="firstName" name="firstName" type="text" required>
+            </div>
+
+            <div class="field half">
+              <label for="lastName">Achternaam *</label>
+              <input id="lastName" name="lastName" type="text" required>
+            </div>
+
+            <div class="field half">
+              <label for="email">E-mailadres *</label>
+              <input id="email" name="email" type="email" required>
+            </div>
+
+            <div class="field half">
+              <label for="phone">Telefoonnummer *</label>
+              <input id="phone" name="phone" type="tel" required>
+            </div>
+
+            <div class="field half">
+              <label for="role">Jouw rol *</label>
+              <select id="role" name="role" required>
+                <option value="">Kies een rol</option>
+                <option value="eigenaar">Eigenaar</option>
+                <option value="ontwikkelaar">Ontwikkelaar</option>
+                <option value="belegger">Belegger</option>
+                <option value="makelaar">Makelaar</option>
+                <option value="architect">Architect / adviseur</option>
+                <option value="gemeente">Gemeente / publieke partij</option>
+                <option value="familie">Familie / erfgenaam</option>
+                <option value="anders">Anders</option>
+              </select>
+            </div>
+
+            <div class="field half">
+              <label for="company">Bedrijf / organisatie</label>
+              <input id="company" name="company" type="text">
+            </div>
+
+            <div class="field">
+              <label for="decisionMakers">Wie beslissen er mee?</label>
+              <textarea id="decisionMakers" name="decisionMakers" placeholder="Bijv. mede-eigenaar, partner, belegger, architect, gemeente, familieleden, VvE"></textarea>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="section-location">
+          <div class="section-header">
+            <div>
+              <h2>Locatie & bestaand pand</h2>
+              <p>Hier verzamelen we de kerngegevens van het object, omdat daar later beleid, haalbaarheid, parkeren en doelgroepen aan worden gekoppeld.</p>
+            </div>
+            <div class="pill">Stap 3</div>
+          </div>
+
+          <div class="grid">
+            <div class="field half">
+              <label for="street">Straat + huisnummer *</label>
+              <input id="street" name="street" type="text" required placeholder="Bijv. Dorpsstraat 14">
+            </div>
+
+            <div class="field quarter">
+              <label for="postalCode">Postcode *</label>
+              <input id="postalCode" name="postalCode" type="text" required placeholder="5735 AB">
+            </div>
+
+            <div class="field quarter">
+              <label for="city">Plaats *</label>
+              <input id="city" name="city" type="text" required placeholder="Aarle-Rixtel">
+            </div>
+
+            <div class="field half">
+              <label for="municipality">Gemeente *</label>
+              <input id="municipality" name="municipality" type="text" required value="Laarbeek">
+            </div>
+
+            <div class="field half">
+              <label for="areaType">Gebiedstype *</label>
+              <select id="areaType" name="areaType" required>
+                <option value="">Kies gebiedstype</option>
+                <option value="centrum-rood">Centrum – rode zone</option>
+                <option value="centrum-oranje">Centrum – oranje zone</option>
+                <option value="centrum-groen">Centrum – groene zone</option>
+                <option value="bebouwde-kom-overig">Overige bebouwde kom</option>
+                <option value="bedrijventerrein">Bedrijventerrein</option>
+                <option value="buitengebied">Buitengebied</option>
+                <option value="onbekend">Nog onbekend</option>
+              </select>
+            </div>
+
+            <div class="field half">
+              <label for="currentUse">Huidige functie *</label>
+              <select id="currentUse" name="currentUse" required>
+                <option value="">Kies huidige functie</option>
+                <option value="woning">Woning</option>
+                <option value="winkel">Winkel</option>
+                <option value="horeca">Horeca</option>
+                <option value="kantoor">Kantoor</option>
+                <option value="maatschappelijk">Maatschappelijk</option>
+                <option value="bedrijf">Bedrijfsmatig</option>
+                <option value="gemengd">Gemengd</option>
+                <option value="leegstaand">Leegstaand</option>
+              </select>
+            </div>
+
+            <div class="field third">
+              <label for="ownershipStatus">Eigendomssituatie *</label>
+              <select id="ownershipStatus" name="ownershipStatus" required>
+                <option value="">Kies eigendom</option>
+                <option value="eigendom">In eigendom</option>
+                <option value="optie">Onder optie</option>
+                <option value="huur">Gehuurd</option>
+                <option value="onderhandeling">Onderhandeling</option>
+                <option value="nog-niet">Nog niet in beeld</option>
+              </select>
+            </div>
+
+            <div class="field third">
+              <label for="monumentStatus">Status pand *</label>
+              <select id="monumentStatus" name="monumentStatus" required>
+                <option value="">Kies status</option>
+                <option value="geen">Geen monument / niet beeldbepalend</option>
+                <option value="beeldbepalend">Beeldbepalend pand</option>
+                <option value="gemeentelijk">Gemeentelijk monument</option>
+                <option value="rijks">Rijksmonument</option>
+                <option value="onbekend">Onbekend</option>
+              </select>
+            </div>
+
+            <div class="field third">
+              <label for="buildingYear">Bouwjaar</label>
+              <input id="buildingYear" name="buildingYear" type="number" min="1500" max="2100" placeholder="Bijv. 1938">
+            </div>
+
+            <div class="field third">
+              <label for="existingGo">Gebruiksoppervlakte bestaand (m²) *</label>
+              <input id="existingGo" name="existingGo" type="number" min="0" step="1" required placeholder="Bijv. 185">
+            </div>
+
+            <div class="field third">
+              <label for="plotSize">Perceeloppervlakte (m²)</label>
+              <input id="plotSize" name="plotSize" type="number" min="0" step="1" placeholder="Bijv. 260">
+            </div>
+
+            <div class="field third">
+              <label for="floors">Aantal bouwlagen</label>
+              <input id="floors" name="floors" type="number" min="0" step="1" placeholder="Bijv. 2">
+            </div>
+
+            <div class="field">
+              <label for="locationContext">Context van de locatie</label>
+              <textarea id="locationContext" name="locationContext" placeholder="Beschrijf de straat, omgeving, nabijgelegen functies, centrumdruk, parkeren, leegstand, leefbaarheid en kansen."></textarea>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="section-plan">
+          <div class="section-header">
+            <div>
+              <h2>Planinhoud</h2>
+              <p>Hier leg je vast wat er precies verandert: functies, aantallen, bouwkundige ingrepen en de beoogde nieuwe situatie.</p>
+            </div>
+            <div class="pill">Stap 4</div>
+          </div>
+
+          <div class="grid">
+            <div class="field third">
+              <label for="existingUnits">Aantal bestaande woningen / eenheden</label>
+              <input id="existingUnits" name="existingUnits" type="number" min="0" step="1" placeholder="Bijv. 1">
+            </div>
+
+            <div class="field third">
+              <label for="newUnits">Aantal beoogde woningen *</label>
+              <input id="newUnits" name="newUnits" type="number" min="1" step="1" required placeholder="Bijv. 2">
+            </div>
+
+            <div class="field third">
+              <label for="groundFloorHousing">Wonen op begane grond?</label>
+              <select id="groundFloorHousing" name="groundFloorHousing">
+                <option value="">Kies</option>
+                <option value="ja">Ja</option>
+                <option value="nee">Nee</option>
+                <option value="deels">Deels</option>
+                <option value="onbekend">Nog onbekend</option>
+              </select>
+            </div>
+
+            <div class="field half">
+              <label for="newFunction">Nieuwe hoofdfunctie *</label>
+              <select id="newFunction" name="newFunction" required>
+                <option value="">Kies nieuwe functie</option>
+                <option value="wonen">Volledig wonen</option>
+                <option value="gemengd">Gemengd programma</option>
+                <option value="centrum-plus-wonen">Centrumfunctie + wonen</option>
+                <option value="zorg-wonen">Zorg / levensloopbestendig wonen</option>
+                <option value="starterswoningen">Starterswoningen</option>
+                <option value="seniorenwoningen">Seniorenwoningen</option>
+              </select>
+            </div>
+
+            <div class="field half">
+              <label for="constructionScope">Soort ingreep *</label>
+              <select id="constructionScope" name="constructionScope" required>
+                <option value="">Kies ingreep</option>
+                <option value="intern">Interne verbouwing</option>
+                <option value="beperkte-uitbreiding">Beperkte uitbreiding</option>
+                <option value="grote-uitbreiding">Grote uitbreiding</option>
+                <option value="functiewijziging">Functiewijziging</option>
+                <option value="sloop-nieuwbouw">Gedeeltelijke sloop / nieuwbouw</option>
+              </select>
+            </div>
+
+            <div class="field half">
+              <label for="newGo">Gebruiksoppervlakte nieuwe situatie totaal (m²)</label>
+              <input id="newGo" name="newGo" type="number" min="0" step="1" placeholder="Bijv. 170">
+            </div>
+
+            <div class="field half">
+              <label for="smallestUnitSize">Kleinste woninggrootte nieuw (m²)</label>
+              <input id="smallestUnitSize" name="smallestUnitSize" type="number" min="0" step="1" placeholder="Bijv. 62">
+              <div class="hint">Belangrijk voor slimme beleidscontrole.</div>
+            </div>
+
+            <div class="field">
+              <label for="planDescription">Beschrijving van het plan *</label>
+              <textarea id="planDescription" name="planDescription" required placeholder="Omschrijf de bestaande situatie, de gewenste transformatie/splitsing, de bouwkundige aanpak en hoe het pand straks gebruikt gaat worden."></textarea>
+            </div>
+
+            <div class="field">
+              <label for="architecturalValue">Welke karakteristieke of waardevolle elementen blijven behouden?</label>
+              <textarea id="architecturalValue" name="architecturalValue" placeholder="Bijv. gevelbeeld, kapvorm, detaillering, historische structuur, monumentale onderdelen"></textarea>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="section-program">
+          <div class="section-header">
+            <div>
+              <h2>Woonprogramma & doelgroep</h2>
+              <p>Leg het programma vast op woningniveau, zodat je later veel beter kunt matchen op beleidsdoelgroep, marktpotentie en woningbehoefte.</p>
+            </div>
+            <div class="pill">Stap 5</div>
+          </div>
+
+          <div class="grid">
+            <div class="field third">
+              <label for="targetGroupPrimary">Primaire doelgroep *</label>
+              <select id="targetGroupPrimary" name="targetGroupPrimary" required>
+                <option value="">Kies doelgroep</option>
+                <option value="starters">Starters</option>
+                <option value="senioren">Senioren</option>
+                <option value="eenpersoonshuishoudens">Eenpersoonshuishoudens</option>
+                <option value="kleine-gezinnen">Kleine gezinnen</option>
+                <option value="doorstromers">Doorstromers</option>
+                <option value="zorg">Zorggerelateerd</option>
+                <option value="gemengd">Gemengde doelgroep</option>
+              </select>
+            </div>
+
+            <div class="field third">
+              <label for="priceSegment">Prijssegment / huursegment</label>
+              <select id="priceSegment" name="priceSegment">
+                <option value="">Kies segment</option>
+                <option value="sociaal">Sociaal</option>
+                <option value="midden">Midden</option>
+                <option value="vrij">Vrije sector</option>
+                <option value="koop-betabaar">Betaalbare koop</option>
+                <option value="koop-midden">Middenkoop</option>
+                <option value="hoog">Hoger segment</option>
+              </select>
+            </div>
+
+            <div class="field third">
+              <label for="occupancyModel">Exploitatiemodel</label>
+              <select id="occupancyModel" name="occupancyModel">
+                <option value="">Kies model</option>
+                <option value="verkoop">Verkoop</option>
+                <option value="verhuur">Verhuur</option>
+                <option value="mix">Mix verkoop/verhuur</option>
+                <option value="nog-open">Nog open</option>
+              </select>
+            </div>
+
+            <div class="field third">
+              <label for="avgUnitSize">Gemiddelde woninggrootte (m²)</label>
+              <input id="avgUnitSize" name="avgUnitSize" type="number" min="0" step="1" placeholder="Bijv. 74">
+            </div>
+
+            <div class="field third">
+              <label for="bedroomsTypical">Gemiddeld aantal slaapkamers</label>
+              <input id="bedroomsTypical" name="bedroomsTypical" type="number" min="0" step="1" placeholder="Bijv. 2">
+            </div>
+
+            <div class="field third">
+              <label for="accessibilityLevel">Toegankelijkheidsniveau</label>
+              <select id="accessibilityLevel" name="accessibilityLevel">
+                <option value="">Kies niveau</option>
+                <option value="standaard">Standaard</option>
+                <option value="levensloopbestendig">Levensloopbestendig</option>
+                <option value="rolstoeltoegankelijk">Rolstoeltoegankelijk</option>
+                <option value="deels">Deels toegankelijk</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="housingNeedExplanation">Waarom voorziet dit plan in een concrete woonbehoefte? *</label>
+              <textarea id="housingNeedExplanation" name="housingNeedExplanation" required placeholder="Beschrijf waarom deze woningen hier nodig zijn, voor welke doelgroep, en hoe dit aansluit op de lokale woonvraag."></textarea>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="section-policy">
+          <div class="section-header">
+            <div>
+              <h2>Beleidscheck & haalbaarheid</h2>
+              <p>Deze sectie is bedoeld om een principeverzoek of eerste haalbaarheidsanalyse direct veel sterker te maken.</p>
+            </div>
+            <div class="pill">Stap 6</div>
+          </div>
+
+          <div class="grid">
+            <div class="field half">
+              <label for="currentDestinationPlan">Bestemming / planologisch regime bekend?</label>
+              <select id="currentDestinationPlan" name="currentDestinationPlan">
+                <option value="">Kies</option>
+                <option value="ja">Ja</option>
+                <option value="deels">Deels</option>
+                <option value="nee">Nee</option>
+              </select>
+            </div>
+
+            <div class="field half">
+              <label for="functionRemovalNeeded">Moet commerciële functie planologisch worden geschrapt?</label>
+              <select id="functionRemovalNeeded" name="functionRemovalNeeded">
+                <option value="">Kies</option>
+                <option value="ja">Ja</option>
+                <option value="nee">Nee</option>
+                <option value="onbekend">Onbekend</option>
+              </select>
+            </div>
+
+            <div class="field half">
+              <label for="independentAccess">Hebben alle nieuwe woningen een eigen toegang?</label>
+              <select id="independentAccess" name="independentAccess">
+                <option value="">Kies</option>
+                <option value="ja">Ja</option>
+                <option value="nee">Nee</option>
+                <option value="deels">Deels</option>
+                <option value="nog-uitwerken">Nog uit te werken</option>
+              </select>
+            </div>
+
+            <div class="field half">
+              <label for="roomRental">Is er sprake van kamerbewoning / onzelfstandige bewoning?</label>
+              <select id="roomRental" name="roomRental">
+                <option value="">Kies</option>
+                <option value="nee">Nee</option>
+                <option value="ja">Ja</option>
+                <option value="onbekend">Onbekend</option>
+              </select>
+            </div>
+
+            <div class="field half">
+              <label for="businessImpact">Zijn er nabijgelegen bedrijven die door woningbouw beperkt kunnen worden?</label>
+              <select id="businessImpact" name="businessImpact">
+                <option value="">Kies</option>
+                <option value="nee">Nee</option>
+                <option value="mogelijk">Mogelijk</option>
+                <option value="ja">Ja</option>
+                <option value="onbekend">Onbekend</option>
+              </select>
+            </div>
+
+            <div class="field half">
+              <label for="groundFloorCentreFunction">Blijft centrumfunctie behouden waar nodig?</label>
+              <select id="groundFloorCentreFunction" name="groundFloorCentreFunction">
+                <option value="">Kies</option>
+                <option value="ja">Ja</option>
+                <option value="nee">Nee</option>
+                <option value="niet-van-toepassing">Niet van toepassing</option>
+                <option value="onbekend">Onbekend</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="policyRisks">Belangrijkste beleids- of vergunningrisico’s</label>
+              <textarea id="policyRisks" name="policyRisks" placeholder="Bijv. rode centrumzone, parkeren niet op eigen terrein, monumentstatus, geluid, bedrijven in de buurt, beperkte ontsluiting"></textarea>
+            </div>
+          </div>
+
+          <div id="policyInsight" class="inline-note" style="margin-top:16px;">
+            Vul gegevens in om hier automatisch een eerste beleidsinschatting te tonen.
+          </div>
+        </section>
+
+        <section class="section" id="section-sustainability">
+          <div class="section-header">
+            <div>
+              <h2>Duurzaamheid, natuurinclusief & klimaatadaptief</h2>
+              <p>Niet als bijzaak, maar als kernonderdeel van de intake. Dit helpt later bij kwaliteit, beleid en positionering.</p>
+            </div>
+            <div class="pill">Stap 7</div>
+          </div>
+
+          <div class="grid">
+            <div class="field third">
+              <label for="energyLabelCurrent">Huidig energielabel</label>
+              <select id="energyLabelCurrent" name="energyLabelCurrent">
+                <option value="">Kies label</option>
+                <option value="A++++">A++++</option>
+                <option value="A+++">A+++</option>
+                <option value="A++">A++</option>
+                <option value="A+">A+</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="G">G</option>
+                <option value="onbekend">Onbekend</option>
+                <option value="niet-plichtig">Niet labelplichtig / monument</option>
+              </select>
+            </div>
+
+            <div class="field third">
+              <label for="energyLabelTarget">Beoogd energielabel</label>
+              <select id="energyLabelTarget" name="energyLabelTarget">
+                <option value="">Kies label</option>
+                <option value="A++++">A++++</option>
+                <option value="A+++">A+++</option>
+                <option value="A++">A++</option>
+                <option value="A+">A+</option>
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <option value="D">D</option>
+                <option value="E">E</option>
+                <option value="F">F</option>
+                <option value="G">G</option>
+                <option value="onbekend">Nog onbekend</option>
+              </select>
+            </div>
+
+            <div class="field third">
+              <label for="waterBuffering">Waterberging voorzien?</label>
+              <select id="waterBuffering" name="waterBuffering">
+                <option value="">Kies</option>
+                <option value="ja">Ja</option>
+                <option value="nee">Nee</option>
+                <option value="nog-uitwerken">Nog uit te werken</option>
+              </select>
+            </div>
+
+            <div class="field half">
+              <label for="natureInclusive">Natuurinclusieve maatregelen</label>
+              <textarea id="natureInclusive" name="natureInclusive" placeholder="Bijv. neststenen, groene gevel, biodiversiteit, inheemse beplanting, groene daken"></textarea>
+            </div>
+
+            <div class="field half">
+              <label for="climateAdaptive">Klimaatadaptieve maatregelen</label>
+              <textarea id="climateAdaptive" name="climateAdaptive" placeholder="Bijv. infiltratie, schaduw, hittebeperking, regenwaterbuffering, minder verharding"></textarea>
+            </div>
+
+            <div class="field">
+              <label for="sustainabilityNotes">Overige duurzaamheidsnotities</label>
+              <textarea id="sustainabilityNotes" name="sustainabilityNotes" placeholder="Bijv. isolatie, all-electric, warmtepomp, circulair materiaalgebruik, hergebruik constructie"></textarea>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="section-environment">
+          <div class="section-header">
+            <div>
+              <h2>Omgeving, parkeren & participatie</h2>
+              <p>Deze vragen helpen om vroeg de klassieke knelpunten te vangen: leefbaarheid, draagvlak, mobiliteit en omgevingsimpact.</p>
+            </div>
+            <div class="pill">Stap 8</div>
+          </div>
+
+          <div class="grid">
+            <div class="field third">
+              <label for="parkingOwnSite">Parkeren op eigen terrein mogelijk? *</label>
+              <select id="parkingOwnSite" name="parkingOwnSite" required>
+                <option value="">Kies</option>
+                <option value="ja">Ja</option>
+                <option value="deels">Deels</option>
+                <option value="nee">Nee</option>
+                <option value="nog-onduidelijk">Nog onduidelijk</option>
+              </select>
+            </div>
+
+            <div class="field third">
+              <label for="parkingSpaces">Aantal parkeerplaatsen op eigen terrein</label>
+              <input id="parkingSpaces" name="parkingSpaces" type="number" min="0" step="1" placeholder="Bijv. 2">
+            </div>
+
+            <div class="field third">
+              <label for="bikeParking">Fietsparkeren op eigen terrein?</label>
+              <select id="bikeParking" name="bikeParking">
+                <option value="">Kies</option>
+                <option value="ja">Ja</option>
+                <option value="nee">Nee</option>
+                <option value="deels">Deels</option>
+              </select>
+            </div>
+
+            <div class="field half">
+              <label for="trafficImpact">Verkeerseffect / ontsluiting</label>
+              <textarea id="trafficImpact" name="trafficImpact" placeholder="Beschrijf ontsluiting, verkeersveiligheid, drukte en verwachte impact op de straat."></textarea>
+            </div>
+
+            <div class="field half">
+              <label for="liveabilityImpact">Effect op woon- en leefklimaat</label>
+              <textarea id="liveabilityImpact" name="liveabilityImpact" placeholder="Beschrijf waarom er géén onevenredige aantasting ontstaat, of juist waar het spannend is."></textarea>
+            </div>
+
+            <div class="field third">
+              <label for="neighbourDialogueDone">Omgevingsdialoog gevoerd? *</label>
+              <select id="neighbourDialogueDone" name="neighbourDialogueDone" required>
+                <option value="">Kies</option>
+                <option value="ja">Ja</option>
+                <option value="nee">Nee</option>
+                <option value="gepland">Gepland</option>
+              </select>
+            </div>
+
+            <div class="field third">
+              <label for="neighbourSupport">Eerste inschatting draagvlak</label>
+              <select id="neighbourSupport" name="neighbourSupport">
+                <option value="">Kies</option>
+                <option value="positief">Overwegend positief</option>
+                <option value="gemengd">Gemengd</option>
+                <option value="kritisch">Kritisch</option>
+                <option value="onbekend">Onbekend</option>
+              </select>
+            </div>
+
+            <div class="field third">
+              <label for="signedReportAvailable">Verslag/ondertekening beschikbaar?</label>
+              <select id="signedReportAvailable" name="signedReportAvailable">
+                <option value="">Kies</option>
+                <option value="ja">Ja</option>
+                <option value="nee">Nee</option>
+                <option value="gedeeltelijk">Gedeeltelijk</option>
+                <option value="nog-niet">Nog niet</option>
+              </select>
+            </div>
+
+            <div class="field">
+              <label for="dialogueSummary">Samenvatting omgevingsdialoog</label>
+              <textarea id="dialogueSummary" name="dialogueSummary" placeholder="Met wie is gesproken, wat waren de reacties, welke zorgen kwamen naar voren en hoe zijn die verwerkt?"></textarea>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="section-commercial">
+          <div class="section-header">
+            <div>
+              <h2>Commercieel, uitvoering & vervolgstappen</h2>
+              <p>Deze sectie maakt de intake bruikbaar voor lead scoring, business development en prioritering.</p>
+            </div>
+            <div class="pill">Stap 9</div>
+          </div>
+
+          <div class="grid">
+            <div class="field third">
+              <label for="budgetBand">Indicatie investeringsruimte</label>
+              <select id="budgetBand" name="budgetBand">
+                <option value="">Kies</option>
+                <option value="<100k">&lt; €100.000</option>
+                <option value="100-250k">€100.000 – €250.000</option>
+                <option value="250-500k">€250.000 – €500.000</option>
+                <option value="500k-1m">€500.000 – €1.000.000</option>
+                <option value="1m+">&gt; €1.000.000</option>
+                <option value="onbekend">Nog onbekend</option>
+              </select>
+            </div>
+
+            <div class="field third">
+              <label for="timelineStart">Gewenste start</label>
+              <select id="timelineStart" name="timelineStart">
+                <option value="">Kies</option>
+                <option value="direct">Direct</option>
+                <option value="0-3m">Binnen 3 maanden</option>
+                <option value="3-6m">Binnen 6 maanden</option>
+                <option value="6-12m">Binnen 12 maanden</option>
+                <option value="12m+">Later dan 12 maanden</option>
+              </select>
+            </div>
+
+            <div class="field third">
+              <label for="helpNeeded">Waar is hulp bij nodig? *</label>
+              <select id="helpNeeded" name="helpNeeded" required>
+                <option value="">Kies</option>
+                <option value="haalbaarheid">Haalbaarheidstoets</option>
+                <option value="principeverzoek">Principeverzoek</option>
+                <option value="ontwerp">Ontwerp / schetsplan</option>
+                <option value="businesscase">Businesscase / exploitatie</option>
+                <option value="volledig-traject">Volledig traject</option>
+              </select>
+            </div>
+
+            <div class="field half">
+              <label for="documentsAvailable">Welke stukken zijn al beschikbaar?</label>
+              <textarea id="documentsAvailable" name="documentsAvailable" placeholder="Bijv. tekeningen, foto’s, kadastrale info, bestemmingsplan, energielabel, parkeerstudie, schetsplan"></textarea>
+            </div>
+
+            <div class="field half">
+              <label for="blockers">Wat houdt het project nu nog tegen?</label>
+              <textarea id="blockers" name="blockers" placeholder="Bijv. onzekerheid gemeente, kosten, parkeren, monument, eigendom, draagvlak, planologische ruimte"></textarea>
+            </div>
+
+            <div class="field">
+              <label for="idealOutcome">Wat zou voor jou een perfecte uitkomst zijn?</label>
+              <textarea id="idealOutcome" name="idealOutcome" placeholder="Bijv. positief principebesluit, 2 levensloopbestendige woningen, verkoopbaar plan, heldere go/no-go"></textarea>
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="section-summary">
+          <div class="section-header">
+            <div>
+              <h2>Live samenvatting & verzenden</h2>
+              <p>Onderstaand blok wordt automatisch opgebouwd op basis van jouw antwoorden en ook zo opgeslagen in Firestore.</p>
+            </div>
+            <div class="pill">Stap 10</div>
+          </div>
+
+          <div class="smart-cards">
+            <div class="smart-card">
+              <div id="fitStatus" class="status warn">Nog onvoldoende data</div>
+              <h4>Beleidsfit</h4>
+              <p id="fitText">Nog niet genoeg informatie om de eerste beleidsfit te bepalen.</p>
+            </div>
+            <div class="smart-card">
+              <div id="productStatus" class="status warn">Nog onvoldoende data</div>
+              <h4>Programmafit</h4>
+              <p id="productText">Nog niet genoeg informatie om het woonprogramma te duiden.</p>
+            </div>
+            <div class="smart-card">
+              <div id="leadStatus" class="status warn">Nog onvoldoende data</div>
+              <h4>Leadkwaliteit</h4>
+              <p id="leadText">Nog niet genoeg informatie om de lead prioriteit te bepalen.</p>
+            </div>
+          </div>
+
+          <div class="field" style="margin-top:18px;">
+            <label for="autoSummary">Automatische samenvatting</label>
+            <textarea id="autoSummary" name="autoSummary" readonly></textarea>
+          </div>
+
+          <div class="field">
+            <label for="internalNotes">Interne notities / extra context</label>
+            <textarea id="internalNotes" name="internalNotes" placeholder="Vrij veld voor aanvullende context."></textarea>
+          </div>
+
+          <div class="actions">
+            <div class="btn-row">
+              <button class="btn-secondary" type="button" id="saveLocalBtn">Lokaal opslaan</button>
+              <button class="btn-secondary" type="button" id="resetBtn">Formulier wissen</button>
+              <button class="btn-primary" type="submit" id="submitBtn">Intake opslaan in Firestore</button>
+            </div>
+            <div class="meta" id="saveMeta">Nog niet opgeslagen</div>
+          </div>
+
+          <div id="successBox" class="success-box"></div>
+          <div id="errorBox" class="error-box"></div>
+        </section>
+      </form>
+
+      <div class="footer-space"></div>
+    </main>
+  </div>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import {
+      getFirestore,
+      collection,
+      addDoc,
+      serverTimestamp
+    } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    // ===============================
+    // 1. VUL HIER JOUW FIREBASE CONFIG IN
+    // ===============================
+    const firebaseConfig = {
+  apiKey: "AIzaSyDkrkHrPW4pPu0_ZVKGma-AVF4-gTtk9R8",
+  authDomain: "niste-1113e.firebaseapp.com",
+  projectId: "niste-1113e",
+  storageBucket: "niste-1113e.firebasestorage.app",
+  messagingSenderId: "292138618317",
+  appId: "1:292138618317:web:50984a6bff31725d6a0884",
+    };
+
+    const firebaseReady =
+      firebaseConfig.apiKey &&
+      !firebaseConfig.apiKey.includes("VUL_HIER") &&
+      firebaseConfig.projectId &&
+      !firebaseConfig.projectId.includes("VUL_HIER");
+
+    let db = null;
+
+    if (firebaseReady) {
+      const app = initializeApp(firebaseConfig);
+      db = getFirestore(app);
     }
-  });
 
-  window.location.href = "/dashboard.html";
-};
-</script>
+    const form = document.getElementById("intakeForm");
+    const progressBar = document.getElementById("progressBar");
+    const progressText = document.getElementById("progressText");
+    const quickSignals = document.getElementById("quickSignals");
+    const policyInsight = document.getElementById("policyInsight");
+    const autoSummary = document.getElementById("autoSummary");
+    const fitStatus = document.getElementById("fitStatus");
+    const fitText = document.getElementById("fitText");
+    const productStatus = document.getElementById("productStatus");
+    const productText = document.getElementById("productText");
+    const leadStatus = document.getElementById("leadStatus");
+    const leadText = document.getElementById("leadText");
+    const saveMeta = document.getElementById("saveMeta");
+    const successBox = document.getElementById("successBox");
+    const errorBox = document.getElementById("errorBox");
+    const stepItems = [...document.querySelectorAll(".step-item")];
 
+    const storageKey = "niste_intake_autosave_v1";
+
+    const fields = [...form.querySelectorAll("input, select, textarea")];
+
+    stepItems.forEach(item => {
+      item.addEventListener("click", () => {
+        const target = document.getElementById(item.dataset.target);
+        if (target) target.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
+    });
+
+    const requiredFieldIds = [
+      "projectTitle", "projectPhase", "urgency", "goalStatement",
+      "firstName", "lastName", "email", "phone", "role",
+      "street", "postalCode", "city", "municipality", "areaType",
+      "currentUse", "ownershipStatus", "monumentStatus", "existingGo",
+      "newUnits", "newFunction", "constructionScope", "planDescription",
+      "targetGroupPrimary", "housingNeedExplanation",
+      "parkingOwnSite", "neighbourDialogueDone", "helpNeeded"
+    ];
+
+    function getValue(nameOrId) {
+      const el = document.getElementById(nameOrId);
+      if (el) return (el.value || "").trim();
+
+      const radio = form.querySelector(`input[name="${nameOrId}"]:checked`);
+      return radio ? radio.value : "";
+    }
+
+    function setValue(el, value) {
+      if (!el) return;
+      if (el.type === "radio") {
+        el.checked = el.value === value;
+      } else {
+        el.value = value;
+      }
+    }
+
+    function slugify(text = "") {
+      return text
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9]+/g, "-")
+        .replace(/^-+|-+$/g, "")
+        .slice(0, 80);
+    }
+
+    function labelRank(label) {
+      const ranks = {
+        "G": 1, "F": 2, "E": 3, "D": 4, "C": 5, "B": 6,
+        "A": 7, "A+": 8, "A++": 9, "A+++": 10, "A++++": 11
+      };
+      return ranks[label] || 0;
+    }
+
+    function computeProgress() {
+      let filled = 0;
+      requiredFieldIds.forEach(id => {
+        if (getValue(id)) filled++;
+      });
+      if (getValue("initiativeType")) filled++;
+      const total = requiredFieldIds.length + 1;
+      const pct = Math.round((filled / total) * 100);
+      progressBar.style.width = pct + "%";
+      progressText.textContent = pct + "%";
+    }
+
+    function activeStepByViewport() {
+      const sections = stepItems.map(item => document.getElementById(item.dataset.target)).filter(Boolean);
+      let currentId = sections[0]?.id || "";
+      const trigger = window.innerHeight * 0.22;
+
+      for (const section of sections) {
+        const rect = section.getBoundingClientRect();
+        if (rect.top <= trigger) currentId = section.id;
+      }
+
+      stepItems.forEach(item => {
+        item.classList.toggle("active", item.dataset.target === currentId);
+      });
+    }
+
+    function collectFormData() {
+      const initiativeType = getValue("initiativeType");
+      const existingGo = Number(getValue("existingGo")) || 0;
+      const newUnits = Number(getValue("newUnits")) || 0;
+      const smallestUnitSize = Number(getValue("smallestUnitSize")) || 0;
+      const parkingSpaces = Number(getValue("parkingSpaces")) || 0;
+      const newGo = Number(getValue("newGo")) || 0;
+      const avgUnitSize = Number(getValue("avgUnitSize")) || 0;
+
+      const energyCurrent = getValue("energyLabelCurrent");
+      const energyTarget = getValue("energyLabelTarget");
+
+      const currentRank = labelRank(energyCurrent);
+      const targetRank = labelRank(energyTarget);
+
+      const derived = {
+        min60RuleLikelyOk: smallestUnitSize ? smallestUnitSize >= 60 : null,
+        split130RuleLikelyOk: initiativeType === "woningsplitsing" ? existingGo >= 130 : null,
+        roomRentalAllowed: getValue("roomRental") === "nee",
+        ownParkingLikelyOk: ["ja", "deels"].includes(getValue("parkingOwnSite")),
+        dialogueDone: getValue("neighbourDialogueDone") === "ja",
+        energyImprovementLikelyOk:
+          energyCurrent === "niet-plichtig"
+            ? true
+            : energyCurrent && energyTarget
+              ? (targetRank > currentRank && targetRank >= labelRank("C"))
+              : null,
+        groundFloorRisk:
+          (getValue("areaType") === "centrum-rood" && ["ja", "deels"].includes(getValue("groundFloorHousing")))
+            ? "hoog"
+            : (getValue("areaType") === "centrum-oranje" && ["ja", "deels"].includes(getValue("groundFloorHousing")))
+              ? "middel"
+              : "laag",
+        estParkingPressure:
+          newUnits > 0 ? Math.max(newUnits - parkingSpaces, 0) : null,
+        estimatedAvgUnitByMath:
+          newUnits > 0 && newGo > 0 ? Math.round(newGo / newUnits) : avgUnitSize || null
+      };
+
+      const contactName = `${getValue("firstName")} ${getValue("lastName")}`.trim();
+      const projectTitle = getValue("projectTitle");
+      const city = getValue("city");
+      const street = getValue("street");
+      const municipality = getValue("municipality");
+      const targetGroupPrimary = getValue("targetGroupPrimary");
+      const areaType = getValue("areaType");
+
+      const summaryParts = [
+        projectTitle ? `Project: ${projectTitle}.` : "",
+        initiativeType ? `Type initiatief: ${initiativeType}.` : "",
+        street || city ? `Locatie: ${street}${street && city ? ", " : ""}${city}.` : "",
+        municipality ? `Gemeente: ${municipality}.` : "",
+        getValue("currentUse") ? `Huidige functie: ${getValue("currentUse")}.` : "",
+        getValue("newFunction") ? `Beoogde functie: ${getValue("newFunction")}.` : "",
+        existingGo ? `Bestaande gebruiksoppervlakte: ${existingGo} m².` : "",
+        newUnits ? `Beoogd aantal woningen: ${newUnits}.` : "",
+        smallestUnitSize ? `Kleinste woning: ${smallestUnitSize} m².` : "",
+        targetGroupPrimary ? `Primaire doelgroep: ${targetGroupPrimary}.` : "",
+        getValue("parkingOwnSite") ? `Parkeren op eigen terrein: ${getValue("parkingOwnSite")}.` : "",
+        getValue("neighbourDialogueDone") ? `Omgevingsdialoog: ${getValue("neighbourDialogueDone")}.` : "",
+        getValue("helpNeeded") ? `Hulpvraag: ${getValue("helpNeeded")}.` : "",
+      ].filter(Boolean);
+
+      const policyFlags = [];
+
+      if (initiativeType === "woningsplitsing" && existingGo && existingGo < 130) {
+        policyFlags.push("Oorspronkelijke woning lijkt kleiner dan 130 m², dus woningsplitsing is beleidsmatig risicovol.");
+      }
+      if (smallestUnitSize && smallestUnitSize < 60) {
+        policyFlags.push("Kleinste woning is kleiner dan 60 m²; dat lijkt niet passend binnen de minimale gebruiksoppervlakte.");
+      }
+      if (getValue("roomRental") === "ja") {
+        policyFlags.push("Kamerbewoning / onzelfstandige bewoning is aangegeven; dat is een duidelijke beleidsmatige rode vlag.");
+      }
+      if (getValue("areaType") === "centrum-rood" && ["ja", "deels"].includes(getValue("groundFloorHousing"))) {
+        policyFlags.push("Wonen op de begane grond in rode centrumzone is zeer risicovol.");
+      }
+      if (getValue("parkingOwnSite") === "nee") {
+        policyFlags.push("Parkeren op eigen terrein ontbreekt; dit vraagt extra onderbouwing of een parkeerbalans.");
+      }
+      if (derived.energyImprovementLikelyOk === false) {
+        policyFlags.push("De energielabelverbetering lijkt nog niet te voldoen aan minimaal één labelstap omhoog met minimaal label C.");
+      }
+      if (getValue("neighbourDialogueDone") === "nee") {
+        policyFlags.push("Omgevingsdialoog is nog niet gevoerd.");
+      }
+
+      return {
+        meta: {
+          source: "website-intake",
+          version: "1.0",
+          intakeCode: `NIS-${new Date().getFullYear()}-${Math.random().toString(36).slice(2, 8).toUpperCase()}`,
+          projectSlug: slugify(projectTitle || `${street}-${city}`),
+          clientCreatedAt: new Date().toISOString()
+        },
+        contact: {
+          firstName: getValue("firstName"),
+          lastName: getValue("lastName"),
+          fullName: contactName,
+          email: getValue("email"),
+          phone: getValue("phone"),
+          role: getValue("role"),
+          company: getValue("company"),
+          decisionMakers: getValue("decisionMakers")
+        },
+        initiative: {
+          initiativeType,
+          projectTitle,
+          projectPhase: getValue("projectPhase"),
+          leadSource: getValue("leadSource"),
+          urgency: getValue("urgency"),
+          goalStatement: getValue("goalStatement")
+        },
+        location: {
+          street,
+          postalCode: getValue("postalCode"),
+          city,
+          municipality,
+          areaType,
+          currentUse: getValue("currentUse"),
+          ownershipStatus: getValue("ownershipStatus"),
+          monumentStatus: getValue("monumentStatus"),
+          buildingYear: getValue("buildingYear"),
+          existingGo,
+          plotSize: Number(getValue("plotSize")) || null,
+          floors: Number(getValue("floors")) || null,
+          locationContext: getValue("locationContext")
+        },
+        plan: {
+          existingUnits: Number(getValue("existingUnits")) || null,
+          newUnits,
+          groundFloorHousing: getValue("groundFloorHousing"),
+          newFunction: getValue("newFunction"),
+          constructionScope: getValue("constructionScope"),
+          newGo,
+          smallestUnitSize,
+          planDescription: getValue("planDescription"),
+          architecturalValue: getValue("architecturalValue")
+        },
+        program: {
+          targetGroupPrimary,
+          priceSegment: getValue("priceSegment"),
+          occupancyModel: getValue("occupancyModel"),
+          avgUnitSize,
+          bedroomsTypical: Number(getValue("bedroomsTypical")) || null,
+          accessibilityLevel: getValue("accessibilityLevel"),
+          housingNeedExplanation: getValue("housingNeedExplanation")
+        },
+        policy: {
+          currentDestinationPlan: getValue("currentDestinationPlan"),
+          functionRemovalNeeded: getValue("functionRemovalNeeded"),
+          independentAccess: getValue("independentAccess"),
+          roomRental: getValue("roomRental"),
+          businessImpact: getValue("businessImpact"),
+          groundFloorCentreFunction: getValue("groundFloorCentreFunction"),
+          policyRisks: getValue("policyRisks")
+        },
+        sustainability: {
+          energyLabelCurrent: energyCurrent,
+          energyLabelTarget: energyTarget,
+          waterBuffering: getValue("waterBuffering"),
+          natureInclusive: getValue("natureInclusive"),
+          climateAdaptive: getValue("climateAdaptive"),
+          sustainabilityNotes: getValue("sustainabilityNotes")
+        },
+        environment: {
+          parkingOwnSite: getValue("parkingOwnSite"),
+          parkingSpaces,
+          bikeParking: getValue("bikeParking"),
+          trafficImpact: getValue("trafficImpact"),
+          liveabilityImpact: getValue("liveabilityImpact"),
+          neighbourDialogueDone: getValue("neighbourDialogueDone"),
+          neighbourSupport: getValue("neighbourSupport"),
+          signedReportAvailable: getValue("signedReportAvailable"),
+          dialogueSummary: getValue("dialogueSummary")
+        },
+        commercial: {
+          budgetBand: getValue("budgetBand"),
+          timelineStart: getValue("timelineStart"),
+          helpNeeded: getValue("helpNeeded"),
+          documentsAvailable: getValue("documentsAvailable"),
+          blockers: getValue("blockers"),
+          idealOutcome: getValue("idealOutcome")
+        },
+        internal: {
+          internalNotes: getValue("internalNotes")
+        },
+        derived: {
+          ...derived,
+          summary: summaryParts.join(" "),
+          policyFlags,
+          completenessPercent: Number(progressText.textContent.replace("%", "")) || 0
+        }
+      };
+    }
+
+    function updateQuickSignals() {
+      const data = collectFormData();
+      const d = data.derived;
+      const signals = [];
+
+      if (d.split130RuleLikelyOk === false) {
+        signals.push({ type: "bad", text: "Splitsingsrisico: bestaande woning lijkt kleiner dan 130 m²." });
+      } else if (data.initiative.initiativeType === "woningsplitsing" && d.split130RuleLikelyOk === true) {
+        signals.push({ type: "ok", text: "Splitsingssignaal positief: bestaande woning is ≥ 130 m²." });
+      }
+
+      if (d.min60RuleLikelyOk === false) {
+        signals.push({ type: "bad", text: "Minimale woninggrootte lijkt onder 60 m² te komen." });
+      } else if (d.min60RuleLikelyOk === true) {
+        signals.push({ type: "ok", text: "Kleinste woning lijkt te voldoen aan de 60 m²-grens." });
+      }
+
+      if (d.groundFloorRisk === "hoog") {
+        signals.push({ type: "bad", text: "Begane grond wonen in rode centrumzone is beleidsmatig zeer risicovol." });
+      } else if (d.groundFloorRisk === "middel") {
+        signals.push({ type: "warn", text: "Begane grond wonen in oranje zone vraagt maatwerk en sterke onderbouwing." });
+      }
+
+      if (data.environment.parkingOwnSite === "nee") {
+        signals.push({ type: "warn", text: "Parkeren op eigen terrein ontbreekt; parkeerbalans kan nodig zijn." });
+      } else if (data.environment.parkingOwnSite === "ja") {
+        signals.push({ type: "ok", text: "Parkeren op eigen terrein is mogelijk." });
+      }
+
+      if (d.energyImprovementLikelyOk === false) {
+        signals.push({ type: "warn", text: "Energielabelsprong lijkt nog onvoldoende uitgewerkt." });
+      } else if (d.energyImprovementLikelyOk === true) {
+        signals.push({ type: "ok", text: "Duurzaamheidssignaal positief: labelverbetering lijkt plausibel." });
+      }
+
+      if (data.environment.neighbourDialogueDone === "nee") {
+        signals.push({ type: "warn", text: "Omgevingsdialoog is nog niet gevoerd." });
+      } else if (data.environment.neighbourDialogueDone === "ja") {
+        signals.push({ type: "ok", text: "Omgevingsdialoog is gevoerd." });
+      }
+
+      quickSignals.innerHTML = signals.length
+        ? signals.map(s => `<div class="alert ${s.type}">${s.text}</div>`).join("")
+        : `<div class="alert warn">Vul de intake in om slimme signalen te zien.</div>`;
+    }
+
+    function updatePolicyInsight() {
+      const data = collectFormData();
+      const issues = [];
+
+      if (data.initiative.initiativeType === "woningsplitsing" && data.location.existingGo && data.location.existingGo < 130) {
+        issues.push("woningsplitsing onder 130 m² bestaand GO");
+      }
+      if (data.plan.smallestUnitSize && data.plan.smallestUnitSize < 60) {
+        issues.push("nieuwe woning kleiner dan 60 m²");
+      }
+      if (data.policy.roomRental === "ja") {
+        issues.push("kamerbewoning / onzelfstandige woonruimte");
+      }
+      if (data.location.areaType === "centrum-rood" && ["ja", "deels"].includes(data.plan.groundFloorHousing)) {
+        issues.push("wonen op begane grond in rode centrumzone");
+      }
+      if (data.environment.parkingOwnSite === "nee") {
+        issues.push("parkeren niet op eigen terrein");
+      }
+      if (data.policy.businessImpact === "ja") {
+        issues.push("mogelijke milieubeperkingen door bedrijven in de omgeving");
+      }
+
+      if (!issues.length) {
+        policyInsight.innerHTML = `
+          <strong>Eerste beleidsinschatting:</strong> op basis van de nu ingevulde gegevens zijn er nog geen directe rode vlaggen zichtbaar.
+          Let wel: parkeren, centrumfunctie, woonbehoefte, omgevingsdialoog en bouwkundige uitwerking blijven doorslaggevend.
+        `;
+        return;
+      }
+
+      policyInsight.innerHTML = `
+        <strong>Eerste beleidsinschatting:</strong> dit initiatief bevat aandachtspunten:
+        <br><br>• ${issues.join("<br>• ")}
+      `;
+    }
+
+    function updateSummaryCards() {
+      const data = collectFormData();
+      const d = data.derived;
+
+      let fitClass = "warn";
+      let fitLabel = "Twijfelgeval";
+      let fitDesc = "De beleidsfit is nog niet scherp genoeg.";
+      let redFlags = 0;
+
+      if (d.split130RuleLikelyOk === false) redFlags++;
+      if (d.min60RuleLikelyOk === false) redFlags++;
+      if (data.policy.roomRental === "ja") redFlags++;
+      if (d.groundFloorRisk === "hoog") redFlags++;
+      if (data.environment.parkingOwnSite === "nee") redFlags++;
+
+      if (redFlags === 0 && data.program.housingNeedExplanation && data.environment.neighbourDialogueDone !== "nee") {
+        fitClass = "ok";
+        fitLabel = "Kansrijk";
+        fitDesc = "De eerste beleidsfit oogt positief, mits verdere onderbouwing klopt.";
+      } else if (redFlags >= 3) {
+        fitClass = "bad";
+        fitLabel = "Risicovol";
+        fitDesc = "Er zijn meerdere duidelijke beleidsmatige spanningen.";
+      }
+
+      fitStatus.className = `status ${fitClass}`;
+      fitStatus.textContent = fitLabel;
+      fitText.textContent = fitDesc;
+
+      let prodClass = "warn";
+      let prodLabel = "Nog onduidelijk";
+      let prodDesc = "Het woonprogramma kan nog scherper.";
+
+      if (data.program.targetGroupPrimary && data.plan.newUnits && (data.plan.smallestUnitSize >= 60 || data.plan.smallestUnitSize === 0)) {
+        prodClass = "ok";
+        prodLabel = "Goed programmeerbaar";
+        prodDesc = "Doelgroep, aantallen en woninglogica zijn bruikbaar vastgelegd.";
+      }
+      if (data.program.targetGroupPrimary === "senioren" && data.program.accessibilityLevel === "levensloopbestendig") {
+        prodClass = "ok";
+        prodLabel = "Sterke doelgroep-fit";
+        prodDesc = "Doelgroep en producteigenschappen versterken elkaar.";
+      }
+
+      productStatus.className = `status ${prodClass}`;
+      productStatus.textContent = prodLabel;
+      productText.textContent = prodDesc;
+
+      let leadScore = 0;
+      if (data.initiative.urgency === "hoog") leadScore += 2;
+      if (data.commercial.timelineStart === "direct" || data.commercial.timelineStart === "0-3m") leadScore += 2;
+      if (data.commercial.helpNeeded === "volledig-traject") leadScore += 2;
+      if (data.environment.neighbourDialogueDone === "ja") leadScore += 1;
+      if (data.commercial.documentsAvailable) leadScore += 1;
+      if (data.location.ownershipStatus === "eigendom" || data.location.ownershipStatus === "optie") leadScore += 1;
+
+      let leadClass = "warn";
+      let leadLabel = "Normale lead";
+      let leadDesc = "Opvolging is zinvol, maar nog niet top-prioriteit.";
+
+      if (leadScore >= 6) {
+        leadClass = "ok";
+        leadLabel = "Hoge prioriteit";
+        leadDesc = "Deze lead oogt concreet, urgent en uitvoerbaar.";
+      } else if (leadScore <= 2) {
+        leadClass = "warn";
+        leadLabel = "Vroege fase";
+        leadDesc = "Waarschijnlijk nog veel verkenning nodig.";
+      }
+
+      leadStatus.className = `status ${leadClass}`;
+      leadStatus.textContent = leadLabel;
+      leadText.textContent = leadDesc;
+
+      autoSummary.value = buildAutoSummary(data, redFlags, leadScore);
+    }
+
+    function buildAutoSummary(data, redFlags, leadScore) {
+      const parts = [];
+
+      parts.push(`Intake voor ${data.initiative.projectTitle || "onbenoemd project"} door ${data.contact.fullName || "onbekende indiener"}.`);
+      parts.push(`Het betreft een initiatieftype "${data.initiative.initiativeType || "onbekend"}" in de fase "${data.initiative.projectPhase || "onbekend"}".`);
+      parts.push(`De locatie betreft ${data.location.street || "onbekende locatie"} in ${data.location.city || "onbekende plaats"}, gemeente ${data.location.municipality || "onbekend"}.`);
+      parts.push(`Huidige functie: ${data.location.currentUse || "onbekend"}. Beoogde functie: ${data.plan.newFunction || "onbekend"}.`);
+      parts.push(`Bestaande gebruiksoppervlakte: ${data.location.existingGo || "onbekend"} m². Beoogd aantal woningen: ${data.plan.newUnits || "onbekend"}.`);
+      if (data.plan.smallestUnitSize) parts.push(`Kleinste opgegeven woningmaat: ${data.plan.smallestUnitSize} m².`);
+      if (data.program.targetGroupPrimary) parts.push(`Primaire doelgroep: ${data.program.targetGroupPrimary}.`);
+      if (data.program.housingNeedExplanation) parts.push(`Onderbouwing woonbehoefte: ${data.program.housingNeedExplanation}`);
+      if (data.environment.parkingOwnSite) parts.push(`Parkeren op eigen terrein: ${data.environment.parkingOwnSite}.`);
+      if (data.environment.neighbourDialogueDone) parts.push(`Omgevingsdialoog: ${data.environment.neighbourDialogueDone}.`);
+      if (data.sustainability.energyLabelCurrent || data.sustainability.energyLabelTarget) {
+        parts.push(`Energielabel bestaand/doel: ${data.sustainability.energyLabelCurrent || "onbekend"} → ${data.sustainability.energyLabelTarget || "onbekend"}.`);
+      }
+
+      if (data.derived.policyFlags.length) {
+        parts.push(`Belangrijkste aandachtspunten: ${data.derived.policyFlags.join(" ")}`);
+      } else {
+        parts.push("Er zijn op basis van de intake nog geen directe harde rode vlaggen geconstateerd.");
+      }
+
+      parts.push(`Indicatieve beleidsrisico-score: ${redFlags}. Indicatieve leadscore: ${leadScore}.`);
+      parts.push(`Hulpvraag: ${data.commercial.helpNeeded || "onbekend"}. Gewenste uitkomst: ${data.commercial.idealOutcome || "niet opgegeven"}.`);
+
+      return parts.join(" ");
+    }
+
+    function saveToLocalStorage() {
+      const payload = {};
+      fields.forEach(el => {
+        if (el.type === "radio") {
+          if (el.checked) payload[el.name] = el.value;
+        } else {
+          payload[el.id] = el.value;
+        }
+      });
+      localStorage.setItem(storageKey, JSON.stringify(payload));
+      saveMeta.textContent = `Lokaal opgeslagen op ${new Date().toLocaleTimeString("nl-NL")}`;
+    }
+
+    function restoreFromLocalStorage() {
+      const raw = localStorage.getItem(storageKey);
+      if (!raw) return;
+
+      try {
+        const payload = JSON.parse(raw);
+        fields.forEach(el => {
+          if (el.type === "radio") {
+            if (payload[el.name] !== undefined) {
+              el.checked = el.value === payload[el.name];
+            }
+          } else if (payload[el.id] !== undefined) {
+            el.value = payload[el.id];
+          }
+        });
+      } catch (e) {
+        console.warn("Kon autosave niet herstellen", e);
+      }
+    }
+
+    function resetFormFully() {
+      localStorage.removeItem(storageKey);
+      form.reset();
+      successBox.style.display = "none";
+      errorBox.style.display = "none";
+      saveMeta.textContent = "Formulier gewist";
+      refreshUI();
+    }
+
+    function refreshUI() {
+      computeProgress();
+      updateQuickSignals();
+      updatePolicyInsight();
+      updateSummaryCards();
+      activeStepByViewport();
+    }
+
+    fields.forEach(el => {
+      const eventName = el.tagName === "SELECT" ? "change" : "input";
+      el.addEventListener(eventName, () => {
+        saveToLocalStorage();
+        refreshUI();
+      });
+      el.addEventListener("change", () => {
+        saveToLocalStorage();
+        refreshUI();
+      });
+    });
+
+    document.getElementById("saveLocalBtn").addEventListener("click", () => {
+      saveToLocalStorage();
+      successBox.style.display = "block";
+      successBox.textContent = "De intake is lokaal opgeslagen in je browser.";
+      errorBox.style.display = "none";
+    });
+
+    document.getElementById("resetBtn").addEventListener("click", resetFormFully);
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      successBox.style.display = "none";
+      errorBox.style.display = "none";
+
+      if (!firebaseReady || !db) {
+        errorBox.style.display = "block";
+        errorBox.textContent = "Firestore is nog niet gekoppeld. Vul eerst jouw Firebase-config in bovenin dit bestand.";
+        return;
+      }
+
+      if (!form.reportValidity()) return;
+
+      const submitBtn = document.getElementById("submitBtn");
+      submitBtn.disabled = true;
+      submitBtn.textContent = "Bezig met opslaan...";
+
+      try {
+        const payload = collectFormData();
+
+        const docRef = await addDoc(collection(db, "intakes"), {
+          ...payload,
+          createdAt: serverTimestamp(),
+          status: "nieuw",
+          pipelineStage: "intake-binnen",
+          tags: [
+            payload.initiative.initiativeType || null,
+            payload.location.city || null,
+            payload.program.targetGroupPrimary || null,
+            payload.commercial.helpNeeded || null
+          ].filter(Boolean)
+        });
+
+        localStorage.removeItem(storageKey);
+        saveMeta.textContent = `Opgeslagen op ${new Date().toLocaleTimeString("nl-NL")}`;
+
+        successBox.style.display = "block";
+        successBox.innerHTML = `
+          Intake succesvol opgeslagen in Firestore.<br>
+          Document ID: <strong>${docRef.id}</strong><br>
+          Intakecode: <strong>${payload.meta.intakeCode}</strong>
+        `;
+
+        errorBox.style.display = "none";
+      } catch (error) {
+        console.error(error);
+        errorBox.style.display = "block";
+        errorBox.textContent = "Opslaan in Firestore is mislukt. Controleer je Firebase-config, Firestore-regels en console.";
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = "Intake opslaan in Firestore";
+      }
+    });
+
+    window.addEventListener("scroll", activeStepByViewport);
+
+    restoreFromLocalStorage();
+    refreshUI();
+  </script>
 </body>
 </html>
