@@ -1,1 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Niste Intake</title>
+</head>
+<body>
 
+<h2>Jouw woning</h2>
+
+<input id="type" placeholder="Type woning">
+<input id="size" placeholder="m²">
+<input id="rooms" placeholder="kamers">
+<input id="postcode" placeholder="postcode">
+
+<h2>Jouw wensen</h2>
+
+<input id="desired_type" placeholder="Type">
+<input id="desired_size" placeholder="m²">
+<input id="desired_rooms" placeholder="kamers">
+<input id="desired_location" placeholder="Regio">
+
+<button onclick="save()">Opslaan</button>
+
+<script type="module">
+import { auth, db } from './firebase.js';
+import { doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+let currentUser;
+
+onAuthStateChanged(auth, user => {
+  if (!user) window.location.href = "/";
+  currentUser = user;
+});
+
+window.save = async () => {
+  await setDoc(doc(db, "users", currentUser.uid), {
+    woning: {
+      type: document.getElementById("type").value,
+      size: document.getElementById("size").value,
+      rooms: document.getElementById("rooms").value,
+      postcode: document.getElementById("postcode").value
+    },
+    wens: {
+      type: document.getElementById("desired_type").value,
+      size: document.getElementById("desired_size").value,
+      rooms: document.getElementById("desired_rooms").value,
+      location: document.getElementById("desired_location").value
+    }
+  });
+
+  window.location.href = "/dashboard.html";
+};
+</script>
+
+</body>
+</html>
