@@ -3,74 +3,123 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WoonMatch – Vind jouw ideale woningruil</title>
+  <title>WoonMatch</title>
   <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+
+  <style>
+    body { background: #0f172a; color: white; }
+  </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
 
-  <div class="max-w-4xl mx-auto p-6">
+<body class="flex items-center justify-center min-h-screen">
 
-    <!-- HEADER -->
-    <h1 class="text-4xl font-bold mb-4">🏡 WoonMatch</h1>
-    <p class="text-lg mb-8">
-      Vind eenvoudig een woning die beter bij jouw leven past. 
-      Zonder gedoe, mét slimme matches.
-    </p>
+<div class="max-w-2xl w-full p-6">
 
-    <!-- PROBLEEM -->
-    <div class="bg-white p-6 rounded-2xl shadow mb-6">
-      <h2 class="text-2xl font-semibold mb-2">Herken je dit?</h2>
-      <ul class="list-disc ml-5">
-        <li>Je woont te groot of te klein</li>
-        <li>Je wilt verhuizen, maar vindt niets passends</li>
-        <li>Je zit vast in de woningmarkt</li>
-      </ul>
-    </div>
+  <!-- HERO -->
+  <h1 class="text-4xl font-bold mb-4">🏡 WoonMatch</h1>
+  <p class="text-gray-300 mb-8">
+    Vind jouw perfecte woningmatch en help de woningmarkt doorstromen.
+  </p>
 
-    <!-- OPLOSSING -->
-    <div class="bg-white p-6 rounded-2xl shadow mb-6">
-      <h2 class="text-2xl font-semibold mb-2">Onze oplossing</h2>
-      <p>
-        Wij matchen jouw woning met iemand anders die precies zoekt wat jij hebt.
-        Zo creëren we slimme doorstroming.
-      </p>
-    </div>
+  <!-- FORM -->
+  <div class="bg-white text-black p-6 rounded-2xl shadow-xl">
 
-    <!-- FORM -->
-    <div class="bg-white p-6 rounded-2xl shadow">
-      <h2 class="text-2xl font-semibold mb-4">Vind jouw match</h2>
+    <form id="form" class="space-y-4">
 
-      <form action="https://formspree.io/f/YOUR_ID" method="POST" class="space-y-4">
+      <input type="text" id="naam" placeholder="Naam" class="w-full p-3 border rounded" required>
+      <input type="email" id="email" placeholder="E-mail" class="w-full p-3 border rounded" required>
 
-        <input type="text" name="naam" placeholder="Naam" class="w-full p-3 border rounded" required>
-        <input type="email" name="email" placeholder="E-mail" class="w-full p-3 border rounded" required>
+      <input type="text" id="huidige" placeholder="Huidige woning" class="w-full p-3 border rounded">
+      <input type="text" id="gewenste" placeholder="Gewenste woning" class="w-full p-3 border rounded">
 
-        <input type="text" name="huidige_woning" placeholder="Huidige woning (bijv. 5-kamer huis Aarle-Rixtel)" class="w-full p-3 border rounded">
+      <select id="timing" class="w-full p-3 border rounded">
+        <option value="">Wanneer wil je verhuizen?</option>
+        <option>Binnen 6 maanden</option>
+        <option>Binnen 1 jaar</option>
+        <option>Oriënterend</option>
+      </select>
 
-        <input type="text" name="gewenste_woning" placeholder="Gewenste woning" class="w-full p-3 border rounded">
+      <button type="submit" class="w-full bg-black text-white p-3 rounded-xl">
+        Vind mijn match
+      </button>
 
-        <select name="verhuisbereidheid" class="w-full p-3 border rounded">
-          <option value="">Wanneer wil je verhuizen?</option>
-          <option>Binnen 6 maanden</option>
-          <option>Binnen 1 jaar</option>
-          <option>Oriënterend</option>
-        </select>
+    </form>
 
-        <textarea name="opmerking" placeholder="Extra wensen" class="w-full p-3 border rounded"></textarea>
+    <p id="status" class="mt-4 text-green-600 hidden">Opgeslagen! We zoeken een match...</p>
 
-        <button type="submit" class="bg-black text-white px-6 py-3 rounded-xl">
-          Vind mijn match
-        </button>
-
-      </form>
-    </div>
-
-    <!-- FOOTER -->
-    <p class="text-sm text-gray-500 mt-6">
-      Dit is een pilot. We nemen persoonlijk contact met je op.
-    </p>
+    <div id="match" class="mt-4 text-blue-600 hidden"></div>
 
   </div>
+
+</div>
+
+<script>
+  // 🔥 FIREBASE CONFIG (vervang dit!)
+  const firebaseConfig = {
+    apiKey: "YOUR_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT"
+  };
+
+  const app = firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // FORM SUBMIT
+  document.getElementById("form").addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const data = {
+      naam: naam.value,
+      email: email.value,
+      huidige: huidige.value,
+      gewenste: gewenste.value,
+      timing: timing.value,
+      created: new Date()
+    };
+
+    // opslaan
+    await db.collection("users").add(data);
+
+    document.getElementById("status").classList.remove("hidden");
+
+    // simpele matching
+    findMatch(data);
+  });
+
+  async function findMatch(user) {
+    const snapshot = await db.collection("users").get();
+
+    let bestMatch = null;
+
+    snapshot.forEach(doc => {
+      const other = doc.data();
+
+      if (other.email === user.email) return;
+
+      // simpele match logica
+      if (
+        other.huidige?.toLowerCase().includes(user.gewenste?.toLowerCase()) &&
+        other.gewenste?.toLowerCase().includes(user.huidige?.toLowerCase())
+      ) {
+        bestMatch = other;
+      }
+    });
+
+    if (bestMatch) {
+      document.getElementById("match").innerHTML =
+        `🎯 Match gevonden met ${bestMatch.naam}! We nemen contact op.`;
+    } else {
+      document.getElementById("match").innerHTML =
+        `⏳ Nog geen directe match. We blijven zoeken!`;
+    }
+
+    document.getElementById("match").classList.remove("hidden");
+  }
+</script>
 
 </body>
 </html>
