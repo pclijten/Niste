@@ -18,153 +18,164 @@
     html { scroll-behavior: smooth; }
     body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--dark); min-height: 100vh; }
 
-    nav {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 1.15rem 2.5rem;
-      border-bottom: 1px solid rgba(42,74,62,.08);
-      background: rgba(246,241,233,.96); backdrop-filter: blur(20px);
-      position: sticky; top: 0; z-index: 50;
-    }
-    .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.65rem; font-weight: 600; color: var(--forest); text-decoration: none; display: flex; align-items: center; }
-    .logo-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); display: inline-block; animation: pulse 2.2s ease-in-out infinite; margin-left: 2px; }
+    /* NAV */
+    nav { display:flex; align-items:center; justify-content:space-between; padding:1.15rem 2.5rem; border-bottom:1px solid rgba(42,74,62,.08); background:rgba(246,241,233,.96); backdrop-filter:blur(20px); position:sticky; top:0; z-index:50; }
+    .nav-logo { font-family:'Cormorant Garamond',serif; font-size:1.65rem; font-weight:600; color:var(--forest); text-decoration:none; display:flex; align-items:center; }
+    .logo-dot { width:7px; height:7px; border-radius:50%; background:var(--gold); display:inline-block; animation:pulse 2.2s ease-in-out infinite; margin-left:2px; }
     @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.6);opacity:.55} }
-    .nav-right { display: flex; align-items: center; gap: 1.2rem; }
-    .nav-save { font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--light); display: flex; align-items: center; gap: .35rem; }
-    .save-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); }
-    .nav-back { font-size: .76rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--mid); text-decoration: none; transition: color .2s; }
-    .nav-back:hover { color: var(--forest); }
+    .nav-right { display:flex; align-items:center; gap:1.2rem; }
+    .nav-save { font-size:.7rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--light); display:flex; align-items:center; gap:.35rem; }
+    .save-dot { width:6px; height:6px; border-radius:50%; background:var(--gold); }
+    .nav-user { font-size:.75rem; color:var(--mid); max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .nav-back { font-size:.76rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--mid); text-decoration:none; transition:color .2s; }
+    .nav-back:hover { color:var(--forest); }
 
-    .progress-outer { width: 100%; height: 3px; background: rgba(42,74,62,.08); position: sticky; top: 65px; z-index: 49; }
-    .progress-fill { height: 100%; background: var(--gold); transition: width .5s cubic-bezier(.4,0,.2,1); }
+    .progress-outer { width:100%; height:3px; background:rgba(42,74,62,.08); position:sticky; top:65px; z-index:49; }
+    .progress-fill { height:100%; background:var(--gold); transition:width .5s cubic-bezier(.4,0,.2,1); }
 
-    .intake-wrap { max-width: 700px; margin: 0 auto; padding: 3rem 1.5rem 7rem; }
+    .intake-wrap { max-width:700px; margin:0 auto; padding:3rem 1.5rem 7rem; }
 
-    .step-dots { display: flex; align-items: center; gap: .4rem; justify-content: center; margin-bottom: 2rem; }
-    .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--sand); transition: all .3s ease; }
-    .dot.active { background: var(--gold); transform: scale(1.5); }
-    .dot.done { background: var(--forest); }
+    .step-dots { display:flex; align-items:center; gap:.4rem; justify-content:center; margin-bottom:2rem; }
+    .dot { width:7px; height:7px; border-radius:50%; background:var(--sand); transition:all .3s ease; }
+    .dot.active { background:var(--gold); transform:scale(1.5); }
+    .dot.done { background:var(--forest); }
 
-    .card { background: #fff; border-radius: 24px; padding: 2.6rem; box-shadow: 0 2px 48px rgba(26,26,22,.07); animation: fadeUp .3s ease forwards; }
+    .card { background:#fff; border-radius:24px; padding:2.6rem; box-shadow:0 2px 48px rgba(26,26,22,.07); animation:fadeUp .3s ease forwards; }
     @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
 
-    .ey { font-size: .65rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); margin-bottom: .5rem; }
-    .st { font-family: 'Cormorant Garamond', serif; font-size: 2rem; font-weight: 600; color: var(--forest); line-height: 1.15; margin-bottom: .5rem; }
-    .st em { font-style: italic; color: var(--dark); }
-    .sd { font-size: .86rem; color: var(--mid); line-height: 1.65; margin-bottom: 1.6rem; }
+    .ey { font-size:.65rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); margin-bottom:.5rem; }
+    .st { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:600; color:var(--forest); line-height:1.15; margin-bottom:.5rem; }
+    .st em { font-style:italic; color:var(--dark); }
+    .sd { font-size:.86rem; color:var(--mid); line-height:1.65; margin-bottom:1.6rem; }
+    .sl { font-size:.62rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--light); margin:1.6rem 0 .6rem; }
+    .skip-notice { display:flex; align-items:center; gap:.5rem; background:var(--gold-pale); border-radius:10px; padding:.6rem 1rem; margin-bottom:1.4rem; font-size:.76rem; color:var(--mid); font-weight:500; }
 
-    .skip-notice { display: flex; align-items: center; gap: .5rem; background: var(--gold-pale); border-radius: 10px; padding: .6rem 1rem; margin-bottom: 1.4rem; font-size: .76rem; color: var(--mid); font-weight: 500; }
+    /* TILES */
+    .tg { display:grid; gap:.55rem; }
+    .g2 { grid-template-columns:1fr 1fr; }
+    .g3 { grid-template-columns:1fr 1fr 1fr; }
+    .g4 { grid-template-columns:1fr 1fr 1fr 1fr; }
+    .tile { border:1.5px solid rgba(217,206,188,.65); border-radius:13px; padding:.9rem .75rem; cursor:pointer; transition:all .17s ease; display:flex; flex-direction:column; align-items:center; gap:.4rem; text-align:center; background:var(--cream); font-size:.8rem; font-weight:600; color:var(--dark); user-select:none; }
+    .tile:hover { border-color:var(--forest); background:rgba(42,74,62,.04); transform:translateY(-1px); }
+    .tile.sel { border-color:var(--forest); background:var(--forest); color:var(--cream); }
+    .tile .ti { font-size:1.35rem; }
 
-    .sl { font-size: .62rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--light); margin: 1.6rem 0 .6rem; }
-    .sl:first-of-type { margin-top: 0; }
+    /* CHIPS */
+    .cr { display:flex; flex-wrap:wrap; gap:.45rem; }
+    .chip { border:1.5px solid rgba(217,206,188,.7); border-radius:100px; padding:.38rem .9rem; cursor:pointer; font-size:.78rem; font-weight:600; color:var(--dark); background:var(--cream); transition:all .17s; user-select:none; white-space:nowrap; }
+    .chip:hover { border-color:var(--forest); background:rgba(42,74,62,.04); }
+    .chip.sel { border-color:var(--forest); background:var(--forest); color:var(--cream); }
 
-    .tg { display: grid; gap: .55rem; }
-    .g2 { grid-template-columns: 1fr 1fr; }
-    .g3 { grid-template-columns: 1fr 1fr 1fr; }
-    .g4 { grid-template-columns: 1fr 1fr 1fr 1fr; }
+    /* COUNTER */
+    .cnt-grp { border-top:1px solid rgba(217,206,188,.45); }
+    .crow { display:flex; align-items:center; justify-content:space-between; padding:.8rem 0; border-bottom:1px solid rgba(217,206,188,.45); }
+    .clabel { font-size:.86rem; font-weight:600; color:var(--dark); }
+    .csub { font-size:.72rem; color:var(--light); }
+    .cctrl { display:flex; align-items:center; gap:.9rem; }
+    .cbtn { width:30px; height:30px; border-radius:50%; border:1.5px solid var(--forest); background:transparent; color:var(--forest); font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .15s; font-weight:700; }
+    .cbtn:hover:not(:disabled) { background:var(--forest); color:var(--cream); }
+    .cbtn:disabled { opacity:.22; cursor:not-allowed; }
+    .cval { font-family:'Cormorant Garamond',serif; font-size:1.35rem; font-weight:600; color:var(--forest); min-width:22px; text-align:center; }
 
-    .tile { border: 1.5px solid rgba(217,206,188,.65); border-radius: 13px; padding: .9rem .75rem; cursor: pointer; transition: all .17s ease; display: flex; flex-direction: column; align-items: center; gap: .4rem; text-align: center; background: var(--cream); font-size: .8rem; font-weight: 600; color: var(--dark); user-select: none; }
-    .tile:hover { border-color: var(--forest); background: rgba(42,74,62,.04); transform: translateY(-1px); }
-    .tile.sel { border-color: var(--forest); background: var(--forest); color: var(--cream); }
-    .tile .ti { font-size: 1.35rem; }
+    /* TOGGLES */
+    .tog-grp { border-top:1px solid rgba(217,206,188,.45); }
+    .trow { display:flex; align-items:center; justify-content:space-between; padding:.8rem 0; border-bottom:1px solid rgba(217,206,188,.45); }
+    .tlabel { font-size:.86rem; font-weight:600; color:var(--dark); }
+    .tsub { font-size:.72rem; color:var(--light); }
+    .tog { width:44px; height:24px; border-radius:12px; background:var(--sand); cursor:pointer; position:relative; transition:background .2s; flex-shrink:0; border:none; outline:none; }
+    .tog.on { background:var(--forest); }
+    .tog::after { content:''; position:absolute; width:18px; height:18px; border-radius:50%; background:#fff; top:3px; left:3px; transition:transform .2s ease; box-shadow:0 1px 4px rgba(0,0,0,.15); }
+    .tog.on::after { transform:translateX(20px); }
 
-    .cr { display: flex; flex-wrap: wrap; gap: .45rem; }
-    .chip { border: 1.5px solid rgba(217,206,188,.7); border-radius: 100px; padding: .38rem .9rem; cursor: pointer; font-size: .78rem; font-weight: 600; color: var(--dark); background: var(--cream); transition: all .17s; user-select: none; white-space: nowrap; }
-    .chip:hover { border-color: var(--forest); background: rgba(42,74,62,.04); }
-    .chip.sel { border-color: var(--forest); background: var(--forest); color: var(--cream); }
+    /* SCALE */
+    .scblock { margin-bottom:1.4rem; }
+    .scq { font-size:.86rem; font-weight:600; color:var(--dark); margin-bottom:.35rem; }
+    .scsub { font-size:.73rem; color:var(--light); margin-bottom:.5rem; }
+    .scrow { display:flex; gap:.4rem; }
+    .scbtn { flex:1; padding:.55rem 0; border-radius:8px; border:1.5px solid rgba(217,206,188,.65); background:var(--cream); font-size:.82rem; font-weight:700; color:var(--mid); cursor:pointer; text-align:center; transition:all .17s; }
+    .scbtn:hover { border-color:var(--forest); color:var(--forest); }
+    .scbtn.sel { background:var(--forest); border-color:var(--forest); color:var(--cream); }
+    .sc-ends { display:flex; justify-content:space-between; font-size:.65rem; color:var(--light); margin-top:.3rem; }
 
-    .clist { border-top: 1px solid rgba(217,206,188,.45); }
-    .crow { display: flex; align-items: center; justify-content: space-between; padding: .8rem 0; border-bottom: 1px solid rgba(217,206,188,.45); }
-    .clabel { font-size: .86rem; font-weight: 600; color: var(--dark); }
-    .csub { font-size: .72rem; color: var(--light); }
-    .cctrl { display: flex; align-items: center; gap: .9rem; }
-    .cbtn { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--forest); background: transparent; color: var(--forest); font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all .15s; font-weight: 700; }
-    .cbtn:hover:not(:disabled) { background: var(--forest); color: var(--cream); }
-    .cbtn:disabled { opacity: .22; cursor: not-allowed; }
-    .cval { font-family: 'Cormorant Garamond', serif; font-size: 1.35rem; font-weight: 600; color: var(--forest); min-width: 22px; text-align: center; }
+    /* SLIDER */
+    .sw { padding:.4rem 0; }
+    .sl-labels { display:flex; justify-content:space-between; font-size:.7rem; color:var(--light); margin-bottom:.6rem; }
+    input[type=range] { -webkit-appearance:none; appearance:none; width:100%; height:4px; border-radius:2px; outline:none; cursor:pointer; background:linear-gradient(to right,var(--gold) 0%,var(--gold) var(--pct),var(--sand) var(--pct),var(--sand) 100%); }
+    input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:22px; height:22px; border-radius:50%; background:#fff; border:2.5px solid var(--gold); cursor:pointer; box-shadow:0 2px 8px rgba(196,154,74,.25); transition:transform .15s; }
+    input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.15); }
+    .slval { text-align:center; font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:600; color:var(--forest); margin-top:.5rem; line-height:1; }
+    .sldesc { text-align:center; font-size:.75rem; color:var(--light); margin-top:.2rem; }
 
-    .trow { display: flex; align-items: center; justify-content: space-between; padding: .8rem 0; border-bottom: 1px solid rgba(217,206,188,.45); }
-    .trow:first-of-type { border-top: 1px solid rgba(217,206,188,.45); }
-    .tlabel { font-size: .86rem; font-weight: 600; color: var(--dark); }
-    .tsub { font-size: .72rem; color: var(--light); }
-    .tog { width: 44px; height: 24px; border-radius: 12px; background: var(--sand); cursor: pointer; position: relative; transition: background .2s; flex-shrink: 0; border: none; outline: none; }
-    .tog.on { background: var(--forest); }
-    .tog::after { content: ''; position: absolute; width: 18px; height: 18px; border-radius: 50%; background: #fff; top: 3px; left: 3px; transition: transform .2s ease; box-shadow: 0 1px 4px rgba(0,0,0,.15); }
-    .tog.on::after { transform: translateX(20px); }
+    /* FORM FIELDS */
+    .field { width:100%; padding:.75rem 1rem; border:1.5px solid rgba(217,206,188,.7); border-radius:11px; font-family:'Plus Jakarta Sans',sans-serif; font-size:.9rem; color:var(--dark); background:var(--cream); outline:none; transition:border-color .2s; }
+    .field:focus { border-color:var(--forest); }
+    textarea.field { resize:vertical; min-height:80px; }
 
-    .sw { padding: .4rem 0; }
-    .sl-labels { display: flex; justify-content: space-between; font-size: .7rem; color: var(--light); margin-bottom: .6rem; }
-    input[type=range] { -webkit-appearance: none; appearance: none; width: 100%; height: 4px; border-radius: 2px; outline: none; cursor: pointer; background: linear-gradient(to right, var(--gold) 0%, var(--gold) var(--pct), var(--sand) var(--pct), var(--sand) 100%); }
-    input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; width: 22px; height: 22px; border-radius: 50%; background: #fff; border: 2.5px solid var(--gold); cursor: pointer; box-shadow: 0 2px 8px rgba(196,154,74,.25); transition: transform .15s; }
-    input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.15); }
-    .slval { text-align: center; font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 600; color: var(--forest); margin-top: .5rem; line-height: 1; }
-    .sldesc { text-align: center; font-size: .75rem; color: var(--light); margin-top: .2rem; }
+    /* BADGES */
+    .mm-badge { display:flex; align-items:center; gap:.6rem; background:rgba(196,154,74,.1); border:1px solid rgba(196,154,74,.3); border-radius:10px; padding:.7rem 1rem; font-size:.8rem; color:var(--rust); font-weight:600; margin-top:.8rem; }
 
-    .field { width: 100%; padding: .75rem 1rem; border: 1.5px solid rgba(217,206,188,.7); border-radius: 11px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: .9rem; color: var(--dark); background: var(--cream); outline: none; transition: border-color .2s; }
-    .field:focus { border-color: var(--forest); }
-    textarea.field { resize: vertical; min-height: 80px; }
-    select.field { cursor: pointer; }
+    /* NAVIGATION */
+    .nav-row { display:flex; justify-content:space-between; align-items:center; margin-top:2rem; padding-top:1.4rem; border-top:1px solid rgba(217,206,188,.45); }
+    .btn-back { background:transparent; color:var(--light); border:none; padding:.7rem 1rem; font-family:'Plus Jakarta Sans',sans-serif; font-size:.82rem; cursor:pointer; display:flex; align-items:center; gap:.4rem; transition:color .2s; }
+    .btn-back:hover { color:var(--forest); }
+    .btn-right { display:flex; align-items:center; gap:.8rem; }
+    .btn-skip { background:transparent; color:var(--light); border:none; font-family:'Plus Jakarta Sans',sans-serif; font-size:.76rem; cursor:pointer; text-decoration:underline; text-underline-offset:3px; transition:color .2s; padding:.4rem .5rem; }
+    .btn-skip:hover { color:var(--mid); }
+    .btn-next { background:var(--forest); color:var(--cream); border:none; border-radius:100px; padding:.78rem 1.8rem; font-family:'Plus Jakarta Sans',sans-serif; font-size:.84rem; font-weight:700; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:.5rem; box-shadow:0 4px 18px rgba(42,74,62,.22); }
+    .btn-next:hover { background:var(--moss); transform:translateY(-1px); }
 
-    .mm-badge { display: flex; align-items: center; gap: .6rem; background: rgba(196,154,74,.1); border: 1px solid rgba(196,154,74,.3); border-radius: 10px; padding: .7rem 1rem; font-size: .8rem; color: var(--rust); font-weight: 600; margin-top: .8rem; }
+    /* RESULT */
+    .pilot-banner { background:var(--gold-pale); border:1px solid rgba(196,154,74,.3); border-radius:14px; padding:1.1rem 1.4rem; margin-bottom:1.6rem; font-size:.83rem; line-height:1.6; color:var(--dark); }
+    .pilot-banner strong { color:var(--rust); }
+    .comp-wrap { margin-bottom:1.6rem; }
+    .comp-lbl { display:flex; justify-content:space-between; font-size:.76rem; color:var(--mid); font-weight:600; margin-bottom:.5rem; }
+    .comp-bar { height:8px; border-radius:4px; background:var(--sand); overflow:hidden; }
+    .comp-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--forest),var(--moss)); transition:width .7s cubic-bezier(.4,0,.2,1); }
+    .comp-hint { font-size:.72rem; color:var(--light); margin-top:.35rem; }
+    .sum-grid { display:grid; grid-template-columns:1fr 1fr; gap:.5rem; margin-bottom:1.2rem; }
+    .sum-item { background:var(--cream); border-radius:11px; padding:.75rem 1rem; }
+    .sum-key { font-size:.62rem; color:var(--light); font-weight:700; letter-spacing:.08em; text-transform:uppercase; margin-bottom:.2rem; }
+    .sum-val { font-size:.88rem; font-weight:700; color:var(--dark); }
+    .edit-lnk { background:none; border:none; color:var(--gold); font-size:.76rem; font-weight:700; cursor:pointer; text-decoration:underline; text-underline-offset:3px; padding:0; transition:color .2s; }
+    .edit-lnk:hover { color:var(--rust); }
+    .edit-lnk-row { display:flex; flex-wrap:wrap; gap:.6rem; margin-bottom:1.2rem; }
 
-    .scblock { margin-bottom: 1.4rem; }
-    .scq { font-size: .86rem; font-weight: 600; color: var(--dark); margin-bottom: .35rem; }
-    .scsub { font-size: .73rem; color: var(--light); margin-bottom: .5rem; }
-    .scrow { display: flex; gap: .4rem; }
-    .scbtn { flex: 1; padding: .55rem 0; border-radius: 8px; border: 1.5px solid rgba(217,206,188,.65); background: var(--cream); font-size: .82rem; font-weight: 700; color: var(--mid); cursor: pointer; text-align: center; transition: all .17s; }
-    .scbtn:hover { border-color: var(--forest); color: var(--forest); }
-    .scbtn.sel { background: var(--forest); border-color: var(--forest); color: var(--cream); }
-    .sc-ends { display: flex; justify-content: space-between; font-size: .65rem; color: var(--light); margin-top: .3rem; }
+    /* CTA BOX */
+    .cta-box { background:var(--forest); border-radius:18px; padding:2rem; color:var(--cream); margin-top:1.4rem; }
+    .cta-title { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:600; margin-bottom:.5rem; line-height:1.2; }
+    .cta-desc { font-size:.82rem; line-height:1.6; color:rgba(246,241,233,.65); margin-bottom:1.3rem; }
+    .user-email-row { display:flex; align-items:center; gap:.7rem; background:rgba(255,255,255,.08); border-radius:10px; padding:.7rem 1rem; margin-bottom:1.1rem; }
+    .user-email-icon { font-size:1rem; }
+    .user-email-lbl { font-size:.8rem; color:rgba(246,241,233,.55); }
+    .user-email-val { font-size:.86rem; font-weight:600; color:var(--cream); }
+    .btn-cta { background:var(--gold); color:var(--dark); border:none; padding:.8rem 1.8rem; border-radius:100px; font-family:'Plus Jakarta Sans',sans-serif; font-size:.85rem; font-weight:700; cursor:pointer; transition:background .2s; width:100%; }
+    .btn-cta:hover { background:var(--gold-lt); }
+    .btn-cta:disabled { opacity:.35; cursor:not-allowed; }
+    .chk-row { display:flex; align-items:flex-start; gap:.6rem; margin-top:.9rem; cursor:pointer; }
+    .chkbox { width:18px; height:18px; border-radius:4px; border:1.5px solid rgba(246,241,233,.25); background:rgba(255,255,255,.08); flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all .15s; margin-top:1px; font-size:.8rem; color:var(--dark); }
+    .chkbox.on { background:var(--gold); border-color:var(--gold); }
+    .priv-lbl { font-size:.73rem; color:rgba(246,241,233,.5); line-height:1.4; }
+    .priv-note { font-size:.68rem; color:rgba(246,241,233,.32); margin-top:.75rem; line-height:1.5; }
 
-    .nav-row { display: flex; justify-content: space-between; align-items: center; margin-top: 2rem; padding-top: 1.4rem; border-top: 1px solid rgba(217,206,188,.45); }
-    .btn-back { background: transparent; color: var(--light); border: none; padding: .7rem 1rem; font-family: 'Plus Jakarta Sans', sans-serif; font-size: .82rem; cursor: pointer; display: flex; align-items: center; gap: .4rem; transition: color .2s; }
-    .btn-back:hover { color: var(--forest); }
-    .btn-next { background: var(--forest); color: var(--cream); border: none; border-radius: 100px; padding: .78rem 1.8rem; font-family: 'Plus Jakarta Sans', sans-serif; font-size: .84rem; font-weight: 700; letter-spacing: .04em; cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: .5rem; box-shadow: 0 4px 18px rgba(42,74,62,.22); }
-    .btn-next:hover { background: var(--moss); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(42,74,62,.28); }
-    .btn-skip { background: transparent; color: var(--light); border: none; font-family: 'Plus Jakarta Sans', sans-serif; font-size: .76rem; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; transition: color .2s; padding: .4rem .5rem; }
-    .btn-skip:hover { color: var(--mid); }
+    /* SUCCESS */
+    .success-wrap { text-align:center; padding:2.5rem 1rem; }
+    .success-ico { font-size:3.5rem; margin-bottom:1.2rem; }
+    .success-title { font-family:'Cormorant Garamond',serif; font-size:2rem; color:var(--forest); margin-bottom:.8rem; }
+    .success-desc { font-size:.86rem; color:var(--mid); line-height:1.65; max-width:420px; margin:0 auto 1.8rem; }
+    .btn-edit-again { background:transparent; border:1.5px solid rgba(42,74,62,.2); border-radius:100px; padding:.7rem 1.6rem; font-family:'Plus Jakarta Sans',sans-serif; font-size:.82rem; font-weight:700; color:var(--forest); cursor:pointer; transition:all .2s; margin-right:.6rem; }
+    .btn-edit-again:hover { background:rgba(42,74,62,.06); }
 
-    /* result */
-    .pilot-banner { background: var(--gold-pale); border: 1px solid rgba(196,154,74,.3); border-radius: 14px; padding: 1.1rem 1.4rem; margin-bottom: 1.6rem; font-size: .83rem; line-height: 1.6; color: var(--dark); }
-    .pilot-banner strong { color: var(--rust); }
-    .comp-wrap { margin-bottom: 1.6rem; }
-    .comp-lbl { display: flex; justify-content: space-between; font-size: .76rem; color: var(--mid); font-weight: 600; margin-bottom: .5rem; }
-    .comp-bar { height: 8px; border-radius: 4px; background: var(--sand); overflow: hidden; }
-    .comp-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--forest), var(--moss)); transition: width .7s cubic-bezier(.4,0,.2,1); }
-    .comp-hint { font-size: .72rem; color: var(--light); margin-top: .35rem; }
-    .sum-grid { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; margin-bottom: 1.2rem; }
-    .sum-item { background: var(--cream); border-radius: 11px; padding: .75rem 1rem; }
-    .sum-key { font-size: .62rem; color: var(--light); font-weight: 700; letter-spacing: .08em; text-transform: uppercase; margin-bottom: .2rem; }
-    .sum-val { font-size: .88rem; font-weight: 700; color: var(--dark); }
-    .edit-lnk { background: none; border: none; color: var(--gold); font-size: .76rem; font-weight: 700; cursor: pointer; text-decoration: underline; text-underline-offset: 3px; padding: 0; transition: color .2s; }
-    .edit-lnk:hover { color: var(--rust); }
-    .cta-box { background: var(--forest); border-radius: 18px; padding: 2rem; color: var(--cream); margin-top: 1.4rem; }
-    .cta-title { font-family: 'Cormorant Garamond', serif; font-size: 1.6rem; font-weight: 600; margin-bottom: .5rem; line-height: 1.2; }
-    .cta-desc { font-size: .82rem; line-height: 1.6; color: rgba(246,241,233,.65); margin-bottom: 1.3rem; }
-    .email-row { display: flex; gap: .6rem; }
-    .email-inp { flex: 1; padding: .7rem 1rem; border-radius: 10px; border: none; background: rgba(255,255,255,.1); color: var(--cream); font-family: 'Plus Jakarta Sans', sans-serif; font-size: .86rem; outline: none; }
-    .email-inp::placeholder { color: rgba(246,241,233,.35); }
-    .email-inp:focus { background: rgba(255,255,255,.16); }
-    .btn-cta { background: var(--gold); color: var(--dark); border: none; padding: .7rem 1.4rem; border-radius: 10px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: .82rem; font-weight: 700; cursor: pointer; white-space: nowrap; transition: background .2s; }
-    .btn-cta:hover { background: var(--gold-lt); }
-    .btn-cta:disabled { opacity: .35; cursor: not-allowed; }
-    .chk-row { display: flex; align-items: flex-start; gap: .6rem; margin-top: .9rem; cursor: pointer; }
-    .chkbox { width: 18px; height: 18px; border-radius: 4px; border: 1.5px solid rgba(246,241,233,.25); background: rgba(255,255,255,.08); flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all .15s; margin-top: 1px; font-size: .8rem; color: var(--dark); }
-    .chkbox.on { background: var(--gold); border-color: var(--gold); }
-    .priv-lbl { font-size: .73rem; color: rgba(246,241,233,.5); line-height: 1.4; }
-    .priv-note { font-size: .68rem; color: rgba(246,241,233,.32); margin-top: .75rem; line-height: 1.5; }
-    .success-wrap { text-align: center; padding: 2.5rem 1rem; }
-    .success-ico { font-size: 3.5rem; margin-bottom: 1.2rem; }
-    .success-title { font-family: 'Cormorant Garamond', serif; font-size: 2rem; color: var(--forest); margin-bottom: .8rem; }
-    .success-desc { font-size: .86rem; color: var(--mid); line-height: 1.65; max-width: 420px; margin: 0 auto 1.8rem; }
-    .btn-edit-again { background: transparent; border: 1.5px solid rgba(42,74,62,.2); border-radius: 100px; padding: .7rem 1.6rem; font-family: 'Plus Jakarta Sans', sans-serif; font-size: .82rem; font-weight: 700; color: var(--forest); cursor: pointer; transition: all .2s; }
-    .btn-edit-again:hover { background: rgba(42,74,62,.06); }
+    /* AUTH GATE */
+    .auth-gate { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:60vh; text-align:center; }
+    .auth-gate-title { font-family:'Cormorant Garamond',serif; font-size:1.8rem; color:var(--forest); margin-bottom:.8rem; }
+    .auth-gate-desc { font-size:.86rem; color:var(--mid); margin-bottom:1.6rem; }
+    .btn-to-login { background:var(--forest); color:var(--cream); border:none; border-radius:100px; padding:.8rem 2rem; font-family:'Plus Jakarta Sans',sans-serif; font-size:.85rem; font-weight:700; cursor:pointer; text-decoration:none; display:inline-block; }
 
     @media(max-width:560px) {
-      .card { padding: 1.5rem 1.1rem; }
-      .g3,.g4 { grid-template-columns: 1fr 1fr; }
-      .sum-grid { grid-template-columns: 1fr; }
-      .email-row { flex-direction: column; }
-      nav { padding: 1rem 1.2rem; }
+      .card { padding:1.5rem 1.1rem; }
+      .g3,.g4 { grid-template-columns:1fr 1fr; }
+      .sum-grid { grid-template-columns:1fr; }
+      nav { padding:1rem 1.2rem; }
     }
   </style>
 </head>
@@ -174,6 +185,7 @@
   <a href="index.html" class="nav-logo">niste<span class="logo-dot"></span></a>
   <div class="nav-right">
     <div class="nav-save" id="save-badge"><span class="save-dot"></span> Automatisch opgeslagen</div>
+    <span class="nav-user" id="nav-user"></span>
     <a href="index.html" class="nav-back">← Home</a>
   </div>
 </nav>
@@ -181,429 +193,222 @@
 
 <div class="intake-wrap">
   <div class="step-dots" id="sdots"></div>
-  <div id="area"></div>
+  <div id="area">
+    <!-- Auth-gate: standaard getoond totdat Firebase auth is opgelost -->
+    <div class="auth-gate">
+      <div class="auth-gate-title">Even laden…</div>
+      <p class="auth-gate-desc">We controleren je aanmelding.</p>
+    </div>
+  </div>
 </div>
 
-<script>
-// ═══ STATE ════════════════════════════════════════════════════════
-const KEY = 'niste_v3';
-let D = {};
-let step = 0;
-const NSTEPS = 8;
+<script type="module">
+import { auth, db }          from './firebase-init.js';
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { doc, getDoc, setDoc, serverTimestamp }
+                              from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { QUESTIONS, STEP_TITLES } from './questions.js';
+import { renderStep, calcCompleteness, buildSummary } from './renderer.js';
 
-function load() {
-  try { const r = localStorage.getItem(KEY); if(r) D = JSON.parse(r); } catch(e) { D={}; }
-  step = Math.min(D._step||0, NSTEPS-1);
+// ─── CONSTANTEN ───────────────────────────────────────────────────────────────
+const NSTEPS       = 7;   // stappen 0–6 zijn vraag-stappen; stap 7 = resultaat
+const CONSENT_VER  = '1.0';
+const PILOT        = 'noord-brabant-2026';
+
+// ─── APP STATE ────────────────────────────────────────────────────────────────
+let state    = {};
+let step     = 0;
+let user     = null;   // Firebase Auth user
+let saving   = false;
+let saveTmr  = null;
+
+// ─── HANDLERS GLOBAAL BESCHIKBAAR MAKEN (voor renderer inline-onclick) ────────
+window.N = {
+  // Sla op zonder re-render (tekst-inputs, textarea, slider)
+  si(k, v) {
+    state[k] = v;
+    schedSave();
+  },
+  // Tile/chip klik: wissel of zet waarde
+  tc(k, v, multi) {
+    if (multi) {
+      const a = [...(state[k] || [])];
+      const i = a.indexOf(v);
+      if (i === -1) a.push(v); else a.splice(i, 1);
+      state[k] = a;
+    } else {
+      state[k] = v === (state[k] ?? '') ? '' : v;
+    }
+    schedSave();
+    renderCard();
+  },
+  // Counter klik
+  ct(k, delta, min, max) {
+    state[k] = Math.min(max, Math.max(min, (state[k] ?? 0) + delta));
+    schedSave();
+    renderCard();
+  },
+  // Toggle klik
+  tt(k) {
+    state[k] = !(state[k] === true);
+    schedSave();
+    renderCard();
+  },
+  // Scale klik
+  sc(k, n) {
+    state[k] = n === (state[k] ?? 0) ? 0 : n;
+    schedSave();
+    renderCard();
+  },
+  // Slider (geen re-render, update alleen display)
+  sl(k, v, descs) {
+    state[k] = parseInt(v, 10);
+    schedSave();
+    const pct = ((parseInt(v, 10) - 1) / 4 * 100).toFixed(0);
+    const si  = document.getElementById(`sli-${k}`);
+    const slv = document.getElementById(`slv-${k}`);
+    const sld = document.getElementById(`sld-${k}`);
+    if (si)  si.style.setProperty('--pct', pct + '%');
+    if (slv) slv.textContent = v + '/5';
+    if (sld) sld.textContent = descs[parseInt(v, 10) - 1];
+  },
+  // Navigeer naar stap (voor "aanpassen" links op resultaatscherm)
+  goTo(s) { goTo(s); },
+};
+
+// ─── NAVIGATIE ────────────────────────────────────────────────────────────────
+function goTo(s) {
+  step = s;
+  state._step = step;
+  schedSave();
+  renderAll();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-function save() {
-  D._step = step;
-  try { localStorage.setItem(KEY, JSON.stringify(D)); } catch(e){}
-  flashSave();
-}
-function S(k,v){ D[k]=v; save(); }
-function G(k,d){ return D[k]!==undefined ? D[k] : d; }
-function Ton(k,v){ const a=G(k,[]); const i=a.indexOf(v); if(i===-1)a.push(v);else a.splice(i,1); S(k,a); }
-function Tin(k,v){ return G(k,[]).includes(v); }
+window.goToStep = goTo; // ook globaal
 
-let _st;
-function flashSave(){
-  clearTimeout(_st);
-  const el=document.getElementById('save-badge');
-  if(!el)return;
-  el.innerHTML='<span class="save-dot" style="background:var(--forest)"></span> Opgeslagen ✓';
-  _st=setTimeout(()=>{ el.innerHTML='<span class="save-dot"></span> Automatisch opgeslagen'; },2000);
-}
-
-// ═══ NAVIGATION ═══════════════════════════════════════════════════
-function goTo(s){ step=s; save(); renderAll(); window.scrollTo({top:0,behavior:'smooth'}); }
-function next(){ if(step<NSTEPS-1) goTo(step+1); }
-function back(){ if(step>0) goTo(step-1); }
-function skip(){ next(); }
-
-function renderDots(){
-  const w=document.getElementById('sdots'); w.innerHTML='';
-  for(let i=0;i<NSTEPS;i++){
-    const d=document.createElement('div');
-    d.className='dot'+(i===step?' active':i<step?' done':'');
+function renderDots() {
+  const w = document.getElementById('sdots');
+  if (!w) return;
+  w.innerHTML = '';
+  for (let i = 0; i <= NSTEPS; i++) {
+    const d = document.createElement('div');
+    d.className = 'dot' + (i === step ? ' active' : i < step ? ' done' : '');
     w.appendChild(d);
   }
 }
-function renderProgress(){ document.getElementById('pfill').style.width=((step+1)/NSTEPS*100)+'%'; }
 
-function completeness(){
-  const checks=[
-    D.woning_type,D.oppervlak,D.bouwjaar,D.energielabel,D.prijs_range,
-    D.kamers_totaal,D.verwarm,D.gasloos!==undefined,
-    D.huishoud_type,D.leeftijd_cat,D.woonduur,
-    D.gewenst_type,D.gewenste_locatie,
-    D.gevoel_rust,D.gevoel_veilig,
-    D.opmerkingen||D.missing||D.energie_geeft
-  ];
-  return Math.round(checks.filter(Boolean).length/checks.length*100);
+function renderProgress() {
+  const fill = document.getElementById('pfill');
+  if (fill) fill.style.width = ((step + 1) / (NSTEPS + 1) * 100) + '%';
 }
 
-// ═══ HELPERS ══════════════════════════════════════════════════════
-function mkTiles(k,opts,grid,multi=false){
-  return `<div class="tg ${grid}">`+opts.map(o=>{
-    const v=typeof o==='object'?o.value:o;
-    const l=typeof o==='object'?o.label:o;
-    const ic=typeof o==='object'?(o.icon||''):'';
-    const sel=multi?Tin(k,v):G(k,'')==v;
-    return `<div class="tile${sel?' sel':''}" onclick="tc('${k}','${v}',${multi})">${ic?`<span class="ti">${ic}</span>`:''}<span>${l}</span></div>`;
-  }).join('')+'</div>';
-}
-window.tc=function(k,v,m){ if(m)Ton(k,v); else S(k,v===G(k,'')?'':v); renderCard(); };
-
-function mkChips(k,opts,multi=false){
-  return `<div class="cr">`+opts.map(o=>{
-    const v=typeof o==='object'?o.value:o;
-    const l=typeof o==='object'?o.label:o;
-    const sel=multi?Tin(k,v):G(k,'')==v;
-    return `<div class="chip${sel?' sel':''}" onclick="cc('${k}','${v}',${multi})">${l}</div>`;
-  }).join('')+'</div>';
-}
-window.cc=function(k,v,m){ if(m)Ton(k,v); else S(k,v===G(k,'')?'':v); renderCard(); };
-
-function mkCounter(k,label,sub='',min=0,max=15,def=0){
-  const v=G(k,def);
-  return `<div class="crow">
-    <div><div class="clabel">${label}</div>${sub?`<div class="csub">${sub}</div>`:''}</div>
-    <div class="cctrl">
-      <button class="cbtn" onclick="ct('${k}',-1,${min},${max})" ${v<=min?'disabled':''}>−</button>
-      <span class="cval" id="cv-${k}">${v}</span>
-      <button class="cbtn" onclick="ct('${k}',1,${min},${max})" ${v>=max?'disabled':''}>+</button>
-    </div>
-  </div>`;
-}
-window.ct=function(k,d,mn,mx){ S(k,Math.min(mx,Math.max(mn,G(k,0)+d))); renderCard(); };
-
-function mkToggle(k,label,sub=''){
-  const on=G(k,false);
-  return `<div class="trow">
-    <div><div class="tlabel">${label}</div>${sub?`<div class="tsub">${sub}</div>`:''}</div>
-    <button class="tog${on?' on':''}" onclick="tt('${k}')"></button>
-  </div>`;
-}
-window.tt=function(k){ S(k,!G(k,false)); renderCard(); };
-
-function mkScale(k,q,sub='',ends=['Helemaal niet','Volledig']){
-  const v=G(k,0);
-  const btns=[1,2,3,4,5].map(n=>`<button class="scbtn${v===n?' sel':''}" onclick="sc('${k}',${n})">${n}</button>`).join('');
-  return `<div class="scblock">
-    <div class="scq">${q}</div>${sub?`<div class="scsub">${sub}</div>`:''}
-    <div class="scrow">${btns}</div>
-    <div class="sc-ends"><span>${ends[0]}</span><span>${ends[1]}</span></div>
-  </div>`;
-}
-window.sc=function(k,n){ S(k,n===G(k,0)?0:n); renderCard(); };
-
-function mkText(k,ph,area=false){
-  const v=G(k,'').replace(/"/g,'&quot;');
-  return area
-    ? `<textarea class="field" placeholder="${ph}" oninput="S('${k}',this.value)">${G(k,'')}</textarea>`
-    : `<input class="field" type="text" placeholder="${ph}" value="${v}" oninput="S('${k}',this.value)">`;
+// ─── FIRESTORE OPSLAAN ────────────────────────────────────────────────────────
+function schedSave() {
+  clearTimeout(saveTmr);
+  saveTmr = setTimeout(() => saveToFirestore(), 1500);
 }
 
-function lbl(k,list){ const f=list.find(o=>o.value===G(k,'')); return f?f.label:G(k,'—')||'—'; }
+async function saveToFirestore(markComplete = false) {
+  if (!user) return;
+  if (saving) return;
+  saving = true;
 
-// ═══ DATA ═════════════════════════════════════════════════════════
-const WT=[
-  {v:'tussenwoning',l:'Tussenwoning',i:'🏘️'},{v:'hoekwoning',l:'Hoekwoning',i:'🏠'},
-  {v:'2kap',l:'2-onder-1-kap',i:'🏡'},{v:'vrijstaand',l:'Vrijstaand',i:'🏰'},
-  {v:'appartement',l:'Appartement',i:'🏢'},{v:'boven_beneden',l:'Boven-/benedenwoning',i:'🏗️'},
-  {v:'penthouse',l:'Penthouse',i:'🌆'},{v:'woonboerderij',l:'Woonboerderij',i:'🌾'},
-].map(o=>({value:o.v,label:o.l,icon:o.i}));
+  const comp = calcCompleteness(QUESTIONS, state);
+  const payload = {};
 
-const OPP=['< 50 m²','50–75 m²','75–100 m²','100–125 m²','125–150 m²','150–175 m²','175–200 m²','> 200 m²'];
-const PRC=['Geen perceel','< 50 m²','50–100 m²','100–200 m²','200–400 m²','400–750 m²','> 750 m²'];
-const BJ=['Vóór 1945','1945–1960','1960–1975','1975–1990','1990–2005','2005–2015','Na 2015'];
-const EL=['A+++','A++','A+','A','B','C','D','E','F','G','Onbekend'];
-const PR=['< €200k','€200–300k','€300–400k','€400–500k','€500–600k','€600–750k','€750k–€1M','> €1M'];
-const VS=[
-  {value:'cv',label:'CV-ketel',icon:'🔥'},{value:'warmtepomp',label:'Warmtepomp',icon:'♻️'},
-  {value:'hybride',label:'Hybride WP',icon:'⚡'},{value:'stadsverw',label:'Stadsverwarming',icon:'🏙️'},
-  {value:'elektrisch',label:'Elektrisch',icon:'🔌'},{value:'anders',label:'Anders',icon:'❓'}
-];
-const ISO=['Dakisolatie','Spouwmuurisolatie','Vloerisolatie','Dubbel glas','HR++ glas','Triple glas'];
-const DOM=['Slimme thermostaat','Slimme verlichting','Slimme stopcontacten','Zonnepaneel-app','Beveiligingssysteem','Rolluiken automatisch','Anders'];
-const HT=[
-  {value:'alleenstaand',label:'Alleenstaand',icon:'🧍'},{value:'stel',label:'Stel zonder kinderen',icon:'👫'},
-  {value:'stel_kind',label:'Stel met kinderen',icon:'👨‍👩‍👧'},{value:'eenouder',label:'Eenoudergezin',icon:'👩‍👧'},
-  {value:'samen',label:'Samenwonend (anders)',icon:'🏠'}
-];
-const LC=['< 35 jaar','35–50 jaar','50–65 jaar','65–75 jaar','> 75 jaar'];
-const WD=['< 2 jaar','2–5 jaar','5–10 jaar','10–20 jaar','> 20 jaar'];
-const GWT=[
-  {value:'vergelijkbaar',label:'Vergelijkbaar',icon:'↔️'},{value:'kleiner',label:'Kleiner',icon:'⬇️'},
-  {value:'gelijkvloers',label:'Gelijkvloers',icon:'♿'},{value:'groter',label:'Groter',icon:'⬆️'},
-  {value:'appartement',label:'Appartement',icon:'🏢'},{value:'grondgeb',label:'Grondgebonden',icon:'🏠'},
-  {value:'zorg',label:'Zorggeschikt',icon:'🏥'},{value:'weet_niet',label:'Weet ik nog niet',icon:'🤷'}
-];
-const LO=['Zelfde wijk','Zelfde gemeente','Tot 5 km','Tot 15 km','Tot 30 km','Heel Nederland'];
-const MH=['Tuin','Gelijkvloers','Lift','Garage/oprit','Stille buurt','Nabij OV','Nabij scholen','Nabij zorg','Energiezuinig','Laadpaal','Zonnepanelen','Balkon/terras'];
-const RR=['Te groot geworden','Te klein','Gelijkvloers wonen','Dichter bij familie','Dichter bij voorzieningen','Lagere woonlasten','Andere buurt','Zorggeschikte woning','Meer buitenruimte','Werklocatie veranderd','Leefbaarheid buurt','Anders'];
-const TG=['Geen tuin','< 20 m²','20–50 m²','50–100 m²','100–200 m²','200–400 m²','> 400 m²'];
-const SG=['Geen schuur','Klein (< 6 m²)','Middel (6–15 m²)','Groot (> 15 m²)'];
-const SLDR=['Zeker niet verhuizen','Waarschijnlijk niet','Misschien, als het klopt','Open voor verhuizing','Actief op zoek'];
+  // Kopieer alle vraag-velden (alleen string, boolean, number, array)
+  QUESTIONS.forEach(q => {
+    if (!q.dbField) return;
+    const v = state[q.dbField];
+    if (v === undefined) return;
+    payload[q.dbField] = v;
+  });
 
-// ═══ STEPS ════════════════════════════════════════════════════════
-function s0(){
-  return `
-    <div class="ey">Stap 1 van 7 — Jouw woning</div>
-    <h1 class="st">Hoe ziet <em>jouw woning</em> eruit?</h1>
-    <p class="sd">Basics die we nodig hebben voor matching — vergelijkbaar met wat je op Funda zou invullen.</p>
-    <div class="skip-notice">💡 Alle vragen zijn optioneel. Hoe meer je invult, hoe beter we kunnen matchen.</div>
+  // Metadata (geen e-mail in Firestore — zit in Firebase Auth)
+  payload._step        = step;
+  payload._completeness = comp;
+  payload._status      = markComplete ? 'complete' : 'in_progress';
+  payload._updatedAt   = serverTimestamp();
+  payload._pilot       = PILOT;
+  payload._version     = '1.0';
 
-    <div class="sl">Postcode (4 cijfers — wijk-niveau, geen straat)</div>
-    <input class="field" type="text" inputmode="numeric" maxlength="4" placeholder="bijv. 5737"
-      value="${G('postcode','')}" oninput="S('postcode',this.value.replace(/\\D/g,'').slice(0,4))">
+  if (markComplete) {
+    payload._consent = {
+      given:     true,
+      timestamp: serverTimestamp(),
+      version:   CONSENT_VER,
+    };
+  }
 
-    <div class="sl">Woningtype</div>
-    ${mkTiles('woning_type',WT,'g2')}
-
-    <div class="sl">Woonoppervlak (gebruiksoppervlak)</div>
-    ${mkChips('oppervlak',OPP)}
-
-    <div class="sl">Perceeloppervlak (incl. tuin, oprit, bijgebouwen)</div>
-    ${mkChips('perceel',PRC)}
-
-    <div class="sl">Bouwjaar</div>
-    ${mkChips('bouwjaar',BJ)}
-
-    <div class="sl">Geschatte woningwaarde (indicatief)</div>
-    ${mkChips('prijs_range',PR)}
-  `;
+  try {
+    const ref = doc(db, 'households', user.uid);
+    await setDoc(ref, payload, { merge: true });
+    flashSave(true);
+  } catch (e) {
+    console.error('Firestore fout:', e);
+    flashSave(false);
+  } finally {
+    saving = false;
+  }
 }
 
-function s1(){
-  const tot=G('kamers_totaal',4);
-  const geb=G('kamers_gebruikt',3);
-  const delta=tot-geb;
-  const mm=delta>=2?`<div class="mm-badge">⚡ ${delta} kamer${delta>1?'s':''} ongebruikt — sterk matchsignaal</div>`:'';
-  return `
-    <div class="ey">Stap 2 van 7 — Indeling</div>
-    <h1 class="st">Kamers & <em>indeling</em></h1>
-    <p class="sd">Hoe is de woning ingedeeld, en hoeveel gebruik je er eigenlijk van?</p>
-    <div class="clist">
-      ${mkCounter('kamers_totaal','Totaal aantal kamers','Incl. woonkamer',1,15,4)}
-      ${mkCounter('kamers_gebruikt','Dagelijks gebruikte kamers','Hoeveel gebruik je echt?',1,G('kamers_totaal',4),3)}
-      ${mkCounter('slaapkamers','Slaapkamers','',0,10,3)}
-      ${mkCounter('badkamers','Badkamers','',0,5,1)}
-      ${mkCounter('toiletten','Toiletten (incl. in badkamer)','',0,6,1)}
-      ${mkCounter('verdiepingen','Verdiepingen boven begane grond','',0,5,1)}
-    </div>
-    ${mm}
-    <div class="sl">Extra ruimte</div>
-    ${mkToggle('zolder','Zolder aanwezig','')}
-    ${mkToggle('zolder_bwb','Zolder bewoonbaar of te maken','Potentieel extra kamer/kantoor')}
-    ${mkToggle('kelder','Kelder aanwezig','')}
-    ${mkToggle('aanbouw_poss','Mogelijkheid voor aanbouw op eigen terrein','')}
-  `;
+let flashTmr;
+function flashSave(ok) {
+  clearTimeout(flashTmr);
+  const el = document.getElementById('save-badge');
+  if (!el) return;
+  el.innerHTML = ok
+    ? '<span class="save-dot" style="background:var(--forest)"></span> Opgeslagen ✓'
+    : '<span class="save-dot" style="background:var(--rust)"></span> Opslaan mislukt';
+  flashTmr = setTimeout(() => {
+    el.innerHTML = '<span class="save-dot"></span> Automatisch opgeslagen';
+  }, 2500);
 }
 
-function s2(){
-  const tuinAan=G('tuin',false);
-  const parkAan=G('parkeer_eigen',false);
-  return `
-    <div class="ey">Stap 3 van 7 — Buitenruimte</div>
-    <h1 class="st">Tuin, oprit & <em>bijgebouwen</em></h1>
-    <p class="sd">Alles rondom de woning — tuin, parkeren, schuur en opslag.</p>
-
-    <div class="sl">Tuin</div>
-    ${mkToggle('tuin','Tuin aanwezig','')}
-    ${tuinAan?`
-      <div class="sl">Tuingrootte</div>
-      ${mkChips('tuin_grootte',TG)}
-      <div class="sl">Type tuin</div>
-      ${mkChips('tuin_type',[{value:'achter',label:'Achtertuin'},{value:'voor_achter',label:'Voor + achter'},{value:'rondom',label:'Rondom'},{value:'dak',label:'Daktuin/terras'}])}
-      <div class="sl">Onderhoudsniveau tuin</div>
-      ${mkTiles('tuin_ond',[{value:'weinig',label:'Weinig onderhoud',icon:'🌿'},{value:'gemid',label:'Gemiddeld',icon:'🌳'},{value:'veel',label:'Veel onderhoud',icon:'🪴'}],'g3')}
-      <div class="sl">Bijzonderheden tuin</div>
-      ${mkToggle('vijver','Vijver aanwezig','')}
-      ${mkToggle('sproeisysteem','Automatisch sproeisysteem','')}
-      ${mkToggle('overkapping','Overkapping / veranda / pergola','')}
-      ${mkToggle('buitenverlichting','Buitenverlichting','')}
-      ${mkToggle('tuin_bestrating','Grotendeels bestraat (geen gras)','Relevant voor onderhoudslast')}
-    `:''}
-
-    <div class="sl">Parkeren op eigen perceel</div>
-    ${mkToggle('parkeer_eigen','Oprit of parkeerplaats op eigen terrein','')}
-    ${parkAan?`
-      ${mkCounter('parkeer_n','Aantal auto\'s te parkeren op eigen terrein','',1,8,1)}
-      ${mkToggle('carport','Carport aanwezig','')}
-      ${mkToggle('garage','Garage aanwezig','')}
-    `:''}
-
-    <div class="sl">Schuur / berging / bijgebouw</div>
-    ${mkChips('schuur',SG)}
-    ${mkToggle('schuur_stroom','Schuur heeft stroom aansluiting','')}
-    ${mkToggle('schuur_water','Schuur heeft wateraansluiting','')}
-
-    <div class="sl">Opmerkingen buitenruimte (optioneel)</div>
-    ${mkText('opmerking_buiten','Bijzonderheden over tuin, oprit of buitenruimte…',true)}
-  `;
+// ─── FIRESTORE LADEN ──────────────────────────────────────────────────────────
+async function loadFromFirestore() {
+  if (!user) return;
+  try {
+    const snap = await getDoc(doc(db, 'households', user.uid));
+    if (snap.exists()) {
+      const data = snap.data();
+      // Alleen bekende dbFields inladen (geen server-side timestamps e.d.)
+      QUESTIONS.forEach(q => {
+        if (q.dbField && data[q.dbField] !== undefined) {
+          state[q.dbField] = data[q.dbField];
+        }
+      });
+      if (data._step !== undefined) step = Math.min(data._step, NSTEPS);
+      if (data._status === 'complete') step = NSTEPS; // toon resultaatscherm
+    }
+  } catch (e) {
+    console.warn('Kon profiel niet laden:', e);
+  }
 }
 
-function s3(){
-  const zpAan=G('zonnepanelen',false);
-  const domAan=G('domotica',false);
-  return `
-    <div class="ey">Stap 4 van 7 — Energie & installaties</div>
-    <h1 class="st">Energie & <em>duurzaamheid</em></h1>
-    <p class="sd">Een volledig energieprofiel helpt ons te matchen met mensen die vergelijkbare of betere duurzaamheidswensen hebben.</p>
+// ─── RESULTAATSCHERM ──────────────────────────────────────────────────────────
+function renderResultScreen() {
+  const comp    = calcCompleteness(QUESTIONS, state);
+  const summary = buildSummary(QUESTIONS, state);
+  const email   = user?.email || '—';
+  const prv     = state._consent_given === true;
 
-    <div class="sl">Energielabel</div>
-    ${mkChips('energielabel',EL)}
+  const compHint = comp >= 75
+    ? '✓ Goed ingevuld profiel — we kunnen je goed matchen.'
+    : comp >= 50
+    ? '→ Meer invullen vergroot de kans op een betere match.'
+    : '→ Nog beperkt ingevuld. Hoe meer details, hoe beter we kunnen zoeken.';
 
-    <div class="sl">Verwarmingssysteem</div>
-    ${mkTiles('verwarm',VS,'g3')}
+  const sumItems = summary.map(s =>
+    `<div class="sum-item">
+      <div class="sum-key">${s.key}</div>
+      <div class="sum-val">${s.val}</div>
+    </div>`
+  ).join('');
 
-    <div class="sl">Gasloos</div>
-    ${mkChips('gasloos',[{value:'ja',label:'Volledig gasloos'},{value:'deels',label:'Deels gasloos'},{value:'nee',label:'Nog op gas'}])}
-
-    ${mkToggle('vloerverwarming','Vloerverwarming aanwezig','Geheel of gedeeltelijk')}
-
-    <div class="sl">Zonne-energie</div>
-    ${mkToggle('zonnepanelen','Zonnepanelen aanwezig','')}
-    ${zpAan?mkCounter('zp_n','Aantal zonnepanelen','',1,80,10):''}
-    ${mkToggle('thuisaccu','Thuisaccu aanwezig','Bijv. Tesla Powerwall, SMA, Enphase')}
-
-    <div class="sl">Laadpaal</div>
-    ${mkToggle('laadpaal','Laadpaal voor elektrisch rijden','Op oprit, in garage of carport')}
-    ${mkToggle('laadpaal_poss','Laadpaal eenvoudig te plaatsen','Ruimte en aansluitpunt beschikbaar')}
-
-    <div class="sl">Isolatie — wat is aanwezig?</div>
-    ${mkChips('isolatie',ISO,true)}
-
-    <div class="sl">Gemiddeld elektriciteitsverbruik</div>
-    ${mkChips('kwh',['< 1.500 kWh/jr','1.500–2.500 kWh/jr','2.500–4.000 kWh/jr','4.000–6.000 kWh/jr','> 6.000 kWh/jr','Onbekend'])}
-
-    <div class="sl">Gasverbruik (of n.v.t.)</div>
-    ${mkChips('m3',['N.v.t. (gasloos)','< 500 m³/jr','500–1.000 m³/jr','1.000–1.700 m³/jr','> 1.700 m³/jr','Onbekend'])}
-
-    <div class="sl">Domotica & slimme systemen</div>
-    ${mkToggle('domotica','Domotica aanwezig','')}
-    ${domAan?`<div style="margin-top:.6rem">${mkChips('dom_types',DOM,true)}</div>`:''}
-  `;
-}
-
-function s4(){
-  return `
-    <div class="ey">Stap 5 van 7 — Gevoel & beleving</div>
-    <h1 class="st">Hoe <em>voelt</em> het hier?</h1>
-    <p class="sd">Omgevingspsychologisch onderzoek laat zien dat subjectieve woonbeleving een doorslaggevende rol speelt bij verhuisbereidheid. Er zijn geen goede of foute antwoorden — geef gewoon je eerlijke gevoel.</p>
-
-    <div class="sl">Beleving binnen</div>
-    ${mkScale('rust','Rust & stilte binnenshuis','Hoe rustig is het in huis?',['Veel lawaai','Erg rustig'])}
-    ${mkScale('ruimte','Ruimtelijk gevoel','Voelt de woning ruim voor wat je nodig hebt?',['Erg benauwd','Erg ruim'])}
-    ${mkScale('licht','Lichtinval','Hoeveel daglicht heeft de woning?',['Donker','Licht en zonnig'])}
-    ${mkScale('thuis','Thuisgevoel','In hoeverre voelt dit als jouw thuis?',['Weinig thuisgevoel','Volledig thuis'])}
-    ${mkScale('onderhoudslast','Onderhoudslast woning','Hoe zwaar weegt het onderhoud?',['Weinig moeite','Erg belastend'])}
-    ${mkScale('trap_last','Trapgebruik belastend','Is de trap een last of juist geen probleem?',['Geen last','Erg belastend'])}
-
-    <div class="sl">Beleving buurt & omgeving</div>
-    ${mkScale('veilig','Veiligheidsgevoel','Hoe veilig voel jij je buiten en thuis?',['Onveilig','Erg veilig'])}
-    ${mkScale('sociaal','Sociale cohesie buurt','Ken je je buren? Voelt de buurt verbonden?',['Anoniem','Hecht en verbonden'])}
-    ${mkScale('groen','Groenbeleving omgeving','Hoeveel natuur/groen is er direct buiten?',['Weinig groen','Veel groen'])}
-    ${mkScale('bereikbaar','Bereikbaarheid voorzieningen','Winkels, zorg, OV, scholen…',['Slecht bereikbaar','Prima bereikbaar'])}
-    ${mkScale('geluidsoverlast','Geluidsoverlast van buiten','Verkeer, buren, horeca…',['Geen overlast','Veel overlast'])}
-    ${mkScale('privacy','Privacygevoel','Hoe privé voel jij je in en om de woning?',['Weinig privacy','Veel privacy'])}
-
-    <div class="sl">Geluidsniveau buurt (overdag)</div>
-    ${mkTiles('geluid',[{value:'stil',label:'Stil',icon:'🔇'},{value:'rustig',label:'Rustig',icon:'🔈'},{value:'gemid',label:'Gemiddeld',icon:'🔉'},{value:'druk',label:'Druk',icon:'🔊'}],'g4')}
-
-    <div class="sl">Lichtinval (overall indruk)</div>
-    ${mkTiles('lichtinval',[{value:'zonnig',label:'Erg licht',icon:'☀️'},{value:'licht',label:'Licht',icon:'🌤'},{value:'gemid',label:'Gemiddeld',icon:'⛅'},{value:'donker',label:'Donker',icon:'🌑'}],'g4')}
-
-    <div class="sl">Wat geeft jou energie in deze woning? (vrij veld, optioneel)</div>
-    ${mkText('energie_geeft','Bijv. de tuin, de buurt, de ruimte, de rust…',true)}
-
-    <div class="sl">Wat mis je, of wat stoort je? (vrij veld, optioneel)</div>
-    ${mkText('missing','Bijv. te groot, trap, drukke straat, slecht geïsoleerd…',true)}
-  `;
-}
-
-function s5(){
-  const v=G('verhuisbereidheid',3);
-  const pct=((v-1)/4*100).toFixed(0);
-  return `
-    <div class="ey">Stap 6 van 7 — Jouw situatie</div>
-    <h1 class="st">Wie woont <em>hier</em>?</h1>
-    <p class="sd">Geen namen of adressen — alleen wat nodig is voor een goede match.</p>
-
-    <div class="sl">Huishoudsituatie</div>
-    ${mkTiles('huishoud_type',HT,'g2')}
-
-    <div class="sl">Leeftijdscategorie hoofdbewoner</div>
-    ${mkChips('leeftijd_cat',LC)}
-
-    <div class="sl">Hoe lang woon je hier al?</div>
-    ${mkChips('woonduur',WD)}
-
-    <div class="sl">Werk & leefstijl</div>
-    ${mkToggle('thuiswerken','Thuiswerken (geheel of gedeeltelijk)','Relevant voor behoefte aan werkkamer')}
-    ${mkToggle('huisdieren','Huisdieren aanwezig','Relevant voor tuin en buurt')}
-
-    <div class="sl">Mobiliteit</div>
-    ${mkToggle('mob_nu','Mobiliteitsbeperkingen nu aanwezig','Bijv. rolstoel, rollator, beperkt ter been')}
-    ${mkToggle('mob_verwacht','Mobiliteitsbeperking te verwachten','Binnen 5–10 jaar — relevant voor gelijkvloers')}
-
-    <div class="sl">Verhuisbereidheid — hoe open sta je voor verandering?</div>
-    <div class="sw">
-      <div class="sl-labels"><span>Zeker niet</span><span>Actief zoekend</span></div>
-      <input type="range" min="1" max="5" step="1" style="--pct:${pct}%" value="${v}"
-        oninput="
-          S('verhuisbereidheid',parseInt(this.value));
-          this.style.setProperty('--pct',((this.value-1)/4*100)+'%');
-          document.getElementById('slv').textContent=this.value+'/5';
-          document.getElementById('sld').textContent=['Zeker niet verhuizen','Waarschijnlijk niet','Misschien, als het klopt','Open voor verhuizing','Actief op zoek'][this.value-1];
-        ">
-      <div class="slval" id="slv">${v}/5</div>
-      <div class="sldesc" id="sld">${SLDR[v-1]}</div>
-    </div>
-
-    <div class="sl">Bijzondere omstandigheden (optioneel)</div>
-    ${mkText('situatie_vrij','Bijv. zorgsituatie, scheiding, uitstroom mantelzorg, terugkeer vanuit buitenland…',true)}
-  `;
-}
-
-function s6(){
-  return `
-    <div class="ey">Stap 7 van 7 — Woonwensen</div>
-    <h1 class="st">Wat zoek <em>jij</em>?</h1>
-    <p class="sd">Je hoeft niets concreets te hebben. Geef aan welke richting aanspreekt — dat is al genoeg voor een eerste match.</p>
-
-    <div class="sl">Gewenst woningtype</div>
-    ${mkTiles('gewenst_type',GWT,'g2')}
-
-    <div class="sl">Gewenst woonoppervlak (minimaal)</div>
-    ${mkChips('gew_opp',['Maakt niet uit','> 50 m²','> 75 m²','> 100 m²','> 125 m²','> 150 m²','> 200 m²'])}
-
-    <div class="sl">Zoekradius</div>
-    ${mkChips('gewenste_locatie',LO)}
-
-    <div class="sl">Must-haves in nieuwe woning</div>
-    ${mkChips('musthaves',MH,true)}
-
-    <div class="sl">Gewenst energieprofiel nieuwe woning</div>
-    ${mkChips('gew_energie',[{value:'egal',label:'Maakt niet uit'},{value:'gasloos',label:'Gasloos'},{value:'label_a',label:'Min. label A'},{value:'zp',label:'Zonnepanelen'},{value:'lp',label:'Laadpaal mogelijk'}],true)}
-
-    <div class="sl">Tuin in nieuwe woning</div>
-    ${mkChips('gew_tuin',[{value:'egal',label:'Maakt niet uit'},{value:'klein_prima',label:'Klein is prima'},{value:'groot',label:'Liefst groot'},{value:'balkon',label:'Balkon/terras ok'},{value:'geen',label:'Geen tuin nodig'}])}
-
-    <div class="sl">Redenen om te verhuizen (meerdere mogelijk)</div>
-    ${mkChips('redenen',RR,true)}
-
-    <div class="sl">Aanvullende woonwensen (vrij veld, optioneel)</div>
-    ${mkText('opmerkingen','Bijv. begane grond, dicht bij kleinkind, rustige straat, geen flat…',true)}
-  `;
-}
-
-function s7(){
-  const comp=completeness();
-  const em=G('email','');
-  const prv=G('privacy',false);
-  const compHint=comp>=75?'✓ Goed ingevuld — we kunnen je goed matchen.':comp>=50?'→ Meer invullen vergroot de kans op een betere match.':'→ Nog beperkt ingevuld. Hoe meer details, hoe beter we kunnen zoeken.';
+  const editLinks = Array.from({ length: NSTEPS }, (_, i) =>
+    `<button class="edit-lnk" onclick="goToStep(${i})">Stap ${i + 1} aanpassen</button>`
+  ).join('');
 
   return `
     <div class="ey">Jouw woonprofiel</div>
@@ -612,7 +417,7 @@ function s7(){
     <div class="pilot-banner">
       <strong>⚠️ Pilotfase — eerlijk over onze stand van zaken</strong><br>
       Niste is net gestart in Noord-Brabant. We bouwen actief een netwerk van profielen op.
-      Er zijn op dit moment <strong>nog beperkte matches beschikbaar</strong>. Zodra er een anoniem profiel in jouw regio verschijnt dat bij jou past, ontvang je een melding. Hoe lang dat duurt hangt af van het aantal aanmeldingen in jouw buurt — dat kan enkele weken zijn.
+      Er zijn op dit moment <strong>nog beperkte matches beschikbaar</strong>. Zodra er een anoniem profiel in jouw regio verschijnt dat bij jou past, ontvang je een e-mail. Hoe lang dat duurt hangt af van het aantal aanmeldingen in jouw buurt.
     </div>
 
     <div class="comp-wrap">
@@ -623,94 +428,129 @@ function s7(){
 
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.7rem">
       <div class="sl" style="margin:0">Samenvatting</div>
-      <button class="edit-lnk" onclick="goTo(0)">✏ Beginnen aanpassen</button>
+      <button class="edit-lnk" onclick="goToStep(0)">Alles bekijken</button>
     </div>
+    <div class="sum-grid">${sumItems || '<div class="sum-item" style="grid-column:1/-1"><div class="sum-val" style="color:var(--light)">Nog geen antwoorden ingevuld</div></div>'}</div>
 
-    <div class="sum-grid">
-      ${si('Woningtype',lbl('woning_type',WT))}
-      ${si('Oppervlak',G('oppervlak','—'))}
-      ${si('Bouwjaar',G('bouwjaar','—'))}
-      ${si('Energielabel',G('energielabel','—'))}
-      ${si('Kamers (totaal/gebruikt)',G('kamers_totaal','—')+' / '+G('kamers_gebruikt','—'))}
-      ${si('Tuin',G('tuin',false)?(G('tuin_grootte','Aanwezig')):'Nee')}
-      ${si('Parkeren eigen terrein',G('parkeer_eigen',false)?'Ja':'Nee')}
-      ${si('Gasloos',G('gasloos','—'))}
-      ${si('Verwarming',lbl('verwarm',VS))}
-      ${si('Zonnepanelen',G('zonnepanelen',false)?'Ja':'Nee')}
-      ${si('Huishoud',lbl('huishoud_type',HT))}
-      ${si('Woonduur',G('woonduur','—'))}
-      ${si('Gewenst type',lbl('gewenst_type',GWT))}
-      ${si('Zoekradius',G('gewenste_locatie','—'))}
-    </div>
-
-    <div style="display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.2rem">
-      ${[0,1,2,3,4,5,6].map(i=>`<button class="edit-lnk" onclick="goTo(${i})">Stap ${i+1} aanpassen</button>`).join('')}
-    </div>
+    <div class="edit-lnk-row">${editLinks}</div>
 
     <div class="cta-box">
-      <div class="cta-title">Ontvang een melding bij een match</div>
-      <p class="cta-desc">Laat je e-mailadres achter. We sturen je een bericht zodra er in jouw regio een anoniem profiel verschijnt dat mogelijk bij jou past. Geen spam, geen verplichtingen — je kunt je profiel altijd volledig verwijderen.</p>
-      <div class="email-row">
-        <input class="email-inp" type="email" placeholder="jouw@email.nl" id="einp" value="${em}"
-          oninput="S('email',this.value);updBtn()">
-        <button class="btn-cta" id="cbtn" ${em&&prv?'':'disabled'} onclick="submitForm()">Aanmelden</button>
+      <div class="cta-title">Profiel opslaan &amp; meldingen ontvangen</div>
+      <p class="cta-desc">
+        Je bent ingelogd als onderstaand e-mailadres. Zodra er in jouw regio een anoniem profiel
+        verschijnt dat bij jou past, ontvang je een bericht op dit adres. Geen spam, geen verplichtingen.
+      </p>
+      <div class="user-email-row">
+        <span class="user-email-icon">📧</span>
+        <div>
+          <div class="user-email-lbl">Meldingen gaan naar</div>
+          <div class="user-email-val">${email}</div>
+        </div>
       </div>
-      <label class="chk-row" onclick="togglePrv()">
-        <div class="chkbox${prv?' on':''}" id="pchk">${prv?'✓':''}</div>
-        <span class="priv-lbl">Ik ga akkoord met de <a href="privacy.html" style="color:var(--gold-lt)">privacyverklaring</a>. Mijn gegevens worden uitsluitend gebruikt voor matching en nooit gedeeld zonder mijn toestemming. Ik kan mijn profiel altijd volledig verwijderen.</span>
+      <button class="btn-cta" id="submit-btn" onclick="submitProfile()" ${prv ? '' : 'disabled'}>
+        Profiel opslaan
+      </button>
+      <label class="chk-row" onclick="toggleConsent()">
+        <div class="chkbox${prv ? ' on' : ''}" id="consent-chk">${prv ? '✓' : ''}</div>
+        <span class="priv-lbl">Ik ga akkoord met de <a href="privacy.html" style="color:var(--gold-lt)">privacyverklaring</a>.
+          Mijn gegevens worden uitsluitend gebruikt voor het matchen van woningprofielen.
+          Ik kan mijn account en gegevens op elk moment volledig verwijderen.</span>
       </label>
       <p class="priv-note">🔒 Jouw exacte adres wordt nooit opgeslagen of gedeeld. Matching is volledig anoniem. Pas bij wederzijdse toestemming van beide partijen is contact mogelijk.</p>
     </div>
   `;
 }
 
-function si(k,v){ return `<div class="sum-item"><div class="sum-key">${k}</div><div class="sum-val">${v||'—'}</div></div>`; }
-
-window.togglePrv=function(){
-  const on=!G('privacy',false); S('privacy',on);
-  const el=document.getElementById('pchk'); if(el){el.className='chkbox'+(on?' on':'');el.textContent=on?'✓':'';}
-  updBtn();
+window.toggleConsent = function () {
+  state._consent_given = !(state._consent_given === true);
+  const chk = document.getElementById('consent-chk');
+  const btn = document.getElementById('submit-btn');
+  if (chk) { chk.className = 'chkbox' + (state._consent_given ? ' on' : ''); chk.textContent = state._consent_given ? '✓' : ''; }
+  if (btn) btn.disabled = !state._consent_given;
 };
-function updBtn(){ const b=document.getElementById('cbtn'); if(b)b.disabled=!(G('email','')&&G('privacy',false)); }
 
-window.submitForm=function(){
-  document.getElementById('area').innerHTML=`<div class="card">
+window.submitProfile = async function () {
+  const btn = document.getElementById('submit-btn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Opslaan…'; }
+  await saveToFirestore(true);
+  document.getElementById('area').innerHTML = `<div class="card">
     <div class="success-wrap">
       <div class="success-ico">✅</div>
-      <div class="success-title">Profiel ontvangen</div>
+      <div class="success-title">Profiel opgeslagen</div>
       <p class="success-desc">
-        Jouw woonprofiel is opgeslagen. We zijn actief aan het opbouwen in Noord-Brabant.<br><br>
-        <strong>Eerlijk gezegd:</strong> Niste is net gestart. Het kan enige tijd duren voordat er genoeg profielen zijn om te matchen in jouw buurt. Zodra er een anoniem profiel verschijnt dat bij jou past, ontvang je een e-mail. Je kunt je profiel tussentijds altijd aanpassen of verwijderen.
+        Jouw woonprofiel is opgeslagen. We zijn actief profielen aan het verzamelen in Noord-Brabant.<br><br>
+        <strong>Eerlijk gezegd:</strong> Niste is net gestart. Het kan enige tijd duren voordat er genoeg profielen zijn om te matchen in jouw buurt. Zodra er een anoniem profiel verschijnt dat bij jou past, ontvang je een e-mail op <em>${user?.email || ''}</em>. Je kunt je profiel tussentijds altijd aanpassen of verwijderen via je dashboard.
       </p>
-      <button class="btn-edit-again" onclick="goTo(0)">✏ Profiel aanpassen</button>
+      <button class="btn-edit-again" onclick="goToStep(0)">✏ Profiel aanpassen</button>
+      <a href="dashboard.html" class="btn-to-login" style="display:inline-block;text-decoration:none">Naar dashboard →</a>
     </div>
   </div>`;
-  D._submitted=true; save();
 };
 
-// ═══ RENDER ═══════════════════════════════════════════════════════
-function renderCard(){
-  const fns=[s0,s1,s2,s3,s4,s5,s6,s7];
-  const last=step===NSTEPS-1;
-  const inner=fns[step]();
-  const nav=`<div class="nav-row">
-    ${step>0?`<button class="btn-back" onclick="back()">← Terug</button>`:'<div></div>'}
-    <div style="display:flex;align-items:center;gap:.8rem">
-      ${!last?`<button class="btn-skip" onclick="skip()">Overslaan</button>`:''}
-      ${!last?`<button class="btn-next" onclick="next()">Volgende →</button>`:''}
-    </div>
-  </div>`;
-  document.getElementById('area').innerHTML=`<div class="card">${inner}${nav}</div>`;
+// ─── HOOFD-RENDER ─────────────────────────────────────────────────────────────
+function renderCard() {
+  const area = document.getElementById('area');
+  if (!area) return;
+
+  if (step >= NSTEPS) {
+    area.innerHTML = `<div class="card">${renderResultScreen()}</div>`;
+    return;
+  }
+
+  const inner = renderStep(step, QUESTIONS, state, STEP_TITLES);
+  const isFirst = step === 0;
+
+  const nav = `
+    <div class="nav-row">
+      ${isFirst ? '<div></div>' : `<button class="btn-back" onclick="goToStep(${step - 1})">← Terug</button>`}
+      <div class="btn-right">
+        <button class="btn-skip" onclick="goToStep(${step + 1})">Overslaan</button>
+        <button class="btn-next" onclick="goToStep(${step + 1})">
+          ${step === NSTEPS - 1 ? 'Bekijk profiel →' : 'Volgende →'}
+        </button>
+      </div>
+    </div>`;
+
+  area.innerHTML = `<div class="card">${inner}${nav}</div>`;
 }
 
-function renderAll(){
+function renderAll() {
   renderDots();
   renderProgress();
   renderCard();
 }
 
-load();
-renderAll();
+// ─── AUTH GATE ────────────────────────────────────────────────────────────────
+onAuthStateChanged(auth, async (u) => {
+  if (!u) {
+    // Niet ingelogd → auth-gate tonen
+    document.getElementById('area').innerHTML = `
+      <div class="card">
+        <div class="auth-gate">
+          <div class="auth-gate-title">Eerst aanmelden</div>
+          <p class="auth-gate-desc">
+            Om je woonprofiel op te slaan en matches te ontvangen, moet je ingelogd zijn.
+            Het aanmelden is gratis en verplicht je tot niets.
+          </p>
+          <a href="aanmelden.html" class="btn-to-login">Aanmelden of inloggen →</a>
+        </div>
+      </div>`;
+    document.getElementById('sdots').innerHTML = '';
+    return;
+  }
+
+  user = u;
+
+  // Toon e-mail in nav
+  const nu = document.getElementById('nav-user');
+  if (nu) nu.textContent = u.email;
+
+  // Laad bestaand profiel uit Firestore
+  await loadFromFirestore();
+
+  // Render intake
+  renderAll();
+});
 </script>
 </body>
 </html>
