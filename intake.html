@@ -17,8 +17,6 @@
     }
     html { scroll-behavior: smooth; }
     body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--dark); min-height: 100vh; }
-
-    /* NAV */
     nav { display:flex; align-items:center; justify-content:space-between; padding:1.15rem 2.5rem; border-bottom:1px solid rgba(42,74,62,.08); background:rgba(246,241,233,.96); backdrop-filter:blur(20px); position:sticky; top:0; z-index:50; }
     .nav-logo { font-family:'Cormorant Garamond',serif; font-size:1.65rem; font-weight:600; color:var(--forest); text-decoration:none; display:flex; align-items:center; }
     .logo-dot { width:7px; height:7px; border-radius:50%; background:var(--gold); display:inline-block; animation:pulse 2.2s ease-in-out infinite; margin-left:2px; }
@@ -29,28 +27,21 @@
     .nav-user { font-size:.75rem; color:var(--mid); max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .nav-back { font-size:.76rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--mid); text-decoration:none; transition:color .2s; }
     .nav-back:hover { color:var(--forest); }
-
     .progress-outer { width:100%; height:3px; background:rgba(42,74,62,.08); position:sticky; top:65px; z-index:49; }
     .progress-fill { height:100%; background:var(--gold); transition:width .5s cubic-bezier(.4,0,.2,1); }
-
     .intake-wrap { max-width:700px; margin:0 auto; padding:3rem 1.5rem 7rem; }
-
     .step-dots { display:flex; align-items:center; gap:.4rem; justify-content:center; margin-bottom:2rem; }
     .dot { width:7px; height:7px; border-radius:50%; background:var(--sand); transition:all .3s ease; }
     .dot.active { background:var(--gold); transform:scale(1.5); }
     .dot.done { background:var(--forest); }
-
     .card { background:#fff; border-radius:24px; padding:2.6rem; box-shadow:0 2px 48px rgba(26,26,22,.07); animation:fadeUp .3s ease forwards; }
     @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-
     .ey { font-size:.65rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); margin-bottom:.5rem; }
     .st { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:600; color:var(--forest); line-height:1.15; margin-bottom:.5rem; }
     .st em { font-style:italic; color:var(--dark); }
     .sd { font-size:.86rem; color:var(--mid); line-height:1.65; margin-bottom:1.6rem; }
     .sl { font-size:.62rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--light); margin:1.6rem 0 .6rem; }
     .skip-notice { display:flex; align-items:center; gap:.5rem; background:var(--gold-pale); border-radius:10px; padding:.6rem 1rem; margin-bottom:1.4rem; font-size:.76rem; color:var(--mid); font-weight:500; }
-
-    /* TILES */
     .tg { display:grid; gap:.55rem; }
     .g2 { grid-template-columns:1fr 1fr; }
     .g3 { grid-template-columns:1fr 1fr 1fr; }
@@ -59,14 +50,10 @@
     .tile:hover { border-color:var(--forest); background:rgba(42,74,62,.04); transform:translateY(-1px); }
     .tile.sel { border-color:var(--forest); background:var(--forest); color:var(--cream); }
     .tile .ti { font-size:1.35rem; }
-
-    /* CHIPS */
     .cr { display:flex; flex-wrap:wrap; gap:.45rem; }
     .chip { border:1.5px solid rgba(217,206,188,.7); border-radius:100px; padding:.38rem .9rem; cursor:pointer; font-size:.78rem; font-weight:600; color:var(--dark); background:var(--cream); transition:all .17s; user-select:none; white-space:nowrap; }
     .chip:hover { border-color:var(--forest); background:rgba(42,74,62,.04); }
     .chip.sel { border-color:var(--forest); background:var(--forest); color:var(--cream); }
-
-    /* COUNTER */
     .cnt-grp { border-top:1px solid rgba(217,206,188,.45); }
     .crow { display:flex; align-items:center; justify-content:space-between; padding:.8rem 0; border-bottom:1px solid rgba(217,206,188,.45); }
     .clabel { font-size:.86rem; font-weight:600; color:var(--dark); }
@@ -76,8 +63,6 @@
     .cbtn:hover:not(:disabled) { background:var(--forest); color:var(--cream); }
     .cbtn:disabled { opacity:.22; cursor:not-allowed; }
     .cval { font-family:'Cormorant Garamond',serif; font-size:1.35rem; font-weight:600; color:var(--forest); min-width:22px; text-align:center; }
-
-    /* TOGGLES */
     .tog-grp { border-top:1px solid rgba(217,206,188,.45); }
     .trow { display:flex; align-items:center; justify-content:space-between; padding:.8rem 0; border-bottom:1px solid rgba(217,206,188,.45); }
     .tlabel { font-size:.86rem; font-weight:600; color:var(--dark); }
@@ -86,8 +71,6 @@
     .tog.on { background:var(--forest); }
     .tog::after { content:''; position:absolute; width:18px; height:18px; border-radius:50%; background:#fff; top:3px; left:3px; transition:transform .2s ease; box-shadow:0 1px 4px rgba(0,0,0,.15); }
     .tog.on::after { transform:translateX(20px); }
-
-    /* SCALE */
     .scblock { margin-bottom:1.4rem; }
     .scq { font-size:.86rem; font-weight:600; color:var(--dark); margin-bottom:.35rem; }
     .scsub { font-size:.73rem; color:var(--light); margin-bottom:.5rem; }
@@ -96,8 +79,6 @@
     .scbtn:hover { border-color:var(--forest); color:var(--forest); }
     .scbtn.sel { background:var(--forest); border-color:var(--forest); color:var(--cream); }
     .sc-ends { display:flex; justify-content:space-between; font-size:.65rem; color:var(--light); margin-top:.3rem; }
-
-    /* SLIDER */
     .sw { padding:.4rem 0; }
     .sl-labels { display:flex; justify-content:space-between; font-size:.7rem; color:var(--light); margin-bottom:.6rem; }
     input[type=range] { -webkit-appearance:none; appearance:none; width:100%; height:4px; border-radius:2px; outline:none; cursor:pointer; background:linear-gradient(to right,var(--gold) 0%,var(--gold) var(--pct),var(--sand) var(--pct),var(--sand) 100%); }
@@ -105,16 +86,10 @@
     input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.15); }
     .slval { text-align:center; font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:600; color:var(--forest); margin-top:.5rem; line-height:1; }
     .sldesc { text-align:center; font-size:.75rem; color:var(--light); margin-top:.2rem; }
-
-    /* FORM FIELDS */
     .field { width:100%; padding:.75rem 1rem; border:1.5px solid rgba(217,206,188,.7); border-radius:11px; font-family:'Plus Jakarta Sans',sans-serif; font-size:.9rem; color:var(--dark); background:var(--cream); outline:none; transition:border-color .2s; }
     .field:focus { border-color:var(--forest); }
     textarea.field { resize:vertical; min-height:80px; }
-
-    /* BADGES */
     .mm-badge { display:flex; align-items:center; gap:.6rem; background:rgba(196,154,74,.1); border:1px solid rgba(196,154,74,.3); border-radius:10px; padding:.7rem 1rem; font-size:.8rem; color:var(--rust); font-weight:600; margin-top:.8rem; }
-
-    /* NAVIGATION */
     .nav-row { display:flex; justify-content:space-between; align-items:center; margin-top:2rem; padding-top:1.4rem; border-top:1px solid rgba(217,206,188,.45); }
     .btn-back { background:transparent; color:var(--light); border:none; padding:.7rem 1rem; font-family:'Plus Jakarta Sans',sans-serif; font-size:.82rem; cursor:pointer; display:flex; align-items:center; gap:.4rem; transition:color .2s; }
     .btn-back:hover { color:var(--forest); }
@@ -123,8 +98,6 @@
     .btn-skip:hover { color:var(--mid); }
     .btn-next { background:var(--forest); color:var(--cream); border:none; border-radius:100px; padding:.78rem 1.8rem; font-family:'Plus Jakarta Sans',sans-serif; font-size:.84rem; font-weight:700; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:.5rem; box-shadow:0 4px 18px rgba(42,74,62,.22); }
     .btn-next:hover { background:var(--moss); transform:translateY(-1px); }
-
-    /* RESULT */
     .pilot-banner { background:var(--gold-pale); border:1px solid rgba(196,154,74,.3); border-radius:14px; padding:1.1rem 1.4rem; margin-bottom:1.6rem; font-size:.83rem; line-height:1.6; color:var(--dark); }
     .pilot-banner strong { color:var(--rust); }
     .comp-wrap { margin-bottom:1.6rem; }
@@ -139,13 +112,10 @@
     .edit-lnk { background:none; border:none; color:var(--gold); font-size:.76rem; font-weight:700; cursor:pointer; text-decoration:underline; text-underline-offset:3px; padding:0; transition:color .2s; }
     .edit-lnk:hover { color:var(--rust); }
     .edit-lnk-row { display:flex; flex-wrap:wrap; gap:.6rem; margin-bottom:1.2rem; }
-
-    /* CTA BOX */
     .cta-box { background:var(--forest); border-radius:18px; padding:2rem; color:var(--cream); margin-top:1.4rem; }
     .cta-title { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:600; margin-bottom:.5rem; line-height:1.2; }
     .cta-desc { font-size:.82rem; line-height:1.6; color:rgba(246,241,233,.65); margin-bottom:1.3rem; }
     .user-email-row { display:flex; align-items:center; gap:.7rem; background:rgba(255,255,255,.08); border-radius:10px; padding:.7rem 1rem; margin-bottom:1.1rem; }
-    .user-email-icon { font-size:1rem; }
     .user-email-lbl { font-size:.8rem; color:rgba(246,241,233,.55); }
     .user-email-val { font-size:.86rem; font-weight:600; color:var(--cream); }
     .btn-cta { background:var(--gold); color:var(--dark); border:none; padding:.8rem 1.8rem; border-radius:100px; font-family:'Plus Jakarta Sans',sans-serif; font-size:.85rem; font-weight:700; cursor:pointer; transition:background .2s; width:100%; }
@@ -156,21 +126,16 @@
     .chkbox.on { background:var(--gold); border-color:var(--gold); }
     .priv-lbl { font-size:.73rem; color:rgba(246,241,233,.5); line-height:1.4; }
     .priv-note { font-size:.68rem; color:rgba(246,241,233,.32); margin-top:.75rem; line-height:1.5; }
-
-    /* SUCCESS */
     .success-wrap { text-align:center; padding:2.5rem 1rem; }
     .success-ico { font-size:3.5rem; margin-bottom:1.2rem; }
     .success-title { font-family:'Cormorant Garamond',serif; font-size:2rem; color:var(--forest); margin-bottom:.8rem; }
     .success-desc { font-size:.86rem; color:var(--mid); line-height:1.65; max-width:420px; margin:0 auto 1.8rem; }
     .btn-edit-again { background:transparent; border:1.5px solid rgba(42,74,62,.2); border-radius:100px; padding:.7rem 1.6rem; font-family:'Plus Jakarta Sans',sans-serif; font-size:.82rem; font-weight:700; color:var(--forest); cursor:pointer; transition:all .2s; margin-right:.6rem; }
     .btn-edit-again:hover { background:rgba(42,74,62,.06); }
-
-    /* AUTH GATE */
     .auth-gate { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:60vh; text-align:center; }
     .auth-gate-title { font-family:'Cormorant Garamond',serif; font-size:1.8rem; color:var(--forest); margin-bottom:.8rem; }
     .auth-gate-desc { font-size:.86rem; color:var(--mid); margin-bottom:1.6rem; }
     .btn-to-login { background:var(--forest); color:var(--cream); border:none; border-radius:100px; padding:.8rem 2rem; font-family:'Plus Jakarta Sans',sans-serif; font-size:.85rem; font-weight:700; cursor:pointer; text-decoration:none; display:inline-block; }
-
     @media(max-width:560px) {
       .card { padding:1.5rem 1.1rem; }
       .g3,.g4 { grid-template-columns:1fr 1fr; }
@@ -193,50 +158,42 @@
 
 <div class="intake-wrap">
   <div class="step-dots" id="sdots"></div>
-  <div id="area">
-    <!-- Auth-gate: standaard getoond totdat Firebase auth is opgelost -->
-    <div class="auth-gate">
-      <div class="auth-gate-title">Even laden…</div>
-      <p class="auth-gate-desc">We controleren je aanmelding.</p>
-    </div>
-  </div>
+  <div id="area"></div>
 </div>
 
 <script type="module">
-  const embedded = new URLSearchParams(location.search).get('embedded') === 'true';
+// ── IMPORTS ALTIJD EERST ────────────────────────────────────────────────────
+import { auth, db }           from './firebase-init.js';
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { doc, getDoc, setDoc, serverTimestamp }
+                               from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { QUESTIONS, STEP_TITLES }               from './questions.js';
+import { renderStep, calcCompleteness, buildSummary } from './renderer.js';
+
+// ── EMBEDDED MODE (iframe vanuit dashboard) ──────────────────────────────────
+const embedded = new URLSearchParams(location.search).get('embedded') === 'true';
 if (embedded) {
-  document.querySelector('nav').style.display = 'none';
+  document.querySelector('nav').style.display          = 'none';
   document.querySelector('.progress-outer').style.display = 'none';
   document.querySelector('.intake-wrap').style.paddingTop = '1rem';
 }
-import { auth, db }          from './firebase-init.js';
-import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { doc, getDoc, setDoc, serverTimestamp }
-                              from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-import { QUESTIONS, STEP_TITLES } from './questions.js';
-import { renderStep, calcCompleteness, buildSummary } from './renderer.js';
 
-// ─── CONSTANTEN ───────────────────────────────────────────────────────────────
-const NSTEPS       = 7;   // stappen 0–6 zijn vraag-stappen; stap 7 = resultaat
-const CONSENT_VER  = '1.0';
-const PILOT        = 'noord-brabant-2026';
+// ── CONSTANTEN ───────────────────────────────────────────────────────────────
+const NSTEPS      = 7;
+const CONSENT_VER = '1.0';
+const PILOT       = 'noord-brabant-2026';
 
-// ─── APP STATE ────────────────────────────────────────────────────────────────
-let state    = {};
-let step     = 0;
-let user     = null;   // Firebase Auth user
-let saving   = false;
-let saveTmr  = null;
+// ── APP STATE ─────────────────────────────────────────────────────────────────
+let state   = {};
+let step    = 0;
+let user    = null;
+let saving  = false;
+let saveTmr = null;
 
-// ─── HANDLERS GLOBAAL BESCHIKBAAR MAKEN (voor renderer inline-onclick) ────────
+// ── GLOBALE HANDLERS (voor inline onclick in renderer) ────────────────────────
 window.N = {
-  // Sla op zonder re-render (tekst-inputs, textarea, slider)
-  si(k, v) {
-    state[k] = v;
-    schedSave();
-  },
-  // Tile/chip klik: wissel of zet waarde
-  tc(k, v, multi) {
+  si(k, v)          { state[k] = v; schedSave(); },
+  tc(k, v, multi)   {
     if (multi) {
       const a = [...(state[k] || [])];
       const i = a.indexOf(v);
@@ -245,52 +202,31 @@ window.N = {
     } else {
       state[k] = v === (state[k] ?? '') ? '' : v;
     }
-    schedSave();
-    renderCard();
+    schedSave(); renderCard();
   },
-  // Counter klik
-  ct(k, delta, min, max) {
-    state[k] = Math.min(max, Math.max(min, (state[k] ?? 0) + delta));
-    schedSave();
-    renderCard();
-  },
-  // Toggle klik
-  tt(k) {
-    state[k] = !(state[k] === true);
-    schedSave();
-    renderCard();
-  },
-  // Scale klik
-  sc(k, n) {
-    state[k] = n === (state[k] ?? 0) ? 0 : n;
-    schedSave();
-    renderCard();
-  },
-  // Slider (geen re-render, update alleen display)
-  sl(k, v, descs) {
+  ct(k, d, mn, mx)  { state[k] = Math.min(mx, Math.max(mn, (state[k] ?? 0) + d)); schedSave(); renderCard(); },
+  tt(k)             { state[k] = !(state[k] === true); schedSave(); renderCard(); },
+  sc(k, n)          { state[k] = n === (state[k] ?? 0) ? 0 : n; schedSave(); renderCard(); },
+  sl(k, v, descs)   {
     state[k] = parseInt(v, 10);
     schedSave();
-    const pct = ((parseInt(v, 10) - 1) / 4 * 100).toFixed(0);
-    const si  = document.getElementById(`sli-${k}`);
-    const slv = document.getElementById(`slv-${k}`);
-    const sld = document.getElementById(`sld-${k}`);
-    if (si)  si.style.setProperty('--pct', pct + '%');
-    if (slv) slv.textContent = v + '/5';
-    if (sld) sld.textContent = descs[parseInt(v, 10) - 1];
+    const pct = ((parseInt(v,10)-1)/4*100).toFixed(0);
+    const si  = document.getElementById('sli-'+k);
+    const slv = document.getElementById('slv-'+k);
+    const sld = document.getElementById('sld-'+k);
+    if (si)  si.style.setProperty('--pct', pct+'%');
+    if (slv) slv.textContent = v+'/5';
+    if (sld) sld.textContent = descs[parseInt(v,10)-1];
   },
-  // Navigeer naar stap (voor "aanpassen" links op resultaatscherm)
   goTo(s) { goTo(s); },
 };
 
-// ─── NAVIGATIE ────────────────────────────────────────────────────────────────
+// ── NAVIGATIE ─────────────────────────────────────────────────────────────────
 function goTo(s) {
-  step = s;
-  state._step = step;
-  schedSave();
-  renderAll();
+  step = s; state._step = step; schedSave(); renderAll();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
-window.goToStep = goTo; // ook globaal
+window.goToStep = goTo;
 
 function renderDots() {
   const w = document.getElementById('sdots');
@@ -302,53 +238,38 @@ function renderDots() {
     w.appendChild(d);
   }
 }
-
 function renderProgress() {
-  const fill = document.getElementById('pfill');
-  if (fill) fill.style.width = ((step + 1) / (NSTEPS + 1) * 100) + '%';
+  const f = document.getElementById('pfill');
+  if (f) f.style.width = ((step+1)/(NSTEPS+1)*100)+'%';
 }
 
-// ─── FIRESTORE OPSLAAN ────────────────────────────────────────────────────────
+// ── FIRESTORE OPSLAAN ─────────────────────────────────────────────────────────
 function schedSave() {
   clearTimeout(saveTmr);
   saveTmr = setTimeout(() => saveToFirestore(), 1500);
 }
 
 async function saveToFirestore(markComplete = false) {
-  if (!user) return;
-  if (saving) return;
+  if (!user || saving) return;
   saving = true;
-
   const comp = calcCompleteness(QUESTIONS, state);
   const payload = {};
-
-  // Kopieer alle vraag-velden (alleen string, boolean, number, array)
   QUESTIONS.forEach(q => {
     if (!q.dbField) return;
     const v = state[q.dbField];
-    if (v === undefined) return;
-    payload[q.dbField] = v;
+    if (v !== undefined) payload[q.dbField] = v;
   });
-
-  // Metadata (geen e-mail in Firestore — zit in Firebase Auth)
-  payload._step        = step;
+  payload._step         = step;
   payload._completeness = comp;
-  payload._status      = markComplete ? 'complete' : 'in_progress';
-  payload._updatedAt   = serverTimestamp();
-  payload._pilot       = PILOT;
-  payload._version     = '1.0';
-
+  payload._status       = markComplete ? 'complete' : 'in_progress';
+  payload._updatedAt    = serverTimestamp();
+  payload._pilot        = PILOT;
+  payload._version      = '1.0';
   if (markComplete) {
-    payload._consent = {
-      given:     true,
-      timestamp: serverTimestamp(),
-      version:   CONSENT_VER,
-    };
+    payload._consent = { given: true, timestamp: serverTimestamp(), version: CONSENT_VER };
   }
-
   try {
-    const ref = doc(db, 'households', user.uid);
-    await setDoc(ref, payload, { merge: true });
+    await setDoc(doc(db, 'households', user.uid), payload, { merge: true });
     flashSave(true);
   } catch (e) {
     console.error('Firestore fout:', e);
@@ -371,210 +292,155 @@ function flashSave(ok) {
   }, 2500);
 }
 
-// ─── FIRESTORE LADEN ──────────────────────────────────────────────────────────
+// ── FIRESTORE LADEN ───────────────────────────────────────────────────────────
 async function loadFromFirestore() {
   if (!user) return;
   try {
     const snap = await getDoc(doc(db, 'households', user.uid));
     if (snap.exists()) {
       const data = snap.data();
-      // Alleen bekende dbFields inladen (geen server-side timestamps e.d.)
       QUESTIONS.forEach(q => {
-        if (q.dbField && data[q.dbField] !== undefined) {
-          state[q.dbField] = data[q.dbField];
-        }
+        if (q.dbField && data[q.dbField] !== undefined) state[q.dbField] = data[q.dbField];
       });
       if (data._step !== undefined) step = Math.min(data._step, NSTEPS);
-      if (data._status === 'complete') step = NSTEPS; // toon resultaatscherm
+      if (data._status === 'complete') step = NSTEPS;
     }
-  } catch (e) {
-    console.warn('Kon profiel niet laden:', e);
-  }
+  } catch (e) { console.warn('Kon profiel niet laden:', e); }
 }
 
-// ─── RESULTAATSCHERM ──────────────────────────────────────────────────────────
+// ── RESULTAATSCHERM ───────────────────────────────────────────────────────────
 function renderResultScreen() {
   const comp    = calcCompleteness(QUESTIONS, state);
   const summary = buildSummary(QUESTIONS, state);
   const email   = user?.email || '—';
   const prv     = state._consent_given === true;
-
-  const compHint = comp >= 75
-    ? '✓ Goed ingevuld profiel — we kunnen je goed matchen.'
-    : comp >= 50
-    ? '→ Meer invullen vergroot de kans op een betere match.'
-    : '→ Nog beperkt ingevuld. Hoe meer details, hoe beter we kunnen zoeken.';
-
+  const compHint = comp >= 75 ? '✓ Goed ingevuld profiel — we kunnen je goed matchen.'
+                : comp >= 50  ? '→ Meer invullen vergroot de kans op een betere match.'
+                              : '→ Nog beperkt ingevuld. Hoe meer details, hoe beter.';
   const sumItems = summary.map(s =>
-    `<div class="sum-item">
-      <div class="sum-key">${s.key}</div>
-      <div class="sum-val">${s.val}</div>
-    </div>`
-  ).join('');
-
-  const editLinks = Array.from({ length: NSTEPS }, (_, i) =>
-    `<button class="edit-lnk" onclick="goToStep(${i})">Stap ${i + 1} aanpassen</button>`
+    `<div class="sum-item"><div class="sum-key">${s.key}</div><div class="sum-val">${s.val}</div></div>`
+  ).join('') || '<div class="sum-item" style="grid-column:1/-1"><div class="sum-val" style="color:var(--light)">Nog geen antwoorden ingevuld</div></div>';
+  const editLinks = Array.from({length:NSTEPS},(_,i) =>
+    `<button class="edit-lnk" onclick="goToStep(${i})">Stap ${i+1} aanpassen</button>`
   ).join('');
 
   return `
     <div class="ey">Jouw woonprofiel</div>
     <h1 class="st">Dit hebben we <em>van je</em></h1>
-
     <div class="pilot-banner">
       <strong>⚠️ Pilotfase — eerlijk over onze stand van zaken</strong><br>
-      Niste is net gestart in Noord-Brabant. We bouwen actief een netwerk van profielen op.
-      Er zijn op dit moment <strong>nog beperkte matches beschikbaar</strong>. Zodra er een anoniem profiel in jouw regio verschijnt dat bij jou past, ontvang je een e-mail. Hoe lang dat duurt hangt af van het aantal aanmeldingen in jouw buurt.
+      Niste is net gestart in Noord-Brabant. Er zijn op dit moment <strong>nog beperkte matches beschikbaar</strong>. Zodra er een anoniem profiel in jouw regio verschijnt dat bij jou past, ontvang je een e-mail.
     </div>
-
     <div class="comp-wrap">
       <div class="comp-lbl"><span>Volledigheid profiel</span><span>${comp}%</span></div>
       <div class="comp-bar"><div class="comp-fill" style="width:${comp}%"></div></div>
       <div class="comp-hint">${compHint}</div>
     </div>
-
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.7rem">
       <div class="sl" style="margin:0">Samenvatting</div>
       <button class="edit-lnk" onclick="goToStep(0)">Alles bekijken</button>
     </div>
-    <div class="sum-grid">${sumItems || '<div class="sum-item" style="grid-column:1/-1"><div class="sum-val" style="color:var(--light)">Nog geen antwoorden ingevuld</div></div>'}</div>
-
+    <div class="sum-grid">${sumItems}</div>
     <div class="edit-lnk-row">${editLinks}</div>
-
     <div class="cta-box">
       <div class="cta-title">Profiel opslaan &amp; meldingen ontvangen</div>
-      <p class="cta-desc">
-        Je bent ingelogd als onderstaand e-mailadres. Zodra er in jouw regio een anoniem profiel
-        verschijnt dat bij jou past, ontvang je een bericht op dit adres. Geen spam, geen verplichtingen.
-      </p>
+      <p class="cta-desc">Je bent ingelogd als onderstaand e-mailadres. Zodra er in jouw regio een anoniem profiel verschijnt dat bij jou past, ontvang je een bericht. Geen spam, geen verplichtingen.</p>
       <div class="user-email-row">
-        <span class="user-email-icon">📧</span>
+        <span>📧</span>
         <div>
           <div class="user-email-lbl">Meldingen gaan naar</div>
           <div class="user-email-val">${email}</div>
         </div>
       </div>
-      <button class="btn-cta" id="submit-btn" onclick="submitProfile()" ${prv ? '' : 'disabled'}>
-        Profiel opslaan
-      </button>
+      <button class="btn-cta" id="submit-btn" onclick="submitProfile()" ${prv?'':'disabled'}>Profiel opslaan</button>
       <label class="chk-row" onclick="toggleConsent()">
-        <div class="chkbox${prv ? ' on' : ''}" id="consent-chk">${prv ? '✓' : ''}</div>
-        <span class="priv-lbl">Ik ga akkoord met de <a href="privacy.html" style="color:var(--gold-lt)">privacyverklaring</a>.
-          Mijn gegevens worden uitsluitend gebruikt voor het matchen van woningprofielen.
-          Ik kan mijn account en gegevens op elk moment volledig verwijderen.</span>
+        <div class="chkbox${prv?' on':''}" id="consent-chk">${prv?'✓':''}</div>
+        <span class="priv-lbl">Ik ga akkoord met de <a href="privacy.html" style="color:var(--gold-lt)">privacyverklaring</a>. Mijn gegevens worden uitsluitend gebruikt voor matching en nooit gedeeld zonder mijn toestemming.</span>
       </label>
-      <p class="priv-note">🔒 Jouw exacte adres wordt nooit opgeslagen of gedeeld. Matching is volledig anoniem. Pas bij wederzijdse toestemming van beide partijen is contact mogelijk.</p>
-    </div>
-  `;
+      <p class="priv-note">🔒 Jouw exacte adres wordt nooit opgeslagen. Matching is volledig anoniem.</p>
+    </div>`;
 }
 
-window.toggleConsent = function () {
+window.toggleConsent = function() {
   state._consent_given = !(state._consent_given === true);
   const chk = document.getElementById('consent-chk');
   const btn = document.getElementById('submit-btn');
-  if (chk) { chk.className = 'chkbox' + (state._consent_given ? ' on' : ''); chk.textContent = state._consent_given ? '✓' : ''; }
+  if (chk) { chk.className='chkbox'+(state._consent_given?' on':''); chk.textContent=state._consent_given?'✓':''; }
   if (btn) btn.disabled = !state._consent_given;
 };
 
-window.submitProfile = async function () {
+window.submitProfile = async function() {
   const btn = document.getElementById('submit-btn');
-  if (btn) { btn.disabled = true; btn.textContent = 'Opslaan…'; }
+  if (btn) { btn.disabled=true; btn.textContent='Opslaan…'; }
   await saveToFirestore(true);
-  document.getElementById('area').innerHTML = `<div class="card">
-    <div class="success-wrap">
-      <div class="success-ico">✅</div>
-      <div class="success-title">Profiel opgeslagen</div>
-      <p class="success-desc">
-        Jouw woonprofiel is opgeslagen. We zijn actief profielen aan het verzamelen in Noord-Brabant.<br><br>
-        <strong>Eerlijk gezegd:</strong> Niste is net gestart. Het kan enige tijd duren voordat er genoeg profielen zijn om te matchen in jouw buurt. Zodra er een anoniem profiel verschijnt dat bij jou past, ontvang je een e-mail op <em>${user?.email || ''}</em>. Je kunt je profiel tussentijds altijd aanpassen of verwijderen via je dashboard.
-      </p>
-      <button class="btn-edit-again" onclick="goToStep(0)">✏ Profiel aanpassen</button>
-      <a href="dashboard.html" class="btn-to-login" style="display:inline-block;text-decoration:none">Naar dashboard →</a>
-    </div>
-  </div>`;
+  document.getElementById('area').innerHTML = `<div class="card"><div class="success-wrap">
+    <div class="success-ico">✅</div>
+    <div class="success-title">Profiel opgeslagen</div>
+    <p class="success-desc">Jouw woonprofiel is opgeslagen.<br><br>
+      <strong>Eerlijk gezegd:</strong> Niste is net gestart. Het kan enige tijd duren voordat er genoeg profielen zijn om te matchen in jouw buurt. Je ontvangt een e-mail op <em>${user?.email||''}</em> zodra er een match is.
+    </p>
+    <button class="btn-edit-again" onclick="goToStep(0)">✏ Profiel aanpassen</button>
+    <a href="dashboard.html" class="btn-to-login" style="display:inline-block;text-decoration:none">Naar dashboard →</a>
+  </div></div>`;
 };
 
-// ─── HOOFD-RENDER ─────────────────────────────────────────────────────────────
+// ── HOOFD-RENDER ──────────────────────────────────────────────────────────────
 function renderCard() {
   const area = document.getElementById('area');
   if (!area) return;
-
   if (step >= NSTEPS) {
     area.innerHTML = `<div class="card">${renderResultScreen()}</div>`;
     return;
   }
-
   const inner = renderStep(step, QUESTIONS, state, STEP_TITLES);
-  const isFirst = step === 0;
-
   const nav = `
     <div class="nav-row">
-      ${isFirst ? '<div></div>' : `<button class="btn-back" onclick="goToStep(${step - 1})">← Terug</button>`}
+      ${step>0 ? `<button class="btn-back" onclick="goToStep(${step-1})">← Terug</button>` : '<div></div>'}
       <div class="btn-right">
-        <button class="btn-skip" onclick="goToStep(${step + 1})">Overslaan</button>
-        <button class="btn-next" onclick="goToStep(${step + 1})">
-          ${step === NSTEPS - 1 ? 'Bekijk profiel →' : 'Volgende →'}
+        <button class="btn-skip" onclick="goToStep(${step+1})">Overslaan</button>
+        <button class="btn-next" onclick="goToStep(${step+1})">
+          ${step===NSTEPS-1?'Bekijk profiel →':'Volgende →'}
         </button>
       </div>
     </div>`;
-
   area.innerHTML = `<div class="card">${inner}${nav}</div>`;
 }
 
-function renderAll() {
-  renderDots();
-  renderProgress();
-  renderCard();
+function renderAll() { renderDots(); renderProgress(); renderCard(); }
+
+// ── INIT: auth op basis van embedded-modus ────────────────────────────────────
+async function initWithUser(u) {
+  user = u;
+  const nu = document.getElementById('nav-user');
+  if (nu) nu.textContent = u.email;
+  await loadFromFirestore();
+  renderAll();
 }
 
-// ── AUTH: embedded = user komt van parent via postMessage ─────────────────────
 if (embedded) {
-  // Wacht op uid van parent dashboard
+  // Wacht op uid van parent dashboard via postMessage
+  document.getElementById('area').innerHTML = '';
+  renderAll(); // toon stap 0 alvast leeg zodat er geen spinner hangt
   window.addEventListener('message', async (e) => {
     if (e.data?.type !== 'NISTE_USER') return;
-    user = { uid: e.data.uid, email: e.data.email };
-    const nu = document.getElementById('nav-user');
-    if (nu) nu.textContent = user.email;
-    await loadFromFirestore();
-    renderAll();
+    await initWithUser({ uid: e.data.uid, email: e.data.email });
   }, { once: true });
-
-  // Toon lege staat zonder auth-gate (parent levert user aan)
-  document.getElementById('area').innerHTML = '';
-  renderAll();
-
 } else {
   // Standalone: normale Firebase auth
   onAuthStateChanged(auth, async (u) => {
     if (!u) {
       document.getElementById('area').innerHTML = `
-        <div class="card">
-          <div class="auth-gate">
-            <div class="auth-gate-title">Eerst aanmelden</div>
-            <p class="auth-gate-desc">Om je woonprofiel op te slaan en matches te ontvangen, moet je ingelogd zijn.</p>
-            <a href="aanmelden.html" class="btn-to-login">Aanmelden of inloggen →</a>
-          </div>
-        </div>`;
+        <div class="card"><div class="auth-gate">
+          <div class="auth-gate-title">Eerst aanmelden</div>
+          <p class="auth-gate-desc">Om je woonprofiel op te slaan en matches te ontvangen, moet je ingelogd zijn.</p>
+          <a href="aanmelden.html" class="btn-to-login">Aanmelden of inloggen →</a>
+        </div></div>`;
       document.getElementById('sdots').innerHTML = '';
       return;
     }
-    user = u;
-    const nu = document.getElementById('nav-user');
-    if (nu) nu.textContent = u.email;
-    await loadFromFirestore();
-    renderAll();
+    await initWithUser(u);
   });
 }
-
-  // Toon e-mail in nav
-  const nu = document.getElementById('nav-user');
-  if (nu) nu.textContent = u.email;
-
-  // Laad bestaand profiel uit Firestore
-  await loadFromFirestore();
-
-  // Render intake
-  renderAll();
-});
 </script>
 </body>
 </html>
