@@ -637,4 +637,13 @@ export const QUESTIONS = [
     placeholder: 'Bijv. begane grond, dicht bij kleinkind, rustige straat, geen flat…',
     dbField: 'opmerkingen', optional: true,
   },
+  {
+  id: 'eigen_vraag',
+  step: 7,                    // welke stap (0–6)
+  type: 'chips',              // tile|chips|counter|toggle|scale|slider|textarea
+  sectionLabel: 'Mijn label',
+  options: ['Optie A', 'Optie B'],
+  dbField: 'eigen_vraag',     // exacte veldnaam in Firestore
+  optional: true,
+}
 ];
