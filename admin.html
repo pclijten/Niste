@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Niste Admin</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --cream: #F6F1E9; --sand: #D9CEBC; --warm: #EDE5D4;
+      --forest: #2A4A3E; --moss: #3D6B5C;
+      --gold: #C49A4A; --gold-lt: #E8C97A; --gold-pale: #F5EDD6;
+      --rust: #B85C38; --dark: #1A1A16; --mid: #5A5A50; --light: #9A9A8E;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--dark); min-height: 100vh; }
+
+    /* LOADING */
+    #loading {
+      position: fixed; inset: 0; background: var(--cream);
+      display: flex; align-items: center; justify-content: center; z-index: 999;
+    }
+    .loading-logo { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 600; color: var(--forest); display: flex; align-items: center; }
+    .loading-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); margin-left: 2px; animation: ldot 1.2s ease-in-out infinite; }
+    @keyframes ldot { 0%,100%{opacity:.3;transform:scale(.8)} 50%{opacity:1;transform:scale(1.3)} }
+
+    /* NAV */
+    nav {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 2.5rem;
+      background: var(--forest);
+      position: sticky; top: 0; z-index: 50;
+    }
+    .nav-logo { font-family: 'Cormorant Garamond', serif; font-size: 1.5rem; font-weight: 600; color: var(--cream); text-decoration: none; display: flex; align-items: center; gap: .5rem; }
+    .admin-badge { font-size: .6rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; background: var(--gold); color: var(--dark); padding: .2rem .6rem; border-radius: 4px; }
+    .nav-right { display: flex; align-items: center; gap: 1rem; }
+    .nav-user { font-size: .78rem; color: rgba(246,241,233,.6); }
+    .btn-logout { background: transparent; border: 1px solid rgba(246,241,233,.25); border-radius: 100px; padding: .4rem .9rem; font-family: 'Plus Jakarta Sans', sans-serif; font-size: .72rem; font-weight: 700; color: rgba(246,241,233,.7); cursor: pointer; transition: all .2s; }
+    .btn-logout:hover { border-color: rgba(246,241,233,.6); color: var(--cream); }
+    .btn-refresh { background: rgba(246,241,233,.1); border: none; border-radius: 8px; padding: .4rem .8rem; font-family: 'Plus Jakarta Sans', sans-serif; font-size: .72rem; font-weight: 700; color: var(--cream); cursor: pointer; transition: all .2s; display: flex; align-items: center; gap: .4rem; }
+    .btn-refresh:hover { background: rgba(246,241,233,.18); }
+
+    /* MAIN */
+    .main { max-width: 1100px; margin: 0 auto; padding: 2.5rem 1.5rem 6rem; }
+
+    /* PAGE HEADER */
+    .ph { margin-bottom: 2rem; }
+    .ph-ey { font-size: .62rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; color: var(--gold); margin-bottom: .4rem; }
+    .ph-title { font-family: 'Cormorant Garamond', serif; font-size: 2.2rem; font-weight: 400; color: var(--dark); }
+    .ph-title em { font-style: italic; color: var(--forest); }
+    .ph-sub { font-size: .84rem; color: var(--mid); margin-top: .3rem; }
+
+    /* STAT CARDS */
+    .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 1.8rem; }
+    .stat { background: #fff; border-radius: 18px; padding: 1.4rem 1.6rem; border: 1px solid rgba(42,74,62,.07); box-shadow: 0 2px 12px rgba(0,0,0,.04); }
+    .stat-val { font-family: 'Cormorant Garamond', serif; font-size: 2.6rem; font-weight: 600; color: var(--forest); line-height: 1; }
+    .stat-lbl { font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--light); margin-top: .3rem; }
+    .stat-sub { font-size: .76rem; color: var(--mid); margin-top: .2rem; }
+
+    /* TWO COLUMN */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 1.2rem; }
+    .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1.2rem; margin-bottom: 1.2rem; }
+
+    /* CARD */
+    .card { background: #fff; border-radius: 20px; padding: 1.6rem 1.8rem; border: 1px solid rgba(42,74,62,.07); box-shadow: 0 2px 16px rgba(0,0,0,.04); }
+    .card-lbl { font-size: .62rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--light); margin-bottom: 1rem; }
+
+    /* BAR CHART */
+    .bar-row { display: flex; align-items: center; gap: .8rem; margin-bottom: .6rem; }
+    .bar-key { font-size: .78rem; color: var(--mid); min-width: 90px; text-align: right; font-weight: 500; }
+    .bar-track { flex: 1; height: 8px; border-radius: 4px; background: var(--warm); overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--forest), var(--moss)); transition: width .8s cubic-bezier(.4,0,.2,1); }
+    .bar-count { font-size: .75rem; color: var(--light); min-width: 28px; font-weight: 600; }
+
+    /* COMPLETENESS BUCKETS */
+    .comp-bucket { display: flex; align-items: center; justify-content: space-between; padding: .6rem 0; border-bottom: 1px solid rgba(217,206,188,.4); }
+    .comp-bucket:last-child { border-bottom: none; }
+    .comp-bucket-lbl { font-size: .82rem; font-weight: 600; color: var(--dark); }
+    .comp-bucket-bar { flex: 1; height: 6px; border-radius: 3px; background: var(--warm); margin: 0 .8rem; overflow: hidden; }
+    .comp-bucket-fill { height: 100%; border-radius: 3px; }
+    .fill-high   { background: var(--forest); }
+    .fill-mid    { background: var(--gold); }
+    .fill-low    { background: var(--rust); }
+    .comp-bucket-n { font-size: .8rem; font-weight: 700; color: var(--mid); min-width: 24px; text-align: right; }
+
+    /* POSTCODE TABLE */
+    .pc-table { width: 100%; border-collapse: collapse; }
+    .pc-table th { font-size: .6rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--light); padding: .4rem .6rem; text-align: left; border-bottom: 1px solid rgba(217,206,188,.5); }
+    .pc-table td { font-size: .82rem; padding: .6rem .6rem; border-bottom: 1px solid rgba(217,206,188,.3); color: var(--dark); }
+    .pc-table tr:last-child td { border-bottom: none; }
+    .pc-table tr:hover td { background: var(--cream); }
+    .pc-pill { display: inline-block; background: rgba(42,74,62,.08); border-radius: 6px; padding: .15rem .55rem; font-weight: 700; font-size: .78rem; color: var(--forest); }
+
+    /* RECENT TABLE */
+    .rec-table { width: 100%; border-collapse: collapse; }
+    .rec-table th { font-size: .6rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--light); padding: .5rem .8rem; text-align: left; border-bottom: 1px solid rgba(217,206,188,.5); }
+    .rec-table td { font-size: .82rem; padding: .65rem .8rem; border-bottom: 1px solid rgba(217,206,188,.25); vertical-align: middle; }
+    .rec-table tr:last-child td { border-bottom: none; }
+    .rec-table tr:hover td { background: var(--cream); }
+    .status-pill { display: inline-flex; align-items: center; gap: .35rem; padding: .2rem .7rem; border-radius: 100px; font-size: .68rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+    .sp-complete    { background: rgba(42,74,62,.1);  color: var(--forest); }
+    .sp-in_progress { background: rgba(196,154,74,.12); color: #9a7530; }
+    .status-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+    .comp-num { font-size: .72rem; font-weight: 700; color: var(--mid); }
+    .comp-bar-inline { width: 60px; height: 5px; border-radius: 3px; background: var(--warm); overflow: hidden; display: inline-block; vertical-align: middle; margin-left: .4rem; }
+    .comp-fill-inline { height: 100%; border-radius: 3px; background: var(--forest); }
+
+    /* EMPTY */
+    .empty { text-align: center; padding: 2.5rem 1rem; color: var(--light); font-size: .86rem; }
+
+    /* PILOT NOTICE */
+    .pilot-notice { background: var(--gold-pale); border: 1px solid rgba(196,154,74,.3); border-radius: 14px; padding: 1rem 1.4rem; margin-bottom: 1.8rem; font-size: .82rem; color: var(--dark); line-height: 1.6; }
+
+    /* SPINNER */
+    .spin { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(246,241,233,.3); border-top-color: var(--cream); border-radius: 50%; animation: spin .7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    @media(max-width: 768px) {
+      .stat-grid { grid-template-columns: 1fr 1fr; }
+      .two-col, .three-col { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="loading">
+  <div class="loading-logo">niste<span class="loading-dot"></span></div>
+</div>
+
+<nav>
+  <a href="dashboard.html" class="nav-logo">
+    niste
+    <span class="admin-badge">Admin</span>
+  </a>
+  <div class="nav-right">
+    <span class="nav-user" id="nav-user"></span>
+    <button class="btn-refresh" onclick="loadData()"><span id="refresh-spin" style="display:none" class="spin"></span> ↻ Vernieuwen</button>
+    <button class="btn-logout" onclick="doLogout()">Uitloggen</button>
+  </div>
+</nav>
+
+<div class="main">
+
+  <div class="ph">
+    <div class="ph-ey">Admin — Pilot overzicht</div>
+    <h1 class="ph-title">Niste <em>Noord-Brabant 2026</em></h1>
+    <p class="ph-sub" id="last-updated">Laden…</p>
+  </div>
+
+  <div class="pilot-notice">
+    📊 Dit overzicht toont geanonimiseerde aggregaten. Geen namen of e-mailadressen zijn zichtbaar — alleen wat nodig is om de pilot te monitoren en matches te activeren.
+  </div>
+
+  <!-- STATS -->
+  <div class="stat-grid">
+    <div class="stat">
+      <div class="stat-val" id="s-total">—</div>
+      <div class="stat-lbl">Profielen totaal</div>
+      <div class="stat-sub" id="s-total-sub">laden…</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="s-complete">—</div>
+      <div class="stat-lbl">Volledig opgeslagen</div>
+      <div class="stat-sub" id="s-complete-sub">status: complete</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="s-avg">—</div>
+      <div class="stat-lbl">Gem. volledigheid</div>
+      <div class="stat-sub" id="s-avg-sub">van alle profielen</div>
+    </div>
+    <div class="stat">
+      <div class="stat-val" id="s-pc">—</div>
+      <div class="stat-lbl">Unieke postcodes</div>
+      <div class="stat-sub" id="s-pc-sub">4-cijferig gebied</div>
+    </div>
+  </div>
+
+  <div class="two-col">
+
+    <!-- COMPLETENESS VERDELING -->
+    <div class="card">
+      <div class="card-lbl">Profielvolledigheid</div>
+      <div id="comp-chart">
+        <div class="empty">Laden…</div>
+      </div>
+    </div>
+
+    <!-- STATUS VERDELING -->
+    <div class="card">
+      <div class="card-lbl">Verhuisbereidheid (slider 1–5)</div>
+      <div id="bereid-chart">
+        <div class="empty">Laden…</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="two-col">
+
+    <!-- WONINGTYPE VERDELING -->
+    <div class="card">
+      <div class="card-lbl">Woningtype huidige woning</div>
+      <div id="type-chart">
+        <div class="empty">Laden…</div>
+      </div>
+    </div>
+
+    <!-- GEWENST TYPE -->
+    <div class="card">
+      <div class="card-lbl">Gewenst woningtype</div>
+      <div id="gewenst-chart">
+        <div class="empty">Laden…</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- POSTCODES -->
+  <div class="card" style="margin-bottom:1.2rem">
+    <div class="card-lbl">Profielen per postcode (top 15)</div>
+    <div id="pc-table">
+      <div class="empty">Laden…</div>
+    </div>
+  </div>
+
+  <!-- RECENTE AANMELDINGEN -->
+  <div class="card">
+    <div class="card-lbl">Recentste profielen (max. 20)</div>
+    <div id="recent-table">
+      <div class="empty">Laden…</div>
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js';
+import { getAuth, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js';
+import { getFirestore, collection, getDocs, query, orderBy, limit }
+  from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js';
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyDkrkHrPW4pPu0_ZVKGma-AVF4-gTtk9R8",
+  authDomain:        "niste-1113e.firebaseapp.com",
+  projectId:         "niste-1113e",
+  storageBucket:     "niste-1113e.firebasestorage.app",
+  messagingSenderId: "292138618317",
+  appId:             "1:292138618317:web:50984a6bff31725d6a0884",
+};
+
+const app  = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
+const auth = getAuth(app);
+const db   = getFirestore(app);
+
+// ── ADMIN E-MAILADRESSEN ───────────────────────────────────────────────────────
+// Voeg hier de e-mailadressen toe van mensen die admin toegang mogen hebben
+const ADMIN_EMAILS = [
+  'pclijten@gmail.com',
+  'eplijten@gmail.com',
+];
+
+// ── AUTH GUARD ─────────────────────────────────────────────────────────────────
+onAuthStateChanged(auth, async (user) => {
+  if (!user) {
+    window.location.href = 'aanmelden.html';
+    return;
+  }
+  if (!ADMIN_EMAILS.includes(user.email)) {
+    // Niet-admin → terug naar dashboard
+    window.location.href = 'dashboard.html';
+    return;
+  }
+  document.getElementById('nav-user').textContent = user.email;
+  document.getElementById('loading').style.display = 'none';
+  await loadData();
+});
+
+window.doLogout = async () => {
+  await signOut(auth);
+  window.location.href = 'index.html';
+};
+
+// ── DATA LADEN ────────────────────────────────────────────────────────────────
+window.loadData = async () => {
+  const spin = document.getElementById('refresh-spin');
+  spin.style.display = 'inline-block';
+
+  try {
+    const snap = await getDocs(collection(db, 'households'));
+    const docs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+    renderStats(docs);
+    renderComplChart(docs);
+    renderBereidChart(docs);
+    renderTypeChart(docs, 'woning_type', 'type-chart', {
+      tussenwoning:'Tussenwoning', hoekwoning:'Hoekwoning', '2kap':'2-onder-1-kap',
+      vrijstaand:'Vrijstaand', appartement:'Appartement', boven_beneden:'Boven/beneden',
+      penthouse:'Penthouse', woonboerderij:'Woonboerderij',
+    });
+    renderTypeChart(docs, 'gewenst_type', 'gewenst-chart', {
+      vergelijkbaar:'Vergelijkbaar', kleiner:'Kleiner', gelijkvloers:'Gelijkvloers',
+      groter:'Groter', appartement:'Appartement', grondgeb:'Grondgebonden',
+      zorg:'Zorggeschikt', weet_niet:'Weet ik nog niet',
+    });
+    renderPostcodes(docs);
+    renderRecent(docs);
+
+    document.getElementById('last-updated').textContent =
+      'Bijgewerkt om ' + new Date().toLocaleTimeString('nl-NL', {hour:'2-digit', minute:'2-digit'}) +
+      ' · ' + docs.length + ' profielen geladen';
+  } catch (e) {
+    console.error(e);
+    document.getElementById('last-updated').textContent = 'Laadфout: ' + e.message;
+  } finally {
+    spin.style.display = 'none';
+  }
+};
+
+// ── STATS ─────────────────────────────────────────────────────────────────────
+function renderStats(docs) {
+  const total    = docs.length;
+  const complete = docs.filter(d => d._status === 'complete').length;
+  const comps    = docs.map(d => d._completeness ?? 0).filter(n => n > 0);
+  const avg      = comps.length ? Math.round(comps.reduce((a,b)=>a+b,0)/comps.length) : 0;
+  const pcs      = new Set(docs.map(d => d.postcode).filter(Boolean)).size;
+
+  document.getElementById('s-total').textContent    = total;
+  document.getElementById('s-total-sub').textContent = `${docs.filter(d=>d._status==='in_progress').length} in behandeling`;
+  document.getElementById('s-complete').textContent  = complete;
+  document.getElementById('s-avg').textContent       = avg ? avg + '%' : '—';
+  document.getElementById('s-pc').textContent        = pcs || '—';
+  document.getElementById('s-pc-sub').textContent    = pcs ? `in ${pcs} gebieden` : 'nog geen postcodes';
+}
+
+// ── VOLLEDIGHEID CHART ────────────────────────────────────────────────────────
+function renderComplChart(docs) {
+  const buckets = [
+    { lbl: '75–100% (goed)',   cls: 'fill-high', fn: d => (d._completeness??0) >= 75 },
+    { lbl: '50–74% (matig)',   cls: 'fill-mid',  fn: d => (d._completeness??0) >= 50 && (d._completeness??0) < 75 },
+    { lbl: '1–49% (beperkt)',  cls: 'fill-low',  fn: d => (d._completeness??0) > 0  && (d._completeness??0) < 50 },
+    { lbl: '0% (leeg)',        cls: 'fill-low',  fn: d => !(d._completeness??0) },
+  ];
+  const total = docs.length || 1;
+  const html = buckets.map(b => {
+    const n   = docs.filter(b.fn).length;
+    const pct = Math.round(n/total*100);
+    return `<div class="comp-bucket">
+      <div class="comp-bucket-lbl">${b.lbl}</div>
+      <div class="comp-bucket-bar"><div class="comp-bucket-fill ${b.cls}" style="width:${pct}%"></div></div>
+      <div class="comp-bucket-n">${n}</div>
+    </div>`;
+  }).join('');
+  document.getElementById('comp-chart').innerHTML = html || '<div class="empty">Geen data</div>';
+}
+
+// ── VERHUISBEREIDHEID CHART ───────────────────────────────────────────────────
+function renderBereidChart(docs) {
+  const labels = ['1 — Zeker niet','2 — Waarschijnlijk niet','3 — Misschien','4 — Open','5 — Actief zoekend'];
+  const counts = [1,2,3,4,5].map(n => docs.filter(d => d.verhuisbereidheid === n).length);
+  const max = Math.max(...counts, 1);
+  const html = labels.map((lbl,i) => `
+    <div class="bar-row">
+      <div class="bar-key">${lbl}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(counts[i]/max*100)}%"></div></div>
+      <div class="bar-count">${counts[i]}</div>
+    </div>`).join('');
+  document.getElementById('bereid-chart').innerHTML = html || '<div class="empty">Geen data</div>';
+}
+
+// ── GENERIEKE TYPE CHART ───────────────────────────────────────────────────────
+function renderTypeChart(docs, field, elId, labelMap) {
+  const counts = {};
+  docs.forEach(d => {
+    const v = d[field];
+    if (v) counts[v] = (counts[v]||0) + 1;
+  });
+  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]);
+  const max = sorted[0]?.[1] || 1;
+  if (!sorted.length) { document.getElementById(elId).innerHTML = '<div class="empty">Geen data</div>'; return; }
+  const html = sorted.map(([k,n]) => `
+    <div class="bar-row">
+      <div class="bar-key">${labelMap[k]||k}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${Math.round(n/max*100)}%"></div></div>
+      <div class="bar-count">${n}</div>
+    </div>`).join('');
+  document.getElementById(elId).innerHTML = html;
+}
+
+// ── POSTCODE TABEL ────────────────────────────────────────────────────────────
+function renderPostcodes(docs) {
+  const counts = {};
+  const avgComp = {};
+  docs.forEach(d => {
+    const pc = d.postcode;
+    if (!pc) return;
+    counts[pc]  = (counts[pc]||0) + 1;
+    avgComp[pc] = (avgComp[pc]||[]);
+    avgComp[pc].push(d._completeness||0);
+  });
+  const sorted = Object.entries(counts).sort((a,b)=>b[1]-a[1]).slice(0,15);
+  if (!sorted.length) { document.getElementById('pc-table').innerHTML = '<div class="empty">Nog geen postcodes ingevuld</div>'; return; }
+
+  const rows = sorted.map(([pc,n]) => {
+    const arr = avgComp[pc];
+    const avg = Math.round(arr.reduce((a,b)=>a+b,0)/arr.length);
+    return `<tr>
+      <td><span class="pc-pill">${pc}</span></td>
+      <td style="font-weight:700">${n}</td>
+      <td>
+        <span class="comp-num">${avg}%</span>
+        <span class="comp-bar-inline"><span class="comp-fill-inline" style="width:${avg}%"></span></span>
+      </td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('pc-table').innerHTML = `
+    <table class="pc-table">
+      <thead><tr><th>Postcode</th><th>Profielen</th><th>Gem. volledigheid</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+// ── RECENTE PROFIELEN ─────────────────────────────────────────────────────────
+function renderRecent(docs) {
+  // Sorteer op _updatedAt (Firestore timestamp of undefined)
+  const sorted = [...docs].sort((a,b) => {
+    const ta = a._updatedAt?.seconds || 0;
+    const tb = b._updatedAt?.seconds || 0;
+    return tb - ta;
+  }).slice(0, 20);
+
+  if (!sorted.length) { document.getElementById('recent-table').innerHTML = '<div class="empty">Nog geen profielen</div>'; return; }
+
+  const rows = sorted.map(d => {
+    const comp   = d._completeness ?? 0;
+    const status = d._status || 'in_progress';
+    const pc     = d.postcode || '—';
+    const wt     = d.woning_type || '—';
+    const gw     = d.gewenst_type || '—';
+    const bereid = d.verhuisbereidheid ? d.verhuisbereidheid + '/5' : '—';
+    const ts     = d._updatedAt?.seconds
+      ? new Date(d._updatedAt.seconds*1000).toLocaleDateString('nl-NL',{day:'2-digit',month:'2-digit',year:'2-digit'})
+      : '—';
+    const sPill  = status === 'complete'
+      ? `<span class="status-pill sp-complete"><span class="status-dot"></span>Opgeslagen</span>`
+      : `<span class="status-pill sp-in_progress"><span class="status-dot"></span>In bewerking</span>`;
+
+    return `<tr>
+      <td>${ts}</td>
+      <td>${pc}</td>
+      <td>${wt}</td>
+      <td>${gw}</td>
+      <td>${bereid}</td>
+      <td>
+        <span class="comp-num">${comp}%</span>
+        <span class="comp-bar-inline"><span class="comp-fill-inline" style="width:${comp}%"></span></span>
+      </td>
+      <td>${sPill}</td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('recent-table').innerHTML = `
+    <table class="rec-table">
+      <thead><tr>
+        <th>Datum</th><th>PC</th><th>Huidig type</th><th>Gewenst</th>
+        <th>Bereidheid</th><th>Volledigheid</th><th>Status</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+</script>
+</body>
+</html>
