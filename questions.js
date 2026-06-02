@@ -1,30 +1,33 @@
-// questions.js — Niste Wooncheck vragenconfig
+// questions.js — Niste Wooncheck vragenconfig (v2)
 //
-// HOE GEBRUIK JE DIT BESTAND:
-//   Vraag toevoegen  → één object toevoegen aan QUESTIONS array
-//   Vraag verwijderen → object weghalen (Firestore-veld blijft intact voor bestaande profielen)
-//   Opties wijzigen  → options array aanpassen
-//   Naar andere stap → step getal aanpassen (0–6)
-//   Volgorde wijzigen → volgorde in array aanpassen
+// ─── TWEE MODI ──────────────────────────────────────────────────────────────
+//   KORT  → snel kennismaken (~15 vragen). Toont alleen vragen met short: true.
+//   LANG  → volledig profiel. Toont alle vragen.
 //
-// VRAAGTYPEN:
-//   postcode         speciale postcode input (4 cijfers)
-//   tiles            klikbare tegels met optioneel icon (grid: g2/g3/g4)
-//   chips            horizontale pill buttons (multi: true voor meerdere)
-//   counter          min/max teller (maxRef: 'andere_vraag_id' voor dynamisch max)
-//   toggle           aan/uit schakelaar
-//   scale            1–5 schaalvraag (ends: ['links label','rechts label'])
-//   slider           schuifbalk 1–5 (voor verhuisbereidheid)
-//   textarea         vrij tekstveld
-//   computed_badge   automatisch berekende badge (geen dbField)
+//   De korte versie is een STRIKTE SUBSET van de lange: zelfde id's en dbField's.
+//   Wie kort invult kan later naadloos "aanvullen naar volledig" zonder iets
+//   opnieuw te doen — de matching gebruikt in beide gevallen dezelfde velden.
 //
-// CONDITIONEEL TONEN:
+//   Filteren in je renderer:
+//     const visible = QUESTIONS.filter(q => mode === 'lang' ? true : q.short);
+//   Stappen voor de korte modus opnieuw nummeren:
+//     de helper buildSteps(mode) onderaan dit bestand doet dat automatisch.
+//
+// ─── HOE GEBRUIK JE DIT BESTAND ──────────────────────────────────────────────
+//   Vraag toevoegen   → object toevoegen aan QUESTIONS
+//   Vraag verwijderen → object weghalen (Firestore-veld blijft intact)
+//   In korte versie   → short: true toevoegen
+//   Opties wijzigen   → options array aanpassen
+//   Naar andere stap  → step getal aanpassen (0–6, lange-versie indeling)
+//
+// ─── VRAAGTYPEN ───────────────────────────────────────────────────────────────
+//   postcode | tiles (g2/g3/g4) | chips (multi:true) | counter (maxRef)
+//   toggle | scale (ends:[links,rechts]) | slider | textarea | computed_badge
+//
+// ─── CONDITIONEEL ─────────────────────────────────────────────────────────────
 //   showIf: { key: 'andere_vraag_id', value: true }
-//
-// SECTIE-LABEL:
-//   sectionLabel: 'Tekst boven de vraag'
 
-// ─── STAP TITELS ──────────────────────────────────────────────────────────────
+// ─── STAP TITELS (lange versie) ───────────────────────────────────────────────
 export const STEP_TITLES = [
   {
     eyebrow: 'Stap 1 van 7 — Jouw woning',
@@ -44,12 +47,12 @@ export const STEP_TITLES = [
   {
     eyebrow: 'Stap 4 van 7 — Energie &amp; installaties',
     title:   'Energie &amp; <em>duurzaamheid</em>',
-    desc:    'Een volledig energieprofiel helpt ons te matchen op duurzaamheidswensen.',
+    desc:    'Een energieprofiel helpt ons te matchen op duurzaamheidswensen.',
   },
   {
-    eyebrow: 'Stap 5 van 7 — Gevoel &amp; beleving',
+    eyebrow: 'Stap 5 van 7 — Buurt &amp; beleving',
     title:   'Hoe <em>voelt</em> het hier?',
-    desc:    'Omgevingspsychologisch onderzoek laat zien dat subjectieve woonbeleving een grote rol speelt bij verhuisbereidheid. Geen goede of foute antwoorden.',
+    desc:    'Subjectieve woonbeleving speelt een grote rol bij verhuisbereidheid. Geen goede of foute antwoorden.',
   },
   {
     eyebrow: 'Stap 6 van 7 — Jouw situatie',
@@ -63,6 +66,25 @@ export const STEP_TITLES = [
   },
 ];
 
+// Titels voor de KORTE versie (3 compacte stappen).
+export const SHORT_STEP_TITLES = [
+  {
+    eyebrow: 'Stap 1 van 3 — Jouw woning nu',
+    title:   'Waar woon je <em>nu</em>?',
+    desc:    'Een paar basics. Geen adres — alleen wat nodig is voor een eerste match.',
+  },
+  {
+    eyebrow: 'Stap 2 van 3 — Hoe past het?',
+    title:   'Past je woning nog bij <em>je leven</em>?',
+    desc:    'Niet wat je hebt, maar hoe goed het nog klopt.',
+  },
+  {
+    eyebrow: 'Stap 3 van 3 — Wat zoek je?',
+    title:   'In welke richting <em>denk je</em>?',
+    desc:    'Nog niks concreets nodig. Een richting is genoeg.',
+  },
+];
+
 // ─── VRAGENLIJST ──────────────────────────────────────────────────────────────
 export const QUESTIONS = [
 
@@ -72,6 +94,8 @@ export const QUESTIONS = [
     id: 'postcode', step: 0, type: 'postcode',
     sectionLabel: 'Postcode (4 cijfers — wijk-niveau, geen straat)',
     dbField: 'postcode', optional: true,
+    short: true, shortStep: 0,
+    enrich: 'bag', // kan later met BAG/EP-online verrijkt worden op postcode
   },
   {
     id: 'woning_type', step: 0, type: 'tiles', grid: 'g2',
@@ -87,12 +111,14 @@ export const QUESTIONS = [
       { value: 'woonboerderij',  label: 'Woonboerderij',       icon: '🌾' },
     ],
     dbField: 'woning_type', optional: true,
+    short: true, shortStep: 0,
   },
   {
     id: 'oppervlak', step: 0, type: 'chips',
     sectionLabel: 'Woonoppervlak (gebruiksoppervlak)',
     options: ['< 50 m²','50–75 m²','75–100 m²','100–125 m²','125–150 m²','150–175 m²','175–200 m²','> 200 m²'],
     dbField: 'oppervlak', optional: true,
+    short: true, shortStep: 0,
   },
   {
     id: 'perceel', step: 0, type: 'chips',
@@ -105,6 +131,7 @@ export const QUESTIONS = [
     sectionLabel: 'Bouwjaar',
     options: ['Vóór 1945','1945–1960','1960–1975','1975–1990','1990–2005','2005–2015','Na 2015'],
     dbField: 'bouwjaar', optional: true,
+    enrich: 'bag',
   },
   {
     id: 'prijs_range', step: 0, type: 'chips',
@@ -121,12 +148,14 @@ export const QUESTIONS = [
     label: 'Totaal aantal kamers', sublabel: 'Incl. woonkamer',
     min: 1, max: 15, default: 4,
     dbField: 'kamers_totaal', optional: true,
+    short: true, shortStep: 0,
   },
   {
     id: 'kamers_gebruikt', step: 1, type: 'counter',
     label: 'Dagelijks gebruikte kamers', sublabel: 'Hoeveel kamers gebruik je echt?',
     min: 1, max: 15, maxRef: 'kamers_totaal', default: 3,
     dbField: 'kamers_gebruikt', optional: true,
+    short: true, shortStep: 0, // levert samen met kamers_totaal het mismatch-signaal
   },
   {
     id: 'slaapkamers', step: 1, type: 'counter',
@@ -153,6 +182,12 @@ export const QUESTIONS = [
     dbField: 'verdiepingen', optional: true,
   },
   {
+    id: 'gelijkvloers_nu', step: 1, type: 'toggle',
+    label: 'Woning is (volledig) gelijkvloers bewoonbaar',
+    sublabel: 'Slapen + badkamer op de begane grond mogelijk',
+    dbField: 'gelijkvloers_nu', optional: true,
+  },
+  {
     id: '_mismatch_badge', step: 1, type: 'computed_badge',
     compute: 'mismatch',
     dbField: null, optional: true,
@@ -165,6 +200,7 @@ export const QUESTIONS = [
   },
   {
     id: 'zolder_bwb', step: 1, type: 'toggle',
+    showIf: { key: 'zolder', value: true },
     label: 'Zolder bewoonbaar of te maken', sublabel: 'Potentieel extra kamer/kantoor',
     dbField: 'zolder_bwb', optional: true,
   },
@@ -218,35 +254,19 @@ export const QUESTIONS = [
     dbField: 'tuin_ond', optional: true,
   },
   {
-    id: 'vijver', step: 2, type: 'toggle',
-    sectionLabel: 'Bijzonderheden tuin',
-    showIf: { key: 'tuin', value: true },
-    label: 'Vijver aanwezig',
-    dbField: 'vijver', optional: true,
-  },
-  {
-    id: 'sproeisysteem', step: 2, type: 'toggle',
-    showIf: { key: 'tuin', value: true },
-    label: 'Automatisch sproeisysteem',
-    dbField: 'sproeisysteem', optional: true,
-  },
-  {
-    id: 'overkapping', step: 2, type: 'toggle',
-    showIf: { key: 'tuin', value: true },
-    label: 'Overkapping / veranda / pergola',
-    dbField: 'overkapping', optional: true,
-  },
-  {
-    id: 'buitenverlichting', step: 2, type: 'toggle',
-    showIf: { key: 'tuin', value: true },
-    label: 'Buitenverlichting',
-    dbField: 'buitenverlichting', optional: true,
-  },
-  {
     id: 'tuin_bestrating', step: 2, type: 'toggle',
     showIf: { key: 'tuin', value: true },
     label: 'Grotendeels bestraat', sublabel: 'Weinig of geen gras — relevant voor onderhoudslast',
     dbField: 'tuin_bestrating', optional: true,
+  },
+  // Samengevoegd: vijver/sproei/overkapping/verlichting waren losse toggles met
+  // weinig matchwaarde. Nu één multi-chip "extra's" — scheelt 4 vragen.
+  {
+    id: 'tuin_extras', step: 2, type: 'chips', multi: true,
+    sectionLabel: 'Extra’s in de tuin (optioneel)',
+    showIf: { key: 'tuin', value: true },
+    options: ['Vijver','Sproeisysteem','Overkapping/veranda','Buitenverlichting'],
+    dbField: 'tuin_extras', optional: true,
   },
   {
     id: 'parkeer_eigen', step: 2, type: 'toggle',
@@ -261,33 +281,19 @@ export const QUESTIONS = [
     min: 1, max: 8, default: 1,
     dbField: 'parkeer_n', optional: true,
   },
+  // Samengevoegd: carport + garage waren losse toggles.
   {
-    id: 'carport', step: 2, type: 'toggle',
+    id: 'parkeer_voorz', step: 2, type: 'chips', multi: true,
     showIf: { key: 'parkeer_eigen', value: true },
-    label: 'Carport aanwezig',
-    dbField: 'carport', optional: true,
-  },
-  {
-    id: 'garage', step: 2, type: 'toggle',
-    showIf: { key: 'parkeer_eigen', value: true },
-    label: 'Garage aanwezig',
-    dbField: 'garage', optional: true,
+    sectionLabel: 'Parkeervoorzieningen',
+    options: ['Carport','Garage'],
+    dbField: 'parkeer_voorz', optional: true,
   },
   {
     id: 'schuur', step: 2, type: 'chips',
     sectionLabel: 'Schuur / berging / bijgebouw',
     options: ['Geen schuur','Klein (< 6 m²)','Middel (6–15 m²)','Groot (> 15 m²)'],
     dbField: 'schuur', optional: true,
-  },
-  {
-    id: 'schuur_stroom', step: 2, type: 'toggle',
-    label: 'Schuur heeft stroomaansluiting',
-    dbField: 'schuur_stroom', optional: true,
-  },
-  {
-    id: 'schuur_water', step: 2, type: 'toggle',
-    label: 'Schuur heeft wateraansluiting',
-    dbField: 'schuur_water', optional: true,
   },
   {
     id: 'opmerking_buiten', step: 2, type: 'textarea',
@@ -303,6 +309,7 @@ export const QUESTIONS = [
     sectionLabel: 'Energielabel',
     options: ['A+++','A++','A+','A','B','C','D','E','F','G','Onbekend'],
     dbField: 'energielabel', optional: true,
+    enrich: 'ep_online', // veelal af te leiden uit EP-online op postcode+huisnr
   },
   {
     id: 'verwarm', step: 3, type: 'tiles', grid: 'g3',
@@ -328,11 +335,6 @@ export const QUESTIONS = [
     dbField: 'gasloos', optional: true,
   },
   {
-    id: 'vloerverwarming', step: 3, type: 'toggle',
-    label: 'Vloerverwarming aanwezig', sublabel: 'Geheel of gedeeltelijk',
-    dbField: 'vloerverwarming', optional: true,
-  },
-  {
     id: 'zonnepanelen', step: 3, type: 'toggle',
     sectionLabel: 'Zonne-energie',
     label: 'Zonnepanelen aanwezig',
@@ -346,20 +348,14 @@ export const QUESTIONS = [
     dbField: 'zp_n', optional: true,
   },
   {
-    id: 'thuisaccu', step: 3, type: 'toggle',
-    label: 'Thuisaccu aanwezig', sublabel: 'Bijv. Tesla Powerwall, SMA, Enphase',
-    dbField: 'thuisaccu', optional: true,
-  },
-  {
-    id: 'laadpaal', step: 3, type: 'toggle',
+    id: 'laadpaal', step: 3, type: 'chips',
     sectionLabel: 'Laadpaal',
-    label: 'Laadpaal aanwezig', sublabel: 'Op oprit, in garage of carport',
+    options: [
+      { value: 'ja',     label: 'Aanwezig' },
+      { value: 'kan',    label: 'Eenvoudig te plaatsen' },
+      { value: 'nee',    label: 'Niet aanwezig' },
+    ],
     dbField: 'laadpaal', optional: true,
-  },
-  {
-    id: 'laadpaal_poss', step: 3, type: 'toggle',
-    label: 'Laadpaal eenvoudig te plaatsen', sublabel: 'Ruimte en aansluitpunt beschikbaar',
-    dbField: 'laadpaal_poss', optional: true,
   },
   {
     id: 'isolatie', step: 3, type: 'chips', multi: true,
@@ -368,16 +364,9 @@ export const QUESTIONS = [
     dbField: 'isolatie', optional: true,
   },
   {
-    id: 'kwh', step: 3, type: 'chips',
-    sectionLabel: 'Gemiddeld elektriciteitsverbruik',
-    options: ['< 1.500 kWh/jr','1.500–2.500 kWh/jr','2.500–4.000 kWh/jr','4.000–6.000 kWh/jr','> 6.000 kWh/jr','Onbekend'],
-    dbField: 'kwh', optional: true,
-  },
-  {
-    id: 'm3', step: 3, type: 'chips',
-    sectionLabel: 'Gasverbruik (of n.v.t.)',
-    options: ['N.v.t. (gasloos)','< 500 m³/jr','500–1.000 m³/jr','1.000–1.700 m³/jr','> 1.700 m³/jr','Onbekend'],
-    dbField: 'm3', optional: true,
+    id: 'vloerverwarming', step: 3, type: 'toggle',
+    label: 'Vloerverwarming aanwezig', sublabel: 'Geheel of gedeeltelijk',
+    dbField: 'vloerverwarming', optional: true,
   },
   {
     id: 'domotica', step: 3, type: 'toggle',
@@ -392,19 +381,24 @@ export const QUESTIONS = [
     dbField: 'dom_types', optional: true,
   },
 
-  // ══ STAP 4: Gevoel & beleving ════════════════════════════════════════════════
-{
-  id: 'buurt_type', step: 4, type: 'tiles', grid: 'g2',
-  sectionLabel: 'Type buurt',
-  options: [
-    { value: 'dorps', label: 'Dorps / rustig', icon: '🌳' },
-    { value: 'suburb', label: 'Woonwijk / gezin', icon: '🏘️' },
-    { value: 'stedelijk', label: 'Stedelijk / levendig', icon: '🏙️' },
-    { value: 'landelijk', label: 'Landelijk / vrij', icon: '🌾' },
-  ],
-  dbField: 'buurt_type', optional: true,
-},
-  
+  // ══ STAP 4: Buurt & beleving ═════════════════════════════════════════════════
+  // Opgeschoond: dubbele constructen verwijderd.
+  //   - 'licht' (scale) verwijderd → 'lichtinval' (tiles) blijft
+  //   - 'geluidsoverlast' (scale) verwijderd → 'geluid' (tiles) blijft
+  //   - 'rust' (scale) blijft (binnenshuis), los van buurt-geluid
+  // 'emotie_vs_ratio' step-bug gefixt: hoort hier (stap 4), niet bij wensen.
+
+  {
+    id: 'buurt_type', step: 4, type: 'tiles', grid: 'g2',
+    sectionLabel: 'Type buurt waar je nu woont',
+    options: [
+      { value: 'dorps',     label: 'Dorps / rustig',       icon: '🌳' },
+      { value: 'suburb',    label: 'Woonwijk / gezin',     icon: '🏘️' },
+      { value: 'stedelijk', label: 'Stedelijk / levendig', icon: '🏙️' },
+      { value: 'landelijk', label: 'Landelijk / vrij',     icon: '🌾' },
+    ],
+    dbField: 'buurt_type', optional: true,
+  },
   {
     id: 'rust', step: 4, type: 'scale',
     sectionLabel: 'Beleving binnen',
@@ -417,12 +411,6 @@ export const QUESTIONS = [
     label: 'Ruimtelijk gevoel', sublabel: 'Voelt de woning ruim voor wat je nodig hebt?',
     ends: ['Erg benauwd','Erg ruim'],
     dbField: 'ruimte', optional: true,
-  },
-  {
-    id: 'licht', step: 4, type: 'scale',
-    label: 'Lichtinval', sublabel: 'Hoeveel daglicht heeft de woning?',
-    ends: ['Donker','Licht en zonnig'],
-    dbField: 'licht', optional: true,
   },
   {
     id: 'thuis', step: 4, type: 'scale',
@@ -462,18 +450,6 @@ export const QUESTIONS = [
     dbField: 'groen', optional: true,
   },
   {
-    id: 'bereikbaar', step: 4, type: 'scale',
-    label: 'Bereikbaarheid voorzieningen', sublabel: 'Winkels, zorg, OV, scholen…',
-    ends: ['Slecht bereikbaar','Prima bereikbaar'],
-    dbField: 'bereikbaar', optional: true,
-  },
-  {
-    id: 'geluidsoverlast', step: 4, type: 'scale',
-    label: 'Geluidsoverlast van buiten', sublabel: 'Verkeer, buren, horeca…',
-    ends: ['Geen overlast','Veel overlast'],
-    dbField: 'geluidsoverlast', optional: true,
-  },
-  {
     id: 'privacy', step: 4, type: 'scale',
     label: 'Privacygevoel', sublabel: 'Hoe privé voel jij je in en om de woning?',
     ends: ['Weinig privacy','Veel privacy'],
@@ -501,6 +477,35 @@ export const QUESTIONS = [
     ],
     dbField: 'lichtinval', optional: true,
   },
+
+  // ── NIEUW: functionele omgeving (matchbaar, niet alleen beleving) ──
+  {
+    id: 'voorz_nabij', step: 4, type: 'chips', multi: true,
+    sectionLabel: 'Wat is nu op loop-/fietsafstand? (meerdere mogelijk)',
+    sublabel: 'Voor matching belangrijker dan gevoel — vooral bij gelijkvloers/zorg',
+    options: ['Supermarkt','Huisarts/apotheek','Ziekenhuis','OV-halte','Basisschool','Kinderopvang','Groen/park','Horeca/winkels centrum'],
+    dbField: 'voorz_nabij', optional: true,
+  },
+  {
+    id: 'auto_afh', step: 4, type: 'chips',
+    sectionLabel: 'Hoe afhankelijk ben je van een auto?',
+    sublabel: 'Bepaalt of een woning verder van voorzieningen haalbaar is',
+    options: [
+      { value: 'geen_auto', label: 'Geen auto' },
+      { value: 'ov',        label: 'Vooral OV/fiets' },
+      { value: 'mix',       label: 'Mix' },
+      { value: 'auto',      label: 'Auto-afhankelijk' },
+    ],
+    dbField: 'auto_afh', optional: true,
+  },
+  {
+    id: 'binding_locatie', step: 4, type: 'chips', multi: true,
+    sectionLabel: 'Bindt iets je aan deze plek?',
+    sublabel: 'Helpt ons begrijpen waarom je wel/niet uit de buurt wilt',
+    options: ['Familie dichtbij','Mantelzorg geven','Mantelzorg ontvangen','Sociaal netwerk','Werk/school','Niks bijzonders'],
+    dbField: 'binding_locatie', optional: true,
+  },
+
   {
     id: 'energie_geeft', step: 4, type: 'textarea',
     sectionLabel: 'Wat geeft jou energie in deze woning? (optioneel)',
@@ -513,30 +518,38 @@ export const QUESTIONS = [
     placeholder: 'Bijv. te groot, trap, drukke straat, slecht geïsoleerd…',
     dbField: 'missing', optional: true,
   },
-
   {
-  id: 'frictie_score', step: 4, type: 'scale',
-  sectionLabel: 'Mismatch',
-  label: 'Hoe goed past deze woning nog bij je leven?',
-  sublabel: 'Niet wat je hebt — maar hoe goed het nog klopt',
-  ends: ['Past totaal niet','Past perfect'],
-  dbField: 'frictie_score', optional: true,
+    id: 'emotie_vs_ratio', step: 4, type: 'scale',
+    sectionLabel: 'Emotie vs ratio',
+    label: 'Als je eerlijk bent: blijf je hier uit gevoel of omdat het logisch is?',
+    ends: ['Puur praktisch','Puur gevoel'],
+    dbField: 'emotie_vs_ratio', optional: true,
+  },
+  {
+    id: 'frictie_score', step: 4, type: 'scale',
+    sectionLabel: 'Mismatch',
+    label: 'Hoe goed past deze woning nog bij je leven?',
+    sublabel: 'Niet wat je hebt — maar hoe goed het nog klopt',
+    ends: ['Past totaal niet','Past perfect'],
+    dbField: 'frictie_score', optional: true,
+    short: true, shortStep: 1,
+  },
+  {
+    id: 'trigger', step: 4, type: 'chips', multi: true,
+    sectionLabel: 'Wat zou jou doen verhuizen?',
+    options: [
+      'Als er iets beters voorbij komt',
+      'Als ik gelijkvloers kan wonen',
+      'Als onderhoud minder wordt',
+      'Als locatie beter is',
+      'Als het financieel aantrekkelijk is',
+      'Als gezinssituatie verandert',
+      'Ik wil sowieso verhuizen',
+    ],
+    dbField: 'trigger', optional: true,
+    short: true, shortStep: 1,
   },
 
-  {
-  id: 'trigger', step: 4, type: 'chips', multi: true,
-  sectionLabel: 'Wat zou jou doen verhuizen?',
-  options: [
-    'Als er iets beters voorbij komt',
-    'Als ik gelijkvloers kan wonen',
-    'Als onderhoud minder wordt',
-    'Als locatie beter is',
-    'Als het financieel aantrekkelijk is',
-    'Als gezinssituatie verandert',
-    'Ik wil sowieso verhuizen',
-  ],
-  dbField: 'trigger', optional: true,
-},
   // ══ STAP 5: Jouw situatie ════════════════════════════════════════════════════
 
   {
@@ -550,12 +563,14 @@ export const QUESTIONS = [
       { value: 'samen',        label: 'Samenwonend (anders)', icon: '🏠' },
     ],
     dbField: 'huishoud_type', optional: true,
+    short: true, shortStep: 1,
   },
   {
     id: 'leeftijd_cat', step: 5, type: 'chips',
     sectionLabel: 'Leeftijdscategorie hoofdbewoner',
     options: ['< 35 jaar','35–50 jaar','50–65 jaar','65–75 jaar','> 75 jaar'],
     dbField: 'leeftijd_cat', optional: true,
+    short: true, shortStep: 1,
   },
   {
     id: 'woonduur', step: 5, type: 'chips',
@@ -592,13 +607,25 @@ export const QUESTIONS = [
     endLabels: ['Zeker niet','Actief zoekend'],
     descriptions: ['Zeker niet verhuizen','Waarschijnlijk niet','Misschien, als het klopt','Open voor verhuizing','Actief op zoek'],
     dbField: 'verhuisbereidheid', optional: true,
+    short: true, shortStep: 1,
   },
   {
-  id: 'woonlast_beleving', step: 5, type: 'scale',
-  sectionLabel: 'Financieel',
-  label: 'Hoe ervaar je je woonlasten?',
-  ends: ['Zeer zwaar','Goed betaalbaar'],
-  dbField: 'woonlast_beleving', optional: true,
+    id: 'woonlast_beleving', step: 5, type: 'scale',
+    sectionLabel: 'Financieel',
+    label: 'Hoe ervaar je je woonlasten?',
+    ends: ['Zeer zwaar','Goed betaalbaar'],
+    dbField: 'woonlast_beleving', optional: true,
+  },
+  {
+    id: 'koop_huur', step: 5, type: 'chips',
+    sectionLabel: 'Woon je in een koop- of huurwoning?',
+    sublabel: 'Bepaalt welke doorstroomketen mogelijk is',
+    options: [
+      { value: 'koop',        label: 'Koopwoning' },
+      { value: 'huur_corp',   label: 'Huur (corporatie)' },
+      { value: 'huur_part',   label: 'Huur (particulier)' },
+    ],
+    dbField: 'koop_huur', optional: true,
   },
   {
     id: 'situatie_vrij', step: 5, type: 'textarea',
@@ -623,6 +650,21 @@ export const QUESTIONS = [
       { value: 'weet_niet',     label: 'Weet ik nog niet',   icon: '🤷' },
     ],
     dbField: 'gewenst_type', optional: true,
+    short: true, shortStep: 2,
+  },
+  {
+    id: 'gewenst_woonmilieu', step: 6, type: 'tiles', grid: 'g2',
+    sectionLabel: 'In wat voor omgeving wil je terecht?',
+    sublabel: 'Mag gelijk zijn aan nu — dan weten we dat je in de buurt wilt blijven',
+    options: [
+      { value: 'dorps',     label: 'Dorps / rustig',       icon: '🌳' },
+      { value: 'suburb',    label: 'Woonwijk',             icon: '🏘️' },
+      { value: 'stedelijk', label: 'Stedelijk / levendig', icon: '🏙️' },
+      { value: 'landelijk', label: 'Landelijk',            icon: '🌾' },
+      { value: 'egal',      label: 'Maakt niet uit',       icon: '🤷' },
+    ],
+    dbField: 'gewenst_woonmilieu', optional: true,
+    short: true, shortStep: 2,
   },
   {
     id: 'gew_opp', step: 6, type: 'chips',
@@ -635,11 +677,19 @@ export const QUESTIONS = [
     sectionLabel: 'Zoekradius',
     options: ['Zelfde wijk','Zelfde gemeente','Tot 5 km','Tot 15 km','Tot 30 km','Heel Nederland'],
     dbField: 'gewenste_locatie', optional: true,
+    short: true, shortStep: 2,
+  },
+  {
+    id: 'voorz_wens', step: 6, type: 'chips', multi: true,
+    sectionLabel: 'Wat moet in de nieuwe omgeving dichtbij zijn?',
+    sublabel: 'De omgevings-tegenhanger van je must-haves',
+    options: ['Supermarkt','Huisarts/apotheek','Ziekenhuis/zorg','OV-halte','Basisschool','Kinderopvang','Groen/park','Familie','Maakt niet uit'],
+    dbField: 'voorz_wens', optional: true,
   },
   {
     id: 'musthaves', step: 6, type: 'chips', multi: true,
     sectionLabel: 'Must-haves in nieuwe woning',
-    options: ['Tuin','Gelijkvloers','Lift','Garage/oprit','Stille buurt','Nabij OV','Nabij scholen','Nabij zorg','Energiezuinig','Laadpaal','Zonnepanelen','Balkon/terras'],
+    options: ['Tuin','Gelijkvloers','Lift','Garage/oprit','Stille buurt','Energiezuinig','Laadpaal','Zonnepanelen','Balkon/terras'],
     dbField: 'musthaves', optional: true,
   },
   {
@@ -673,31 +723,24 @@ export const QUESTIONS = [
     dbField: 'redenen', optional: true,
   },
   {
-  id: 'tradeoff_ruimte_locatie', step: 6, type: 'scale',
-  sectionLabel: 'Wat vind je belangrijker?',
-  label: 'Grote van de woning woning vs betere locatie',
-  ends: ['Grote van de woning','Betere locatie'],
-  dbField: 'tradeoff_ruimte_locatie', optional: true,
-},
+    id: 'tradeoff_ruimte_locatie', step: 6, type: 'scale',
+    sectionLabel: 'Wat vind je belangrijker?',
+    label: 'Grootte van de woning vs betere locatie',
+    ends: ['Grootte woning','Betere locatie'],
+    dbField: 'tradeoff_ruimte_locatie', optional: true,
+  },
   {
-  id: 'tradeoff_rust_voorzieningen', step: 6, type: 'scale',
-  label: 'Rust vs voorzieningen dichtbij',
-  ends: ['Rust en ruimte','Alles dichtbij'],
-  dbField: 'tradeoff_rust_voorzieningen', optional: true,
-},
+    id: 'tradeoff_rust_voorzieningen', step: 6, type: 'scale',
+    label: 'Rust vs voorzieningen dichtbij',
+    ends: ['Rust en ruimte','Alles dichtbij'],
+    dbField: 'tradeoff_rust_voorzieningen', optional: true,
+  },
   {
-  id: 'tradeoff_onderhoud', step: 6, type: 'scale',
-  label: 'Nieuw/onderhoudsarm vs karakter/ruimte',
-  ends: ['Nieuw en makkelijk','Karakter en ruimte'],
-  dbField: 'tradeoff_onderhoud', optional: true,
-},
-  {
-  id: 'emotie_vs_ratio', step: 4, type: 'scale',
-  sectionLabel: 'Emotie vs ratio',
-  label: 'Als je eerlijk bent: blijf je hier uit gevoel of omdat het logisch is?',
-  ends: ['Puur praktisch','Puur gevoel'],
-  dbField: 'emotie_vs_ratio', optional: true,
-},
+    id: 'tradeoff_onderhoud', step: 6, type: 'scale',
+    label: 'Nieuw/onderhoudsarm vs karakter/ruimte',
+    ends: ['Nieuw en makkelijk','Karakter en ruimte'],
+    dbField: 'tradeoff_onderhoud', optional: true,
+  },
   {
     id: 'opmerkingen', step: 6, type: 'textarea',
     sectionLabel: 'Aanvullende woonwensen (vrij veld, optioneel)',
@@ -705,3 +748,21 @@ export const QUESTIONS = [
     dbField: 'opmerkingen', optional: true,
   },
 ];
+
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+//
+// Geeft de zichtbare vragen voor een modus.
+//   mode: 'kort' | 'lang'
+export function getQuestions(mode = 'lang') {
+  if (mode === 'kort') {
+    return QUESTIONS
+      .filter(q => q.short)
+      .map(q => ({ ...q, step: q.shortStep })); // hernummer naar korte stappen
+  }
+  return QUESTIONS;
+}
+
+// Geeft de juiste staptitels voor een modus.
+export function getStepTitles(mode = 'lang') {
+  return mode === 'kort' ? SHORT_STEP_TITLES : STEP_TITLES;
+}
