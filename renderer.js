@@ -98,12 +98,15 @@ function rScale(q, state) {
 function rSlider(q, state) {
   const v = state[q.id] ?? q.default ?? 3;
   const pct = ((v - 1) / (q.max - q.min) * 100).toFixed(0);
-  const descsJson = JSON.stringify(q.descriptions);
+  // Descriptions in een data-attribuut (HTML-escaped). Géén JSON in oninput,
+  // want komma's/quotes in de tekst breken anders de attribuut-string op.
+  const descsAttr = JSON.stringify(q.descriptions)
+    .replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   return `<div class="sw">
     <div class="sl-labels"><span>${q.endLabels[0]}</span><span>${q.endLabels[1]}</span></div>
     <input type="range" id="sli-${q.id}" min="${q.min}" max="${q.max}" step="1"
-      style="--pct:${pct}%" value="${v}"
-      oninput="N.sl('${q.id}',this.value,${descsJson})">
+      style="--pct:${pct}%" value="${v}" data-descs="${descsAttr}"
+      oninput="N.sl('${q.id}',this.value)">
     <div class="slval" id="slv-${q.id}">${v}/${q.max}</div>
     <div class="sldesc" id="sld-${q.id}">${q.descriptions[v - 1]}</div>
   </div>`;
