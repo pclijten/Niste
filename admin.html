@@ -832,21 +832,33 @@ async function setMatchStatus(id, status){
 // Het dashboard kan dit oppikken en de gebruiker om opt-in vragen.
 async function writePending(householdId, m, side){
   if(!householdId) return;
-  const other = side==='a' ? {
-    pc: m.pc_b, type: m.type_b, gewenst: m.gewenst_b,
-  } : {
-    pc: m.pc_a, type: m.type_a, gewenst: m.gewenst_a,
-  };
+  // 'other' = de tegenpartij vanuit het perspectief van dit huishouden
+  const otherId = side==='a' ? m.household_b : m.household_a;
+  const o = householdById(otherId) || {};
+  const basic = side==='a'
+    ? { pc: m.pc_b, type: m.type_b, gewenst: m.gewenst_b }
+    : { pc: m.pc_a, type: m.type_a, gewenst: m.gewenst_a };
+
+  // Rijke, NIET-identificerende kenmerken. Bewust weggelaten: exacte adres,
+  // woningwaarde, vrije tekst — die zouden het huis herleidbaar maken vóór opt-in.
   const entry = {
     matchId: m.id,
     score: m.score,
-    // alleen geanonimiseerde tegenpartij-info
-    other_pc: other.pc, other_type: other.type, other_gewenst: other.gewenst,
+    // regio + kerntype (zoals voorheen)
+    other_pc: basic.pc, other_type: basic.type, other_gewenst: basic.gewenst,
+    // extra woningkenmerken voor een goed beeld
+    other_oppervlak:     o.oppervlak ?? null,
+    other_kamers:        o.kamers_totaal ?? null,
+    other_tuin:          o.tuin ?? null,
+    other_energie:       o.energielabel ?? null,
+    other_buurt:         o.buurt_type ?? null,
+    other_gewenst_milieu:o.gewenst_woonmilieu ?? null,
+    other_koop_huur:     o.koop_huur ?? null,
+    other_gelijkvloers:  o.gelijkvloers_nu ?? null,
     optin_self: false,   // deze gebruiker heeft nog niet ge-opt-in
     status: 'pending',   // pending → interested → declined
     approvedAt: Date.now(),  // client-tijd: serverTimestamp() mag niet in geneste map
   };
-  // sla op als map onder _pending_matches.<matchId> via merge
   await setDoc(doc(db,'households',householdId), {
     _pending_matches: { [m.id]: entry }
   }, { merge: true });
