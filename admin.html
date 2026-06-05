@@ -143,6 +143,33 @@
     .detail-row{display:flex;justify-content:space-between;font-size:.76rem;padding:.25rem 0;border-bottom:1px solid rgba(217,206,188,.25)}
     .detail-row-k{color:var(--light)}
     .detail-row-v{color:var(--dark);font-weight:600;text-align:right}
+    /* ── MATCH-ANALYSE ── */
+    .analyse{margin:.2rem 0 1rem}
+    .analyse-intent{display:grid;grid-template-columns:1fr auto 1fr;gap:.6rem;align-items:stretch;margin-bottom:1rem}
+    .intent-card{background:linear-gradient(135deg,rgba(42,74,62,.04),rgba(61,107,92,.02));border:1px solid rgba(42,74,62,.08);border-radius:12px;padding:.8rem 1rem}
+    .intent-lbl{font-size:.6rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--gold);margin-bottom:.4rem}
+    .intent-has{font-size:.82rem;color:var(--dark);font-weight:600;line-height:1.4}
+    .intent-wants{font-size:.78rem;color:var(--moss);margin-top:.35rem;line-height:1.4}
+    .intent-wants strong{color:var(--forest);font-weight:700}
+    .intent-mid{display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:var(--gold)}
+    .verdict{display:flex;align-items:center;gap:.6rem;padding:.7rem 1rem;border-radius:12px;margin-bottom:.9rem;font-size:.84rem;font-weight:700;line-height:1.4}
+    .verdict-strong{background:rgba(42,74,62,.08);color:var(--forest)}
+    .verdict-ok{background:rgba(196,154,74,.12);color:#8a6a28}
+    .verdict-weak{background:rgba(184,92,56,.1);color:var(--rust)}
+    .verdict-ico{font-size:1.2rem}
+    .analyse-cols{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
+    .analyse-col{background:#fff;border:1px solid rgba(42,74,62,.07);border-radius:12px;padding:.9rem 1.1rem}
+    .analyse-col-title{font-size:.64rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;margin-bottom:.6rem;display:flex;align-items:center;gap:.4rem}
+    .analyse-col-title.match-t{color:var(--forest)}
+    .analyse-col-title.fric-t{color:var(--rust)}
+    .analyse-point{display:flex;gap:.5rem;align-items:flex-start;font-size:.79rem;line-height:1.45;color:var(--mid);padding:.3rem 0}
+    .analyse-point-ico{flex-shrink:0;width:16px;text-align:center;margin-top:.05rem}
+    .analyse-point.good .analyse-point-ico{color:var(--forest)}
+    .analyse-point.warn .analyse-point-ico{color:var(--gold)}
+    .analyse-point.bad .analyse-point-ico{color:var(--rust)}
+    .analyse-point strong{color:var(--dark);font-weight:700}
+    .analyse-empty{font-size:.76rem;color:var(--light);font-style:italic;padding:.3rem 0}
+    @media(max-width:768px){.analyse-intent{grid-template-columns:1fr}.intent-mid{transform:rotate(90deg)}.analyse-cols{grid-template-columns:1fr}}
     .empty{text-align:center;padding:2.5rem 1rem;color:var(--light);font-size:.86rem}
     .approved-note{background:var(--gold-pale);border-radius:10px;padding:.6rem .9rem;font-size:.74rem;color:#9a7530;margin-top:.7rem;display:flex;align-items:center;gap:.5rem;line-height:1.45}
     .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(246,241,233,.3);border-top-color:var(--cream);border-radius:50%;animation:spin .7s linear infinite}
@@ -563,9 +590,161 @@ function profileDetail(h){
 function renderDetail(m){
   const a=householdById(m.household_a);
   const b=householdById(m.household_b);
-  return `<div class="detail-grid">
+  return `${renderAnalyse(a,b,m)}
+  <div class="detail-col-title" style="margin-top:1.2rem">Ruwe gegevens</div>
+  <div class="detail-grid">
     <div><div class="detail-col-title">Profiel A</div>${profileDetail(a)}</div>
     <div><div class="detail-col-title">Profiel B</div>${profileDetail(b)}</div>
+  </div>`;
+}
+
+// ─── MATCH-ANALYSE ────────────────────────────────────────────────────────────
+// Vertaalt twee profielen naar een leesbaar verhaal: wat elk huishouden heeft
+// en wil, plus waar ze op elkaar aansluiten (overeenkomsten) en waar het schuurt
+// (aandachtspunten). Gebruikt de volledige profielen uit allHouseholds.
+
+// Rangorde van woninggrootte voor "groter/kleiner"-vergelijking
+const OPP_RANK = {'< 50 m²':1,'50–75 m²':2,'75–100 m²':3,'100–125 m²':4,'125–150 m²':5,'150–175 m²':6,'175–200 m²':7,'> 200 m²':8};
+const RADIUS_RANK = {'Zelfde wijk':1,'Zelfde gemeente':2,'Tot 5 km':3,'Tot 15 km':4,'Tot 30 km':5,'Heel Nederland':6};
+
+function oppRank(h){ return OPP_RANK[h?.oppervlak] || null; }
+
+// "heeft → wil"-zin voor één profiel
+function intentSentence(h){
+  if(!h) return {has:'Profiel niet gevonden', wants:''};
+  const type = WL[h.woning_type] || h.woning_type || 'woning';
+  const opp  = h.oppervlak ? ` (${h.oppervlak})` : '';
+  const kamers = (h.kamers_totaal!=null) ? `, ${h.kamers_totaal} kamers${h.kamers_gebruikt!=null?` waarvan ${h.kamers_gebruikt} gebruikt`:''}` : '';
+  const milieu = h.buurt_type ? ` in ${milieuLabel(h.buurt_type)}` : '';
+  const has = `${type}${opp}${kamers}${milieu}`;
+
+  const gewenst = GL[h.gewenst_type] || h.gewenst_type;
+  const gMilieu = h.gewenst_woonmilieu && h.gewenst_woonmilieu!=='egal' ? milieuLabel(h.gewenst_woonmilieu) : null;
+  const gOpp = h.gew_opp && h.gew_opp!=='Maakt niet uit' ? h.gew_opp : null;
+  const radius = h.gewenste_locatie ? ` · zoekt binnen ${h.gewenste_locatie.toLowerCase()}` : '';
+  let wantsParts=[];
+  if(gewenst && gewenst!=='Weet nog niet') wantsParts.push(`<strong>${gewenst.toLowerCase()}</strong>`);
+  if(gMilieu) wantsParts.push(gMilieu);
+  if(gOpp) wantsParts.push(`min. ${gOpp}`);
+  const wants = wantsParts.length ? `Wil ${wantsParts.join(', ')}${radius}` : (h.gewenste_locatie?`Zoekt binnen ${h.gewenste_locatie.toLowerCase()}`:'Nog geen duidelijke wens');
+  return {has, wants};
+}
+
+function milieuLabel(v){
+  return {dorps:'dorps/rustig',suburb:'woonwijk',stedelijk:'stedelijk',landelijk:'landelijk'}[v] || v;
+}
+
+// Bepaalt overeenkomsten en aandachtspunten tussen twee profielen
+function analysePair(a,b){
+  const good=[], issues=[];
+  if(!a || !b){ return {good, issues:[{lvl:'bad',txt:'Eén van beide profielen is niet (meer) beschikbaar.'}]}; }
+
+  // 1) Grootte-complementariteit: wil A groter en is B groter (of omgekeerd)?
+  const ra=oppRank(a), rb=oppRank(b);
+  const aWantsBigger = a.gewenst_type==='groter';
+  const aWantsSmaller = ['kleiner','gelijkvloers','appartement','zorg'].includes(a.gewenst_type);
+  const bWantsBigger = b.gewenst_type==='groter';
+  const bWantsSmaller = ['kleiner','gelijkvloers','appartement','zorg'].includes(b.gewenst_type);
+
+  if(ra && rb){
+    if(aWantsBigger && rb>ra) good.push(`A wil groter wonen, en B's woning is ruimer (${a.oppervlak} → ${b.oppervlak}).`);
+    if(aWantsSmaller && rb<ra) good.push(`A wil kleiner/gelijkvloers, en B's woning is compacter (${a.oppervlak} → ${b.oppervlak}).`);
+    if(bWantsBigger && ra>rb) good.push(`B wil groter wonen, en A's woning is ruimer (${b.oppervlak} → ${a.oppervlak}).`);
+    if(bWantsSmaller && ra<rb) good.push(`B wil kleiner/gelijkvloers, en A's woning is compacter (${b.oppervlak} → ${a.oppervlak}).`);
+    // tegenstelling: beiden willen dezelfde kant op
+    if(aWantsBigger && bWantsBigger) issues.push({lvl:'bad',txt:'Beide huishoudens willen <strong>groter</strong> — ze kunnen elkaars woning waarschijnlijk niet zijn.'});
+    if(aWantsSmaller && bWantsSmaller) issues.push({lvl:'warn',txt:'Beide willen kleiner/gelijkvloers — check of de woningen tóch verschillen genoeg.'});
+  } else {
+    issues.push({lvl:'warn',txt:'Oppervlak ontbreekt bij minstens één profiel — grootte-fit niet te beoordelen.'});
+  }
+
+  // 2) De klassieke keten: senior laat ruim achter, gezin zoekt ruim
+  const aOver = (a.kamers_totaal||0)-(a.kamers_gebruikt||0);
+  const bOver = (b.kamers_totaal||0)-(b.kamers_gebruikt||0);
+  if(aOver>=2 && bWantsBigger) good.push(`A heeft ${aOver} ongebruikte kamers — ruimte die B (zoekt groter) goed kan gebruiken.`);
+  if(bOver>=2 && aWantsBigger) good.push(`B heeft ${bOver} ongebruikte kamers — ruimte die A (zoekt groter) goed kan gebruiken.`);
+
+  // 3) Locatie / zoekradius overlap
+  if(a.postcode && b.postcode){
+    if(a.postcode===b.postcode) good.push(`Beiden in postcodegebied <strong>${a.postcode}</strong> — zelfde buurt.`);
+    else {
+      const ra2=RADIUS_RANK[a.gewenste_locatie]||9, rb2=RADIUS_RANK[b.gewenste_locatie]||9;
+      if(ra2<=2 && rb2<=2) issues.push({lvl:'warn',txt:`Verschillende postcodes (${a.postcode} vs ${b.postcode}), maar beiden zoeken dichtbij — controleer of de afstand binnen bereik is.`});
+    }
+  } else {
+    issues.push({lvl:'warn',txt:'Postcode ontbreekt — locatie-fit niet te controleren.'});
+  }
+
+  // 4) Woonmilieu-wens
+  if(a.gewenst_woonmilieu && a.gewenst_woonmilieu!=='egal' && b.buurt_type){
+    if(a.gewenst_woonmilieu===b.buurt_type) good.push(`A zoekt ${milieuLabel(a.gewenst_woonmilieu)}, en B woont daar (${milieuLabel(b.buurt_type)}).`);
+  }
+  if(b.gewenst_woonmilieu && b.gewenst_woonmilieu!=='egal' && a.buurt_type){
+    if(b.gewenst_woonmilieu===a.buurt_type) good.push(`B zoekt ${milieuLabel(b.gewenst_woonmilieu)}, en A woont daar (${milieuLabel(a.buurt_type)}).`);
+  }
+
+  // 5) Verhuisbereidheid
+  const ba=a.verhuisbereidheid, bb=b.verhuisbereidheid;
+  if(ba!=null && bb!=null){
+    if(ba>=4 && bb>=4) good.push(`Beiden staan open voor verhuizen (${ba}/5 en ${bb}/5).`);
+    else if(ba<=2 || bb<=2) issues.push({lvl:'warn',txt:`Lage verhuisbereidheid bij ${ba<=2?'A':''}${(ba<=2&&bb<=2)?' en ':''}${bb<=2?'B':''} — match kan theoretisch kloppen maar animo is beperkt.`});
+  } else {
+    issues.push({lvl:'warn',txt:`Verhuisbereidheid onbekend bij ${ba==null?'A':''}${(ba==null&&bb==null)?' en ':''}${bb==null?'B':''} — niet duidelijk hoe gemotiveerd ze zijn.`});
+  }
+
+  // 6) Koop/huur compatibiliteit (informe rend)
+  if(a.koop_huur && b.koop_huur){
+    if(a.koop_huur!==b.koop_huur) issues.push({lvl:'warn',txt:`Verschillende woonvorm (${koopLabel(a.koop_huur)} vs ${koopLabel(b.koop_huur)}) — een directe ruil is dan vaak niet mogelijk, wel een keten.`});
+  }
+
+  return {good, issues};
+}
+
+function koopLabel(v){ return {koop:'koop',huur_corp:'huur corporatie',huur_part:'huur particulier'}[v]||v; }
+
+function renderAnalyse(a,b,m){
+  const ia=intentSentence(a), ib=intentSentence(b);
+  const {good, issues}=analysePair(a,b);
+
+  // Verdict-regel op basis van score + balans
+  let vClass='verdict-ok', vIco='🤔', vTxt='Redelijke match — beoordeel de aandachtspunten.';
+  const hardBad = issues.some(i=>i.lvl==='bad');
+  if(hardBad){ vClass='verdict-weak'; vIco='⚠️'; vTxt='Let op: er is een tegenstelling die de match onwaarschijnlijk maakt.'; }
+  else if(m.score>=75 && good.length>=2){ vClass='verdict-strong'; vIco='✨'; vTxt='Sterke complementaire match — de profielen vullen elkaar goed aan.'; }
+  else if(m.score>=55 && good.length>=2){ vClass='verdict-strong'; vIco='👍'; vTxt='Goede match met duidelijke overeenkomsten.'; }
+
+  const goodHtml = good.length
+    ? good.map(t=>`<div class="analyse-point good"><span class="analyse-point-ico">✓</span><span>${t}</span></div>`).join('')
+    : '<div class="analyse-empty">Geen duidelijke complementaire punten gevonden.</div>';
+  const issuesHtml = issues.length
+    ? issues.map(i=>`<div class="analyse-point ${i.lvl==='bad'?'bad':'warn'}"><span class="analyse-point-ico">${i.lvl==='bad'?'✕':'!'}</span><span>${i.txt}</span></div>`).join('')
+    : '<div class="analyse-empty">Geen bijzondere aandachtspunten.</div>';
+
+  return `<div class="analyse">
+    <div class="verdict ${vClass}"><span class="verdict-ico">${vIco}</span><span>${vTxt}</span></div>
+    <div class="analyse-intent">
+      <div class="intent-card">
+        <div class="intent-lbl">Profiel A — heeft &amp; wil</div>
+        <div class="intent-has">${ia.has}</div>
+        <div class="intent-wants">→ ${ia.wants}</div>
+      </div>
+      <div class="intent-mid">⇄</div>
+      <div class="intent-card">
+        <div class="intent-lbl">Profiel B — heeft &amp; wil</div>
+        <div class="intent-has">${ib.has}</div>
+        <div class="intent-wants">→ ${ib.wants}</div>
+      </div>
+    </div>
+    <div class="analyse-cols">
+      <div class="analyse-col">
+        <div class="analyse-col-title match-t">✓ Waar ze op aansluiten</div>
+        ${goodHtml}
+      </div>
+      <div class="analyse-col">
+        <div class="analyse-col-title fric-t">! Aandachtspunten</div>
+        ${issuesHtml}
+      </div>
+    </div>
   </div>`;
 }
 
