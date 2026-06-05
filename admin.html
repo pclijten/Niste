@@ -608,6 +608,7 @@ function renderReviewList(){
         <span class="mchip">📐 Mismatch ${bd.mis||0}</span>
         <span class="mchip">🎯 Bereid ${bd.bereid||0}</span>
         ${bd.extra?`<span class="mchip">✨ Extra ${bd.extra}</span>`:''}
+        ${bd.penalty?`<span class="mchip" style="background:rgba(184,92,56,.12);color:var(--rust)">↓ Eerder afgewezen −${bd.penalty}</span>`:''}
       </div>
 
       ${approvedNote}
