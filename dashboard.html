@@ -119,6 +119,7 @@
     .nav-item.danger { color: var(--rust); }
     .nav-item.danger:hover { background: rgba(184,92,56,.08); }
     .nav-icon { font-size: 1rem; width: 20px; text-align: center; }
+    .nav-badge { margin-left: auto; background: var(--gold); color: var(--dark); border-radius: 100px; padding: .05rem .4rem; font-size: .62rem; font-weight: 800; min-width: 16px; text-align: center; }
 
     /* MAIN CONTENT */
     .main { padding: 2.5rem 3rem; overflow-y: auto; }
@@ -170,6 +171,10 @@
       background: rgba(196,154,74,.12);
       color: #9a7530; border: 1px solid rgba(196,154,74,.25);
     }
+    .status-badge.match {
+      background: rgba(42,74,62,.1);
+      color: var(--forest); border: 1px solid rgba(42,74,62,.25);
+    }
     .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; animation: pulse 1.8s infinite; }
 
     /* STATS GRID */
@@ -202,6 +207,40 @@
       background: linear-gradient(90deg, var(--forest), var(--moss));
       transition: width .7s cubic-bezier(.4,0,.2,1);
     }
+
+    /* MATCH-STATUSBLOK */
+    .match-status-card { border-left: 4px solid var(--gold); }
+    .match-status-card.has-match { border-left-color: var(--forest); }
+    .match-anon {
+      display: flex; gap: 1rem; align-items: center;
+      background: var(--cream); border-radius: 14px;
+      padding: 1rem 1.2rem; margin: 1rem 0;
+    }
+    .match-anon-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      background: var(--forest); color: var(--cream);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem; flex-shrink: 0;
+    }
+    .match-anon-info h4 { font-size: .9rem; font-weight: 700; color: var(--dark); margin-bottom: .15rem; }
+    .match-anon-info p { font-size: .78rem; color: var(--mid); }
+    .optin-row { display: flex; gap: .7rem; flex-wrap: wrap; margin-top: 1rem; align-items: center; }
+    .btn-optin {
+      background: var(--forest); color: var(--cream);
+      border: none; border-radius: 100px; padding: .7rem 1.5rem;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: .8rem; font-weight: 700; cursor: pointer; transition: all .2s;
+    }
+    .btn-optin:hover { background: var(--moss); transform: translateY(-1px); }
+    .btn-optin.done { background: rgba(42,74,62,.12); color: var(--forest); cursor: default; transform: none; }
+    .btn-optin-no {
+      background: transparent; color: var(--mid);
+      border: 1.5px solid rgba(42,74,62,.2); border-radius: 100px;
+      padding: .7rem 1.3rem; font-family: 'Plus Jakarta Sans', sans-serif;
+      font-size: .8rem; font-weight: 700; cursor: pointer; transition: all .2s;
+    }
+    .btn-optin-no:hover { border-color: var(--rust); color: var(--rust); }
+    .optin-note { font-size: .76rem; color: var(--mid); line-height: 1.5; margin-top: .6rem; }
 
     /* PROFILE FORM */
     .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -258,6 +297,24 @@
     }
     .msg-box.error   { background: rgba(184,92,56,.1); color: var(--rust); border: 1px solid rgba(184,92,56,.2); display: block; }
     .msg-box.success { background: rgba(42,74,62,.1); color: var(--forest); border: 1px solid rgba(42,74,62,.2); display: block; }
+
+    /* BERICHTEN (gebruiker) */
+    .chat-card { background: white; border-radius: 20px; border: 1px solid rgba(42,74,62,.07); box-shadow: 0 2px 16px rgba(0,0,0,.04); display: flex; flex-direction: column; height: calc(100vh - 220px); min-height: 380px; }
+    .chat-head { padding: 1.1rem 1.6rem; border-bottom: 1px solid rgba(217,206,188,.4); }
+    .chat-head h4 { font-family: 'Cormorant Garamond', serif; font-size: 1.3rem; font-weight: 400; color: var(--forest); }
+    .chat-head p { font-size: .76rem; color: var(--light); margin-top: .15rem; }
+    .chat-thread { flex: 1; overflow-y: auto; padding: 1.4rem 1.6rem; display: flex; flex-direction: column; gap: .7rem; }
+    .chat-bubble { max-width: 78%; padding: .65rem .95rem; border-radius: 14px; font-size: .85rem; line-height: 1.45; }
+    .chat-bubble-time { font-size: .62rem; opacity: .6; margin-top: .25rem; }
+    .chat-bubble.user { align-self: flex-end; background: var(--forest); color: var(--cream); border-bottom-right-radius: 4px; }
+    .chat-bubble.admin { align-self: flex-start; background: var(--cream); color: var(--dark); border-bottom-left-radius: 4px; }
+    .chat-empty { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--light); font-size: .85rem; text-align: center; padding: 2rem; }
+    .chat-compose { padding: .9rem 1.2rem; border-top: 1px solid rgba(217,206,188,.4); display: flex; gap: .6rem; }
+    .chat-input { flex: 1; padding: .7rem 1rem; border: 1.5px solid rgba(217,206,188,.7); border-radius: 12px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: .86rem; resize: none; outline: none; max-height: 120px; }
+    .chat-input:focus { border-color: var(--forest); }
+    .chat-send { background: var(--forest); color: var(--cream); border: none; border-radius: 12px; padding: 0 1.3rem; font-family: 'Plus Jakarta Sans', sans-serif; font-size: .82rem; font-weight: 700; cursor: pointer; transition: background .2s; }
+    .chat-send:hover { background: var(--moss); }
+    .chat-send:disabled { opacity: .4; cursor: not-allowed; }
 
     /* MODAL */
     .modal-overlay {
@@ -359,6 +416,9 @@
     <button class="nav-item" onclick="showPage('status')" id="nav-status">
       <span class="nav-icon">📍</span> Mijn status
     </button>
+    <button class="nav-item" onclick="showPage('messages')" id="nav-messages">
+      <span class="nav-icon">💬</span> Berichten <span class="nav-badge" id="msg-nav-badge" style="display:none"></span>
+    </button>
     <button class="nav-item" onclick="showPage('intake')" id="nav-intake">
       <span class="nav-icon">✏️</span> Profiel &amp; wensen
     </button>
@@ -394,7 +454,7 @@
           </div>
         </div>
         <div class="stat-card">
-          <div class="stat-card-val">🟡</div>
+          <div class="stat-card-val" id="stat-status">🟡</div>
           <div class="stat-card-lbl">Status aanmelding</div>
         </div>
         <div class="stat-card">
@@ -403,10 +463,13 @@
         </div>
       </div>
 
+      <!-- MATCH-STATUSBLOK: dynamisch ingevuld -->
+      <div id="match-status-slot"></div>
+
       <div class="card">
         <div class="card-label">Jouw aanmelding</div>
         <h3>Welkom bij de Niste pilot 👋</h3>
-        <p>Je aanmelding is ontvangen. We zijn actief profielen aan het verzamelen in Noord-Brabant. Zodra er een anoniem profiel in jouw regio verschijnt dat bij jou past, ontvang je een e-mail. <strong>Pilotfase:</strong> dit kan enige tijd duren afhankelijk van het aantal aanmeldingen in jouw buurt.</p>
+        <p>Je aanmelding is ontvangen. We zijn actief profielen aan het verzamelen in Noord-Brabant. Zodra er een anoniem profiel in jouw regio verschijnt dat bij jou past, hoor je het hier en per e-mail. <strong>Pilotfase:</strong> dit kan enige tijd duren afhankelijk van het aantal aanmeldingen in jouw buurt.</p>
         <div style="margin-top:1.2rem">
           <span class="status-badge pending"><span class="status-dot"></span> Pilot actief</span>
         </div>
@@ -431,43 +494,31 @@
 
       <div class="card">
         <div class="card-label">Voortgang pilot</div>
-        <ul class="timeline">
-          <li class="tl-item">
-            <div class="tl-icon done">✓</div>
-            <div class="tl-text">
-              <h4>Account aangemaakt</h4>
-              <p>Je bent succesvol geregistreerd voor de Niste pilot Noord-Brabant 2026.</p>
-            </div>
-          </li>
-          <li class="tl-item">
-            <div class="tl-icon active">2</div>
-            <div class="tl-text">
-              <h4>Profiel opbouwen</h4>
-              <p>We verzamelen profielen in jouw regio. Hoe vollediger jouw profiel, hoe beter we kunnen matchen. Vul je woonprofiel in via "Profiel &amp; wensen".</p>
-            </div>
-          </li>
-          <li class="tl-item">
-            <div class="tl-icon pending"></div>
-            <div class="tl-text">
-              <h4>Eerste anonieme match</h4>
-              <p>Zodra er een huishouden in jouw buurt is met een complementair profiel, ontvang je een anonieme melding per e-mail. Identiteiten blijven verborgen.</p>
-            </div>
-          </li>
-          <li class="tl-item">
-            <div class="tl-icon pending"></div>
-            <div class="tl-text">
-              <h4>Wederzijdse interesse</h4>
-              <p>Pas als beide partijen aangeven dat ze openstaan voor contact, wordt een kennismaking mogelijk gemaakt.</p>
-            </div>
-          </li>
-          <li class="tl-item">
-            <div class="tl-icon pending"></div>
-            <div class="tl-text">
-              <h4>Volgende stappen</h4>
-              <p>Niste is een platform — verdere stappen (makelaar, overdracht) worden door de betrokkenen zelf ingevuld. Wij faciliteren de ontmoeting.</p>
-            </div>
-          </li>
-        </ul>
+        <ul class="timeline" id="status-timeline"></ul>
+      </div>
+    </div>
+
+    <!-- ── MESSAGES PAGE ── -->
+    <div class="dash-page" id="page-messages">
+      <div class="page-header">
+        <div class="page-eyebrow">Contact</div>
+        <h1 class="page-title">Berichten met <em>Niste</em></h1>
+      </div>
+      <div class="chat-card">
+        <div class="chat-head">
+          <h4>Het Niste-team</h4>
+          <p>Vragen over je profiel of een mogelijke match? Stuur ons gerust een bericht.</p>
+        </div>
+        <div class="chat-thread" id="chat-thread">
+          <div class="chat-empty">
+            <div style="font-size:2.2rem;margin-bottom:.5rem">💬</div>
+            <div>Nog geen berichten. Stel je vraag hieronder — we reageren zo snel mogelijk.</div>
+          </div>
+        </div>
+        <div class="chat-compose">
+          <textarea class="chat-input" id="chat-input" rows="1" placeholder="Typ een bericht…"></textarea>
+          <button class="chat-send" id="chat-send" onclick="sendUserMsg()">Versturen</button>
+        </div>
       </div>
     </div>
 
@@ -487,7 +538,7 @@
 <div class="modal-overlay" id="delete-modal">
   <div class="modal-box">
     <h3>Account verwijderen?</h3>
-    <p>Dit verwijdert je account én alle bijbehorende gegevens permanent uit onze systemen. Jouw woonprofiel en eventuele matches worden volledig gewist. Deze actie kan niet ongedaan worden gemaakt.</p>
+    <p>Dit verwijdert je account én alle bijbehorende gegevens permanent uit onze systemen. Jouw woonprofiel, berichten en eventuele matches worden volledig gewist. Deze actie kan niet ongedaan worden gemaakt.</p>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeDeleteModal()">Annuleren</button>
       <button class="btn-confirm-delete" onclick="handleDeleteAccount()">Ja, verwijder alles</button>
@@ -502,9 +553,9 @@
            GoogleAuthProvider, signInWithPopup,
            onAuthStateChanged }      from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
   import { getFirestore, doc, getDoc,
-           setDoc, deleteDoc,
-           collection, query, where,
-           getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
+           setDoc, updateDoc, deleteDoc,
+           collection, query, where, orderBy,
+           getDocs, addDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey:            "AIzaSyDkrkHrPW4pPu0_ZVKGma-AVF4-gTtk9R8",
@@ -518,19 +569,25 @@
   const app  = initializeApp(firebaseConfig);
   const auth = getAuth(app);
   const db   = getFirestore(app);
-  let currentUser = null;
-  let userData    = null;
+  let currentUser   = null;
+  let userData      = null;
+  let householdData = null;
+  let myMessages    = [];
+  let msgUnsub      = null;
 
   // ── AUTH GUARD ──────────────────────────────────────────────────────────────
   onAuthStateChanged(auth, async (user) => {
     if (!user) { window.location.href = "index.html"; return; }
     currentUser = user;
     await loadUserData(user);
+    await loadHousehold(user);
+    subscribeMessages(user);
+    renderMatchStatus();
+    renderTimeline();
     document.getElementById("loading-screen").style.display = "none";
   });
 
   async function loadUserData(user) {
-    // Laad gebruikersnaam uit /users
     try {
       const snap = await getDoc(doc(db, "users", user.uid));
       userData = snap.exists()
@@ -539,30 +596,194 @@
     } catch {
       userData = { name: user.displayName || "Gebruiker", email: user.email };
     }
-
-    const name  = userData.name  || "Gebruiker";
-    const email = userData.email || user.email;
-
-    // Nav + welkomsttekst
+    const name = userData.name || "Gebruiker";
     document.getElementById("nav-name").textContent     = name;
     document.getElementById("nav-avatar").textContent   = name.charAt(0).toUpperCase();
     document.getElementById("welcome-name").textContent = name.split(" ")[0];
+  }
 
-    // Laad volledigheid uit /households
+  async function loadHousehold(user) {
     try {
       const hSnap = await getDoc(doc(db, "households", user.uid));
       if (hSnap.exists()) {
-        const pct = hSnap.data()._completeness;
+        householdData = hSnap.data();
+        const pct = householdData._completeness;
         if (pct !== undefined) {
           document.getElementById("stat-completeness").textContent = pct + "%";
           document.getElementById("comp-bar-fill").style.width = pct + "%";
         }
-      }
-    } catch { /* geen huishoud-doc aanwezig, stilletjes negeren */ }
+      } else { householdData = null; }
+    } catch { householdData = null; }
   }
+
+  // ── MATCH-STATUS ──────────────────────────────────────────────────────────────
+  function pendingMatches() {
+    const pm = householdData?._pending_matches || {};
+    return Object.values(pm).filter(e => e && typeof e === 'object');
+  }
+
+  function renderMatchStatus() {
+    const slot = document.getElementById("match-status-slot");
+    const statusVal = document.getElementById("stat-status");
+    if (!slot) return;
+
+    const matches = pendingMatches();
+    const isComplete = householdData?._status === 'complete';
+
+    if (matches.length > 0) {
+      statusVal.textContent = "🟢";
+      const m = matches[0];
+      const optedIn = m.optin_self === true;
+      slot.innerHTML = `
+        <div class="card match-status-card has-match">
+          <div class="card-label">Mogelijke match</div>
+          <h3>Er is een mogelijke match in jouw regio ✨</h3>
+          <p>We hebben een huishouden gevonden waarvan het woonprofiel mogelijk goed bij dat van jou past. De identiteit blijft verborgen totdat jullie allebei aangeven open te staan voor contact.</p>
+          <div class="match-anon">
+            <div class="match-anon-icon">🏡</div>
+            <div class="match-anon-info">
+              <h4>${typeLabel(m.other_type)}${m.other_pc && m.other_pc!=='—' ? ' · regio '+m.other_pc : ''}</h4>
+              <p>Zoekt: ${gewenstLabel(m.other_gewenst)}</p>
+            </div>
+          </div>
+          ${optedIn ? `
+            <div class="optin-row">
+              <span class="btn-optin done">✓ Je staat open voor contact</span>
+            </div>
+            <p class="optin-note">Bedankt! Zodra de andere partij ook akkoord geeft, brengen wij jullie met elkaar in contact. Je hoort van ons.</p>
+          ` : `
+            <div class="optin-row">
+              <button class="btn-optin" onclick="optIn('${m.matchId}')">Ik sta open voor contact</button>
+              <button class="btn-optin-no" onclick="optOut('${m.matchId}')">Nu even niet</button>
+            </div>
+            <p class="optin-note">Geen verplichtingen. Pas als <strong>beide</strong> huishoudens "ja" zeggen, wordt een kennismaking mogelijk. Je adres blijft tot dat moment privé.</p>
+          `}
+        </div>`;
+    } else if (isComplete) {
+      statusVal.textContent = "🟡";
+      slot.innerHTML = `
+        <div class="card match-status-card">
+          <div class="card-label">Status</div>
+          <h3>Je profiel wordt beoordeeld 🔍</h3>
+          <p>Je woonprofiel is compleet en staat in de wachtrij. We bekijken handmatig welke huishoudens mogelijk bij elkaar passen. Zodra er een match voor jou is, zie je dat hier en ontvang je bericht.</p>
+          <div style="margin-top:1rem"><span class="status-badge pending"><span class="status-dot"></span> In beoordeling</span></div>
+        </div>`;
+    } else {
+      statusVal.textContent = "🟡";
+      slot.innerHTML = "";
+    }
+  }
+
+  window.optIn = async (matchId) => {
+    if (!currentUser || !householdData) return;
+    try {
+      await setDoc(doc(db, "households", currentUser.uid), {
+        _pending_matches: { [matchId]: { ...findPending(matchId), optin_self: true, optinAt: Date.now() } }
+      }, { merge: true });
+      if (householdData._pending_matches?.[matchId]) householdData._pending_matches[matchId].optin_self = true;
+      renderMatchStatus();
+      renderTimeline();
+      await addDoc(collection(db, "messages"), {
+        uid: currentUser.uid, sender: 'user',
+        text: 'Ik heb aangegeven open te staan voor contact bij een mogelijke match.',
+        createdAt: serverTimestamp(), read_admin: false, read_user: true, system: true,
+      });
+    } catch (e) { console.error(e); showMsg("global-msg","Kon je keuze niet opslaan. Probeer het opnieuw.","error"); }
+  };
+
+  window.optOut = async (matchId) => {
+    if (!currentUser) return;
+    try {
+      await setDoc(doc(db, "households", currentUser.uid), {
+        _pending_matches: { [matchId]: { ...findPending(matchId), optin_self: false } }
+      }, { merge: true });
+      if (householdData._pending_matches?.[matchId]) householdData._pending_matches[matchId].optin_self = false;
+      renderMatchStatus();
+    } catch (e) { console.error(e); }
+  };
+
+  function findPending(matchId) { return householdData?._pending_matches?.[matchId] || {}; }
+
+  // ── TIMELINE (dynamisch) ──────────────────────────────────────────────────────
+  function renderTimeline() {
+    const tl = document.getElementById("status-timeline");
+    if (!tl) return;
+    const isComplete = householdData?._status === 'complete';
+    const matches = pendingMatches();
+    const hasMatch = matches.length > 0;
+    const optedIn  = matches.some(m => m.optin_self === true);
+    const step = (state, title, body) =>
+      `<li class="tl-item"><div class="tl-icon ${state}">${state==='done'?'✓':state==='active'?'●':''}</div><div class="tl-text"><h4>${title}</h4><p>${body}</p></div></li>`;
+    tl.innerHTML = [
+      step('done', 'Account aangemaakt', 'Je bent geregistreerd voor de Niste pilot Noord-Brabant 2026.'),
+      step(isComplete?'done':'active', 'Profiel opbouwen', isComplete?'Je profiel is compleet en meegenomen in de matching.':'Vul je woonprofiel aan via "Profiel & wensen" — hoe vollediger, hoe beter we matchen.'),
+      step(hasMatch?'done':(isComplete?'active':'pending'), 'Eerste anonieme match', hasMatch?'Er is een mogelijke match gevonden — bekijk het op je overzicht.':'We zoeken een huishouden met een complementair profiel in jouw buurt.'),
+      step(optedIn?'active':'pending', 'Wederzijdse interesse', optedIn?'Je hebt aangegeven open te staan. We wachten op de andere partij.':'Pas als beide partijen openstaan voor contact, maken we een kennismaking mogelijk.'),
+      step('pending', 'Volgende stappen', 'Niste faciliteert de ontmoeting. Verdere stappen (makelaar, overdracht) vullen de betrokkenen zelf in.'),
+    ].join('');
+  }
+
+  // ── BERICHTEN (live) ────────────────────────────────────────────────────────
+  function subscribeMessages(user) {
+    try {
+      const qy = query(collection(db, "messages"), where("uid", "==", user.uid));
+      msgUnsub = onSnapshot(qy, (snap) => {
+        myMessages = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+          .filter(m => !m.system)
+          .sort((a,b) => (a.createdAt?.seconds||0) - (b.createdAt?.seconds||0));
+        renderChat();
+        updateMsgBadge();
+      }, (err) => console.warn("messages snapshot", err));
+    } catch (e) { console.warn("subscribeMessages", e); }
+  }
+
+  function updateMsgBadge() {
+    const unread = myMessages.filter(m => m.sender === 'admin' && !m.read_user).length;
+    const badge = document.getElementById("msg-nav-badge");
+    if (!badge) return;
+    if (unread > 0) { badge.textContent = unread; badge.style.display = ''; }
+    else badge.style.display = 'none';
+  }
+
+  function renderChat() {
+    const thread = document.getElementById("chat-thread");
+    if (!thread) return;
+    if (!myMessages.length) {
+      thread.innerHTML = `<div class="chat-empty"><div style="font-size:2.2rem;margin-bottom:.5rem">💬</div><div>Nog geen berichten. Stel je vraag hieronder — we reageren zo snel mogelijk.</div></div>`;
+      return;
+    }
+    thread.innerHTML = myMessages.map(m => {
+      const t = m.createdAt?.seconds ? new Date(m.createdAt.seconds*1000).toLocaleString('nl-NL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '';
+      return `<div class="chat-bubble ${m.sender}">${escapeHtml(m.text)}<div class="chat-bubble-time">${t}</div></div>`;
+    }).join('');
+    thread.scrollTop = thread.scrollHeight;
+  }
+
+  async function markUserRead() {
+    const unread = myMessages.filter(m => m.sender === 'admin' && !m.read_user);
+    for (const m of unread) { try { await updateDoc(doc(db, "messages", m.id), { read_user: true }); } catch {} }
+  }
+
+  window.sendUserMsg = async () => {
+    const input = document.getElementById("chat-input");
+    const text = (input?.value || "").trim();
+    if (!text || !currentUser) return;
+    input.value = "";
+    try {
+      await addDoc(collection(db, "messages"), {
+        uid: currentUser.uid, sender: 'user', text,
+        createdAt: serverTimestamp(), read_admin: false, read_user: true,
+      });
+    } catch (e) { console.error("sendUserMsg", e); showMsg("global-msg","Bericht versturen mislukt.","error"); }
+  };
+
+  function escapeHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function typeLabel(v){ return ({tussenwoning:'Tussenwoning',hoekwoning:'Hoekwoning','2kap':'2-onder-1-kap',vrijstaand:'Vrijstaande woning',appartement:'Appartement',boven_beneden:'Boven-/benedenwoning',penthouse:'Penthouse',woonboerderij:'Woonboerderij'})[v] || v || 'Woning'; }
+  function gewenstLabel(v){ return ({vergelijkbaar:'iets vergelijkbaars',kleiner:'kleiner',gelijkvloers:'gelijkvloers',groter:'groter',appartement:'een appartement',grondgeb:'grondgebonden',zorg:'zorggeschikt',weet_niet:'weet nog niet'})[v] || v || '—'; }
 
   // ── LOGOUT ──────────────────────────────────────────────────────────────────
   window.handleLogout = async () => {
+    if (msgUnsub) msgUnsub();
     await signOut(auth);
     window.location.href = "index.html";
   };
@@ -572,14 +793,18 @@
     closeDeleteModal();
     if (!currentUser) return;
     try {
-      // Verwijder Firestore data
       await deleteDoc(doc(db, "users", currentUser.uid));
       await deleteDoc(doc(db, "households", currentUser.uid));
-      // Verwijder matches
-      const mq   = query(collection(db, "matches"), where("userId", "==", currentUser.uid));
-      const msnap = await getDocs(mq);
-      await Promise.all(msnap.docs.map(m => deleteDoc(m.ref)));
-      // Verwijder Auth account
+      try {
+        const mq = query(collection(db, "messages"), where("uid", "==", currentUser.uid));
+        const msnap = await getDocs(mq);
+        await Promise.all(msnap.docs.map(m => deleteDoc(m.ref)));
+      } catch {}
+      try {
+        const mq2 = query(collection(db, "matches"), where("userId", "==", currentUser.uid));
+        const msnap2 = await getDocs(mq2);
+        await Promise.all(msnap2.docs.map(m => deleteDoc(m.ref)));
+      } catch {}
       await deleteUser(currentUser);
       window.location.href = "index.html";
     } catch (e) {
@@ -606,35 +831,25 @@
   window.showPage = (page) => {
     document.querySelectorAll(".dash-page").forEach(p => p.classList.remove("active"));
     document.querySelectorAll(".nav-item").forEach(b => b.classList.remove("active"));
-
     const pageEl = document.getElementById(`page-${page}`);
     const navEl  = document.getElementById(`nav-${page}`);
     if (pageEl) pageEl.classList.add("active");
     if (navEl)  navEl.classList.add("active");
 
-// Intake: verwijder main padding en stuur user naar iframe
     const main = document.getElementById("main-content");
     if (page === "intake") {
       main.style.padding = "0";
       const frame = document.getElementById("intake-frame");
       const sendUser = () => {
         if (!currentUser) return;
-        frame.contentWindow.postMessage({
-          type:  'NISTE_USER',
-          uid:   currentUser.uid,
-          email: currentUser.email,
-        }, window.location.origin);
+        frame.contentWindow.postMessage({ type:'NISTE_USER', uid:currentUser.uid, email:currentUser.email }, window.location.origin);
       };
-      // Frame kan al geladen zijn of nog niet
-      if (frame.contentDocument?.readyState === 'complete') {
-        sendUser();
-      } else {
-        frame.onload = sendUser;
-      }
+      if (frame.contentDocument?.readyState === 'complete') sendUser();
+      else frame.onload = sendUser;
     } else {
       main.style.padding = "";
     }
-
+    if (page === "messages") markUserRead();
     clearMsg("global-msg");
   };
 
@@ -643,6 +858,10 @@
   window.closeDeleteModal = () => document.getElementById("delete-modal").classList.remove("open");
   document.getElementById("delete-modal").addEventListener("click", e => {
     if (e.target === e.currentTarget) closeDeleteModal();
+  });
+
+  document.getElementById("chat-input").addEventListener("keydown", e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); window.sendUserMsg(); }
   });
 
   // ── HELPERS ─────────────────────────────────────────────────────────────────
