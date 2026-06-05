@@ -256,6 +256,7 @@
     <div class="card"><div class="card-lbl">Woningtype — huidig</div><div id="type-chart"><div class="empty">Laden…</div></div></div>
     <div class="card"><div class="card-lbl">Woningtype — gewenst</div><div id="gewenst-chart"><div class="empty">Laden…</div></div></div>
   </div>
+  <div class="card"><div class="card-lbl">Gekoppelde deelnemers</div><div id="koppelingen-table"><div class="empty">Laden…</div></div></div>
   <div class="card"><div class="card-lbl">Recentste profielen (max. 20)</div><div id="recent-table"><div class="empty">Laden…</div></div></div>
 </div>
 </div>
@@ -504,6 +505,59 @@ function renderRecent(docs){
   document.getElementById('recent-table').innerHTML=`<table class="rec-table"><thead><tr><th>Datum</th><th>PC</th><th>Huidig</th><th>Gewenst</th><th>Bereid</th><th>Volledigheid</th><th>Status</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
+// ── GEKOPPELDE DEELNEMERS ─────────────────────────────────────────────────────
+// Toont alle door de admin goedgekeurde matches: wie met wie, score, opt-in van
+// beide kanten en de fase van de koppeling.
+function renderKoppelingen(){
+  const el=document.getElementById('koppelingen-table');
+  if(!el) return;
+  // alleen goedgekeurde matches zijn echte "koppelingen"; suggested = nog in beoordeling
+  const koppels=allMatches.filter(m=>m.status==='approved');
+  if(!koppels.length){
+    el.innerHTML='<div class="empty">Nog geen goedgekeurde koppelingen. Keur in "Beoordelen" een match goed om hem hier te zien.</div>';
+    return;
+  }
+
+  const optStatus=(uid, matchId)=>{
+    const h=householdById(uid);
+    const e=h?._pending_matches?.[matchId];
+    if(!e) return {txt:'—', cls:'sp-in_progress'};
+    if(e.status==='declined') return {txt:'afgewezen', cls:''};
+    if(e.optin_self===true) return {txt:'akkoord', cls:'sp-complete'};
+    return {txt:'wacht', cls:'sp-in_progress'};
+  };
+
+  const rows=koppels.map(m=>{
+    const la=labelFor(m.household_a).label;
+    const lb=labelFor(m.household_b).label;
+    const sa=optStatus(m.household_a, m.id);
+    const sb=optStatus(m.household_b, m.id);
+    const sl=scoreLabel(m.score);
+    // fase bepalen
+    let fase, faseCls;
+    if(m.thread_id){ fase='💬 Chat geopend'; faseCls='sp-complete'; }
+    else if(sa.txt==='akkoord' && sb.txt==='akkoord'){ fase='Klaar voor chat'; faseCls='sp-complete'; }
+    else if(sa.txt==='afgewezen' || sb.txt==='afgewezen'){ fase='Afgewezen'; faseCls=''; }
+    else if(sa.txt==='akkoord' || sb.txt==='akkoord'){ fase='Eén kant akkoord'; faseCls='sp-in_progress'; }
+    else { fase='Wacht op opt-in'; faseCls='sp-in_progress'; }
+
+    const dot=(s)=> s==='akkoord'?'🟢':s==='afgewezen'?'🔴':'⚪';
+    return `<tr>
+      <td><span class="pc-pill">${la}</span> <span style="color:var(--gold);font-weight:700">⇄</span> <span class="pc-pill">${lb}</span></td>
+      <td>${WL[m.type_a]||m.type_a||'—'} ⇄ ${WL[m.type_b]||m.type_b||'—'}</td>
+      <td><span style="color:${sl.color};font-weight:700">${m.score}</span></td>
+      <td>${dot(sa.txt)} ${la}<br>${dot(sb.txt)} ${lb}</td>
+      <td><span class="status-pill ${faseCls}"><span class="status-dot"></span>${fase}</span></td>
+      <td><button class="btn-detail" style="background:none;border:none;color:var(--forest);font-weight:700;cursor:pointer;text-decoration:underline;font-size:.76rem" onclick="switchTab('review')">Bekijk →</button></td>
+    </tr>`;
+  }).join('');
+
+  el.innerHTML=`<table class="rec-table">
+    <thead><tr><th>Koppeling</th><th>Woningtypen</th><th>Score</th><th>Opt-in status</th><th>Fase</th><th></th></tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+}
+
 // ── ACTIE-STROOK (taakgericht) ───────────────────────────────────────────────
 function renderActionStrook(){
   const el=document.getElementById('action-strook');
@@ -547,6 +601,7 @@ async function loadMatches(){
     renderReviewBadge();
     renderReviewFilters();
     renderReviewList();
+    renderKoppelingen();
   } catch(e){console.warn(e);}
 }
 
