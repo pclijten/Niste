@@ -1,623 +1,284 @@
-<!DOCTYPE html>
-<html lang="nl">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Wooncheck – Niste</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,500&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --cream: #F6F1E9; --warm: #EDE5D4; --sand: #D9CEBC;
-      --forest: #2A4A3E; --moss: #3D6B5C;
-      --gold: #C49A4A; --gold-lt: #E8C97A; --gold-pale: #F5EDD6;
-      --rust: #B85C38; --dark: #1A1A16; --mid: #5A5A50; --light: #9A9A8E;
-    }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--dark); min-height: 100vh; }
+// renderer.js — Niste vraag-renderer
+//
+// Dit bestand weet HOE vragen getekend worden, maar niet WELKE vragen er zijn.
+// Alle onderdelen zijn pure functies die HTML strings teruggeven.
+// Event handlers refereren aan window.N (opgezet in intake.html).
+//
+// v2: ondersteunt korte/lange modus. renderStep en calcCompleteness krijgen
+//     een optionele `mode` parameter ('lang' | 'kort'). In korte modus wordt
+//     gefilterd op q.shortStep en alleen vragen met q.short === true.
+//
+// BEREKENDE BADGES — voeg hier nieuwe compute-functies toe:
+const COMPUTED = {
+  mismatch(state) {
+    const delta = (state.kamers_totaal ?? 4) - (state.kamers_gebruikt ?? 3);
+    if (delta < 2) return null;
+    return `⚡ ${delta} kamer${delta > 1 ? 's' : ''} ongebruikt — sterk matchsignaal voor matching`;
+  },
+};
 
-    /* Nav — verborgen in embedded modus via CSS class */
-    nav { display:flex; align-items:center; justify-content:space-between; padding:1.15rem 2.5rem; border-bottom:1px solid rgba(42,74,62,.08); background:rgba(246,241,233,.96); backdrop-filter:blur(20px); position:sticky; top:0; z-index:50; }
-    .nav-logo { font-family:'Cormorant Garamond',serif; font-size:1.65rem; font-weight:600; color:var(--forest); text-decoration:none; display:flex; align-items:center; }
-    .logo-dot { width:7px; height:7px; border-radius:50%; background:var(--gold); display:inline-block; animation:pulse 2.2s ease-in-out infinite; margin-left:2px; }
-    @keyframes pulse { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.6);opacity:.55} }
-    .nav-right { display:flex; align-items:center; gap:1.2rem; }
-    .nav-save { font-size:.7rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--light); display:flex; align-items:center; gap:.35rem; }
-    .save-dot { width:6px; height:6px; border-radius:50%; background:var(--gold); }
-    .nav-user { font-size:.75rem; color:var(--mid); max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .nav-back { font-size:.76rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--mid); text-decoration:none; transition:color .2s; }
-    .nav-back:hover { color:var(--forest); }
+// ─── ENKELVOUDIGE VRAAGRENDERERS ──────────────────────────────────────────────
 
-    /* Embedded mode: verberg nav en progress */
-    body.embedded nav { display: none; }
-    body.embedded .progress-outer { display: none; }
-    body.embedded .intake-wrap { padding-top: 1.5rem; }
-
-    .progress-outer { width:100%; height:3px; background:rgba(42,74,62,.08); position:sticky; top:65px; z-index:49; }
-    .progress-fill { height:100%; background:var(--gold); transition:width .5s cubic-bezier(.4,0,.2,1); }
-    .intake-wrap { max-width:700px; margin:0 auto; padding:3rem 1.5rem 7rem; }
-
-    /* ── MODE-KEUZE SCHERM ── */
-    .mode-choice { animation:fadeUp .3s ease forwards; }
-    .mode-choice-head { text-align:center; margin-bottom:2rem; }
-    .mode-choice-ey { font-size:.65rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); margin-bottom:.6rem; }
-    .mode-choice-title { font-family:'Cormorant Garamond',serif; font-size:2.4rem; font-weight:600; color:var(--forest); line-height:1.12; margin-bottom:.6rem; }
-    .mode-choice-title em { font-style:italic; color:var(--dark); }
-    .mode-choice-desc { font-size:.9rem; color:var(--mid); line-height:1.65; max-width:460px; margin:0 auto; }
-    .mode-cards { display:grid; grid-template-columns:1fr 1fr; gap:1.1rem; }
-    .mode-card { background:#fff; border:1.5px solid rgba(42,74,62,.1); border-radius:20px; padding:1.8rem 1.6rem; cursor:pointer; transition:transform .2s, box-shadow .25s, border-color .2s; text-align:left; display:flex; flex-direction:column; }
-    .mode-card:hover { transform:translateY(-3px); box-shadow:0 14px 36px rgba(42,74,62,.12); border-color:var(--forest); }
-    .mode-card-badge { align-self:flex-start; background:var(--gold-pale); color:var(--rust); border-radius:100px; padding:.25rem .75rem; font-size:.62rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; margin-bottom:1rem; }
-    .mode-card.long .mode-card-badge { background:rgba(42,74,62,.08); color:var(--forest); }
-    .mode-card-icon { font-size:2rem; margin-bottom:.7rem; }
-    .mode-card-title { font-family:'Cormorant Garamond',serif; font-size:1.5rem; font-weight:600; color:var(--forest); margin-bottom:.4rem; }
-    .mode-card-time { font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--gold); margin-bottom:.8rem; }
-    .mode-card-body { font-size:.82rem; color:var(--mid); line-height:1.6; margin-bottom:1.2rem; flex:1; }
-    .mode-card-cta { font-size:.78rem; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:var(--forest); display:flex; align-items:center; gap:.4rem; }
-    .mode-switch-hint { text-align:center; font-size:.78rem; color:var(--light); margin-top:1.4rem; }
-
-    /* ── TEGEL-STAPNAVIGATIE ── */
-    .step-nav { display:flex; gap:8px; overflow-x:auto; padding:6px 2px 10px; margin:0 0 1.4rem; scrollbar-width:thin; -webkit-overflow-scrolling:touch; scroll-snap-type:x proximity; }
-    .step-nav::-webkit-scrollbar { height:6px; }
-    .step-nav::-webkit-scrollbar-thumb { background:var(--warm); border-radius:999px; }
-    .step-tile { flex:0 0 auto; scroll-snap-align:start; display:flex; flex-direction:column; align-items:center; gap:5px; min-width:76px; padding:10px 8px 8px; background:transparent; border:1px solid transparent; border-radius:14px; cursor:pointer; font-family:'Plus Jakarta Sans',sans-serif; transition:background .18s ease, border-color .18s ease, transform .12s ease; }
-    .step-tile:hover { background:rgba(42,74,62,.05); }
-    .step-tile:active { transform:scale(.97); }
-    .step-tile.active { background:var(--cream); border-color:var(--warm); }
-    .step-tile-ring { position:relative; width:42px; height:42px; border-radius:50%; display:grid; place-items:center; background:conic-gradient(var(--gold) var(--ring,0%), var(--warm) 0); transition:background .35s ease; }
-    .step-tile-ring::before { content:''; position:absolute; inset:3px; border-radius:50%; background:var(--cream); }
-    .step-tile.active .step-tile-ring::before { background:#fff; }
-    .step-tile-icon { position:relative; z-index:1; font-size:17px; line-height:1; }
-    .step-tile.done .step-tile-ring { background:var(--forest); }
-    .step-tile.done .step-tile-icon { color:var(--forest); font-weight:800; }
-    .step-tile-label { font-size:11px; font-weight:800; letter-spacing:.01em; color:var(--mid); text-align:center; white-space:nowrap; }
-    .step-tile.active .step-tile-label { color:var(--forest); }
-    .step-tile-count { font-size:10px; font-weight:600; color:var(--light); min-height:12px; }
-    .step-tile.done .step-tile-count { color:var(--forest); }
-    .step-tile.active::after { content:''; display:block; width:20px; height:3px; border-radius:999px; background:var(--gold); margin-top:2px; }
-
-    /* Mode-badge boven de tegels, met wisselknop */
-    .mode-bar { display:flex; align-items:center; justify-content:space-between; gap:.8rem; margin-bottom:.6rem; flex-wrap:wrap; }
-    .mode-tag { font-size:.66rem; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--gold); display:flex; align-items:center; gap:.4rem; }
-    .mode-tag .save-dot { background:var(--gold); }
-    .mode-switch-btn { background:transparent; border:1px solid rgba(42,74,62,.15); border-radius:100px; padding:.35rem .9rem; font-family:'Plus Jakarta Sans',sans-serif; font-size:.7rem; font-weight:700; letter-spacing:.04em; color:var(--mid); cursor:pointer; transition:all .2s; }
-    .mode-switch-btn:hover { border-color:var(--forest); color:var(--forest); background:rgba(42,74,62,.04); }
-
-    .card { background:#fff; border-radius:24px; padding:2.6rem; box-shadow:0 2px 48px rgba(26,26,22,.07); animation:fadeUp .3s ease forwards; }
-    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
-    .ey { font-size:.65rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); margin-bottom:.5rem; }
-    .st { font-family:'Cormorant Garamond',serif; font-size:2rem; font-weight:600; color:var(--forest); line-height:1.15; margin-bottom:.5rem; }
-    .st em { font-style:italic; color:var(--dark); }
-    .sd { font-size:.86rem; color:var(--mid); line-height:1.65; margin-bottom:1.6rem; }
-    .sl { font-size:.62rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--light); margin:1.6rem 0 .6rem; }
-    .skip-notice { display:flex; align-items:center; gap:.5rem; background:var(--gold-pale); border-radius:10px; padding:.6rem 1rem; margin-bottom:1.4rem; font-size:.76rem; color:var(--mid); font-weight:500; }
-    .tg { display:grid; gap:.55rem; }
-    .g2 { grid-template-columns:1fr 1fr; }
-    .g3 { grid-template-columns:1fr 1fr 1fr; }
-    .g4 { grid-template-columns:1fr 1fr 1fr 1fr; }
-    .tile { border:1.5px solid rgba(217,206,188,.65); border-radius:13px; padding:.9rem .75rem; cursor:pointer; transition:all .17s ease; display:flex; flex-direction:column; align-items:center; gap:.4rem; text-align:center; background:var(--cream); font-size:.8rem; font-weight:600; color:var(--dark); user-select:none; }
-    .tile:hover { border-color:var(--forest); background:rgba(42,74,62,.04); transform:translateY(-1px); }
-    .tile.sel { border-color:var(--forest); background:var(--forest); color:var(--cream); }
-    .tile .ti { font-size:1.35rem; }
-    .cr { display:flex; flex-wrap:wrap; gap:.45rem; }
-    .chip { border:1.5px solid rgba(217,206,188,.7); border-radius:100px; padding:.38rem .9rem; cursor:pointer; font-size:.78rem; font-weight:600; color:var(--dark); background:var(--cream); transition:all .17s; user-select:none; white-space:nowrap; }
-    .chip:hover { border-color:var(--forest); background:rgba(42,74,62,.04); }
-    .chip.sel { border-color:var(--forest); background:var(--forest); color:var(--cream); }
-    .cnt-grp { border-top:1px solid rgba(217,206,188,.45); }
-    .crow { display:flex; align-items:center; justify-content:space-between; padding:.8rem 0; border-bottom:1px solid rgba(217,206,188,.45); }
-    .clabel { font-size:.86rem; font-weight:600; color:var(--dark); }
-    .csub { font-size:.72rem; color:var(--light); }
-    .cctrl { display:flex; align-items:center; gap:.9rem; }
-    .cbtn { width:30px; height:30px; border-radius:50%; border:1.5px solid var(--forest); background:transparent; color:var(--forest); font-size:1rem; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all .15s; font-weight:700; }
-    .cbtn:hover:not(:disabled) { background:var(--forest); color:var(--cream); }
-    .cbtn:disabled { opacity:.22; cursor:not-allowed; }
-    .cval { font-family:'Cormorant Garamond',serif; font-size:1.35rem; font-weight:600; color:var(--forest); min-width:22px; text-align:center; }
-    .tog-grp { border-top:1px solid rgba(217,206,188,.45); }
-    .trow { display:flex; align-items:center; justify-content:space-between; padding:.8rem 0; border-bottom:1px solid rgba(217,206,188,.45); }
-    .tlabel { font-size:.86rem; font-weight:600; color:var(--dark); }
-    .tsub { font-size:.72rem; color:var(--light); }
-    .tog { width:44px; height:24px; border-radius:12px; background:var(--sand); cursor:pointer; position:relative; transition:background .2s; flex-shrink:0; border:none; outline:none; }
-    .tog.on { background:var(--forest); }
-    .tog::after { content:''; position:absolute; width:18px; height:18px; border-radius:50%; background:#fff; top:3px; left:3px; transition:transform .2s ease; box-shadow:0 1px 4px rgba(0,0,0,.15); }
-    .tog.on::after { transform:translateX(20px); }
-    .scblock { margin-bottom:1.4rem; }
-    .scq { font-size:.86rem; font-weight:600; color:var(--dark); margin-bottom:.35rem; }
-    .scsub { font-size:.73rem; color:var(--light); margin-bottom:.5rem; }
-    .scrow { display:flex; gap:.4rem; }
-    .scbtn { flex:1; padding:.55rem 0; border-radius:8px; border:1.5px solid rgba(217,206,188,.65); background:var(--cream); font-size:.82rem; font-weight:700; color:var(--mid); cursor:pointer; text-align:center; transition:all .17s; }
-    .scbtn:hover { border-color:var(--forest); color:var(--forest); }
-    .scbtn.sel { background:var(--forest); border-color:var(--forest); color:var(--cream); }
-    .sc-ends { display:flex; justify-content:space-between; font-size:.65rem; color:var(--light); margin-top:.3rem; }
-    .sw { padding:.4rem 0; }
-    .sl-labels { display:flex; justify-content:space-between; font-size:.7rem; color:var(--light); margin-bottom:.6rem; }
-    input[type=range] { -webkit-appearance:none; appearance:none; width:100%; height:4px; border-radius:2px; outline:none; cursor:pointer; background:linear-gradient(to right,var(--gold) 0%,var(--gold) var(--pct),var(--sand) var(--pct),var(--sand) 100%); }
-    input[type=range]::-webkit-slider-thumb { -webkit-appearance:none; width:22px; height:22px; border-radius:50%; background:#fff; border:2.5px solid var(--gold); cursor:pointer; box-shadow:0 2px 8px rgba(196,154,74,.25); transition:transform .15s; }
-    input[type=range]::-webkit-slider-thumb:hover { transform:scale(1.15); }
-    .slval { text-align:center; font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:600; color:var(--forest); margin-top:.5rem; line-height:1; }
-    .sldesc { text-align:center; font-size:.75rem; color:var(--light); margin-top:.2rem; }
-    .field { width:100%; padding:.75rem 1rem; border:1.5px solid rgba(217,206,188,.7); border-radius:11px; font-family:'Plus Jakarta Sans',sans-serif; font-size:.9rem; color:var(--dark); background:var(--cream); outline:none; transition:border-color .2s; }
-    .field:focus { border-color:var(--forest); }
-    textarea.field { resize:vertical; min-height:80px; }
-    .mm-badge { display:flex; align-items:center; gap:.6rem; background:rgba(196,154,74,.1); border:1px solid rgba(196,154,74,.3); border-radius:10px; padding:.7rem 1rem; font-size:.8rem; color:var(--rust); font-weight:600; margin-top:.8rem; }
-    .nav-row { display:flex; justify-content:space-between; align-items:center; margin-top:2rem; padding-top:1.4rem; border-top:1px solid rgba(217,206,188,.45); }
-    .btn-back { background:transparent; color:var(--light); border:none; padding:.7rem 1rem; font-family:'Plus Jakarta Sans',sans-serif; font-size:.82rem; cursor:pointer; display:flex; align-items:center; gap:.4rem; transition:color .2s; }
-    .btn-back:hover { color:var(--forest); }
-    .btn-right { display:flex; align-items:center; gap:.8rem; }
-    .btn-skip { background:transparent; color:var(--light); border:none; font-family:'Plus Jakarta Sans',sans-serif; font-size:.76rem; cursor:pointer; text-decoration:underline; text-underline-offset:3px; transition:color .2s; padding:.4rem .5rem; }
-    .btn-skip:hover { color:var(--mid); }
-    .btn-next { background:var(--forest); color:var(--cream); border:none; border-radius:100px; padding:.78rem 1.8rem; font-family:'Plus Jakarta Sans',sans-serif; font-size:.84rem; font-weight:700; cursor:pointer; transition:all .2s; display:flex; align-items:center; gap:.5rem; box-shadow:0 4px 18px rgba(42,74,62,.22); }
-    .btn-next:hover { background:var(--moss); transform:translateY(-1px); }
-    .pilot-banner { background:var(--gold-pale); border:1px solid rgba(196,154,74,.3); border-radius:14px; padding:1.1rem 1.4rem; margin-bottom:1.6rem; font-size:.83rem; line-height:1.6; color:var(--dark); }
-    .pilot-banner strong { color:var(--rust); }
-    .comp-wrap { margin-bottom:1.6rem; }
-    .comp-lbl { display:flex; justify-content:space-between; font-size:.76rem; color:var(--mid); font-weight:600; margin-bottom:.5rem; }
-    .comp-bar { height:8px; border-radius:4px; background:var(--sand); overflow:hidden; }
-    .comp-fill { height:100%; border-radius:4px; background:linear-gradient(90deg,var(--forest),var(--moss)); transition:width .7s cubic-bezier(.4,0,.2,1); }
-    .comp-hint { font-size:.72rem; color:var(--light); margin-top:.35rem; }
-    .upgrade-box { background:var(--gold-pale); border:1px solid rgba(196,154,74,.3); border-radius:14px; padding:1.1rem 1.4rem; margin-bottom:1.4rem; }
-    .upgrade-box-title { font-size:.86rem; font-weight:800; color:var(--rust); margin-bottom:.3rem; }
-    .upgrade-box-body { font-size:.8rem; color:var(--mid); line-height:1.55; margin-bottom:.9rem; }
-    .btn-upgrade { background:var(--forest); color:var(--cream); border:none; border-radius:100px; padding:.6rem 1.3rem; font-family:'Plus Jakarta Sans',sans-serif; font-size:.78rem; font-weight:700; cursor:pointer; transition:background .2s; }
-    .btn-upgrade:hover { background:var(--moss); }
-    .sum-grid { display:grid; grid-template-columns:1fr 1fr; gap:.5rem; margin-bottom:1.2rem; }
-    .sum-item { background:var(--cream); border-radius:11px; padding:.75rem 1rem; }
-    .sum-key { font-size:.62rem; color:var(--light); font-weight:700; letter-spacing:.08em; text-transform:uppercase; margin-bottom:.2rem; }
-    .sum-val { font-size:.88rem; font-weight:700; color:var(--dark); }
-    .edit-lnk { background:none; border:none; color:var(--gold); font-size:.76rem; font-weight:700; cursor:pointer; text-decoration:underline; text-underline-offset:3px; padding:0; transition:color .2s; }
-    .edit-lnk:hover { color:var(--rust); }
-    .edit-lnk-row { display:flex; flex-wrap:wrap; gap:.6rem; margin-bottom:1.2rem; }
-    .cta-box { background:var(--forest); border-radius:18px; padding:2rem; color:var(--cream); margin-top:1.4rem; }
-    .cta-title { font-family:'Cormorant Garamond',serif; font-size:1.6rem; font-weight:600; margin-bottom:.5rem; line-height:1.2; }
-    .cta-desc { font-size:.82rem; line-height:1.6; color:rgba(246,241,233,.65); margin-bottom:1.3rem; }
-    .user-email-row { display:flex; align-items:center; gap:.7rem; background:rgba(255,255,255,.08); border-radius:10px; padding:.7rem 1rem; margin-bottom:1.1rem; }
-    .user-email-lbl { font-size:.8rem; color:rgba(246,241,233,.55); }
-    .user-email-val { font-size:.86rem; font-weight:600; color:var(--cream); }
-    .btn-cta { background:var(--gold); color:var(--dark); border:none; padding:.8rem 1.8rem; border-radius:100px; font-family:'Plus Jakarta Sans',sans-serif; font-size:.85rem; font-weight:700; cursor:pointer; transition:background .2s; width:100%; }
-    .btn-cta:hover { background:var(--gold-lt); }
-    .btn-cta:disabled { opacity:.35; cursor:not-allowed; }
-    .chk-row { display:flex; align-items:flex-start; gap:.6rem; margin-top:.9rem; cursor:pointer; }
-    .chkbox { width:18px; height:18px; border-radius:4px; border:1.5px solid rgba(246,241,233,.25); background:rgba(255,255,255,.08); flex-shrink:0; display:flex; align-items:center; justify-content:center; transition:all .15s; margin-top:1px; font-size:.8rem; color:var(--dark); }
-    .chkbox.on { background:var(--gold); border-color:var(--gold); }
-    .priv-lbl { font-size:.73rem; color:rgba(246,241,233,.5); line-height:1.4; }
-    .priv-note { font-size:.68rem; color:rgba(246,241,233,.32); margin-top:.75rem; line-height:1.5; }
-    .success-wrap { text-align:center; padding:2.5rem 1rem; }
-    .success-ico { font-size:3.5rem; margin-bottom:1.2rem; }
-    .success-title { font-family:'Cormorant Garamond',serif; font-size:2rem; color:var(--forest); margin-bottom:.8rem; }
-    .success-desc { font-size:.86rem; color:var(--mid); line-height:1.65; max-width:420px; margin:0 auto 1.8rem; }
-    .btn-edit-again { background:transparent; border:1.5px solid rgba(42,74,62,.2); border-radius:100px; padding:.7rem 1.6rem; font-family:'Plus Jakarta Sans',sans-serif; font-size:.82rem; font-weight:700; color:var(--forest); cursor:pointer; transition:all .2s; margin-right:.6rem; }
-    .btn-edit-again:hover { background:rgba(42,74,62,.06); }
-    .auth-gate { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:60vh; text-align:center; padding:2rem; }
-    .auth-gate-title { font-family:'Cormorant Garamond',serif; font-size:1.8rem; color:var(--forest); margin-bottom:.8rem; }
-    .auth-gate-desc { font-size:.86rem; color:var(--mid); margin-bottom:1.6rem; max-width:380px; line-height:1.6; }
-    .btn-to-login { background:var(--forest); color:var(--cream); border:none; border-radius:100px; padding:.8rem 2rem; font-family:'Plus Jakarta Sans',sans-serif; font-size:.85rem; font-weight:700; cursor:pointer; text-decoration:none; display:inline-block; }
-    @media(max-width:560px) {
-      .card { padding:1.5rem 1.1rem; }
-      .g3,.g4 { grid-template-columns:1fr 1fr; }
-      .sum-grid { grid-template-columns:1fr; }
-      .mode-cards { grid-template-columns:1fr; }
-      .step-tile { min-width:64px; padding:8px 6px 6px; }
-      .step-tile-ring { width:38px; height:38px; }
-      .step-tile-label { font-size:10px; }
-      nav { padding:1rem 1.2rem; }
-    }
-  </style>
-</head>
-<body>
-
-<nav>
-  <a href="index.html" class="nav-logo">niste<span class="logo-dot"></span></a>
-  <div class="nav-right">
-    <div class="nav-save" id="save-badge"><span class="save-dot"></span> Automatisch opgeslagen</div>
-    <span class="nav-user" id="nav-user"></span>
-    <a href="index.html" class="nav-back">← Home</a>
-  </div>
-</nav>
-<div class="progress-outer"><div class="progress-fill" id="pfill" style="width:0%"></div></div>
-
-<div class="intake-wrap">
-  <div id="topnav"></div>
-  <div id="area"></div>
-</div>
-
-<script type="module">
-// ── IMPORTS ─────────────────────────────────────────────────────────────────
-import { auth, db }           from './firebase-init.js';
-import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js';
-import { doc, getDoc, setDoc, serverTimestamp }
-                               from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js';
-import { QUESTIONS, STEP_TITLES, SHORT_STEP_TITLES } from './questions.js';
-import { renderStep, calcCompleteness, buildSummary, stepCompleteness } from './renderer.js';
-
-// ── EMBEDDED MODE ────────────────────────────────────────────────────────────
-if (new URLSearchParams(location.search).get('embedded') === 'true') {
-  document.body.classList.add('embedded');
+function rPostcode(q, state) {
+  const v = (state[q.id] || '').replace(/\D/g, '').slice(0, 4);
+  return `<input class="field" type="text" inputmode="numeric" maxlength="4"
+    placeholder="bijv. 5737" value="${v}"
+    oninput="N.si('${q.id}',this.value.replace(/\\D/g,'').slice(0,4))">`;
 }
 
-// ── CONSTANTEN ───────────────────────────────────────────────────────────────
-const CONSENT_VER = '1.0';
-const PILOT       = 'noord-brabant-2026';
-
-// Iconen + labels per stap (lange en korte versie)
-const STEP_META = [
-  { icon: '🏠', label: 'Woning' },
-  { icon: '🚪', label: 'Indeling' },
-  { icon: '🌳', label: 'Buiten' },
-  { icon: '⚡', label: 'Energie' },
-  { icon: '💭', label: 'Beleving' },
-  { icon: '👥', label: 'Situatie' },
-  { icon: '🎯', label: 'Wensen' },
-];
-const STEP_META_SHORT = [
-  { icon: '🏠', label: 'Woning' },
-  { icon: '💭', label: 'Hoe past het' },
-  { icon: '🎯', label: 'Wat zoek je' },
-];
-
-// ── STATE ─────────────────────────────────────────────────────────────────────
-let state   = {};
-let step    = 0;
-let mode    = null;           // null = nog kiezen | 'kort' | 'lang'
-let user    = null;
-let saving  = false;
-let saveTmr = null;
-
-// Aantal stappen / titels / meta voor de actieve modus
-function stepTitles() { return mode === 'kort' ? SHORT_STEP_TITLES : STEP_TITLES; }
-function stepMeta()   { return mode === 'kort' ? STEP_META_SHORT   : STEP_META;   }
-function nSteps()     { return stepTitles().length; }
-
-// ── GLOBALE HANDLERS ──────────────────────────────────────────────────────────
-window.N = {
-  si(k, v)        { state[k] = v; schedSave(); },
-  tc(k, v, multi) {
-    if (multi) {
-      const a = [...(state[k] || [])];
-      const i = a.indexOf(v);
-      if (i === -1) a.push(v); else a.splice(i, 1);
-      state[k] = a;
-    } else {
-      state[k] = v === (state[k] ?? '') ? '' : v;
-    }
-    schedSave(); renderCard(); renderTopNav();
-  },
-  ct(k, d, mn, mx) { state[k] = Math.min(mx, Math.max(mn, (state[k] ?? 0) + d)); schedSave(); renderCard(); renderTopNav(); },
-  tt(k)            { state[k] = !(state[k] === true); schedSave(); renderCard(); renderTopNav(); },
-  sc(k, n)         { state[k] = n === (state[k] ?? 0) ? 0 : n; schedSave(); renderCard(); renderTopNav(); },
-  sl(k, v)  {
-    state[k] = parseInt(v, 10);
-    schedSave();
-    const pct = ((parseInt(v,10)-1)/4*100).toFixed(0);
-    const si  = document.getElementById('sli-'+k);
-    const slv = document.getElementById('slv-'+k);
-    const sld = document.getElementById('sld-'+k);
-    if (si)  si.style.setProperty('--pct', pct+'%');
-    if (slv) slv.textContent = v+'/5';
-    if (sld && si) {
-      let descs = [];
-      try { descs = JSON.parse(si.getAttribute('data-descs') || '[]'); } catch (e) {}
-      if (descs[parseInt(v,10)-1]) sld.textContent = descs[parseInt(v,10)-1];
-    }
-    renderTopNav();
-  },
-  goTo(s) { goTo(s); },
-};
-
-// ── MODE-KEUZE ─────────────────────────────────────────────────────────────────
-window.chooseMode = function(m) {
-  mode = m;
-  step = 0;
-  state._mode = m;
-  schedSave();
-  renderAll();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-};
-
-window.switchMode = function() {
-  // Wissel tussen kort en lang met behoud van alle antwoorden.
-  const target = mode === 'kort' ? 'lang' : 'kort';
-  mode = target;
-  state._mode = target;
-  step = Math.min(step, nSteps() - 1);
-  schedSave();
-  renderAll();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-};
-
-function renderModeChoice() {
-  return `
-    <div class="mode-choice">
-      <div class="mode-choice-head">
-        <div class="mode-choice-ey">Wooncheck</div>
-        <h1 class="mode-choice-title">Hoe wil je <em>beginnen</em>?</h1>
-        <p class="mode-choice-desc">Je kunt snel kennismaken of meteen je volledige profiel invullen. Je kunt later altijd wisselen — je antwoorden blijven bewaard.</p>
-      </div>
-      <div class="mode-cards">
-        <button class="mode-card short" onclick="chooseMode('kort')">
-          <span class="mode-card-badge">Aanrader om te starten</span>
-          <span class="mode-card-icon">⚡</span>
-          <span class="mode-card-title">Snel kennismaken</span>
-          <span class="mode-card-time">± 2 minuten · 13 vragen</span>
-          <span class="mode-card-body">Een paar basics over je woning, hoe goed het nog past en welke richting je zoekt. Genoeg voor een eerste match.</span>
-          <span class="mode-card-cta">Start kort →</span>
-        </button>
-        <button class="mode-card long" onclick="chooseMode('lang')">
-          <span class="mode-card-badge">Volledig profiel</span>
-          <span class="mode-card-icon">📋</span>
-          <span class="mode-card-title">Uitgebreid invullen</span>
-          <span class="mode-card-time">± 8 minuten · 7 onderdelen</span>
-          <span class="mode-card-body">Alles van woning, buurt en energie tot je woonwensen. Hoe vollediger, hoe beter we je kunnen matchen.</span>
-          <span class="mode-card-cta">Start uitgebreid →</span>
-        </button>
-      </div>
-      <p class="mode-switch-hint">Twijfel je? Begin kort. Aanvullen kan altijd.</p>
+function rTiles(q, state) {
+  const grid = q.grid || 'g2';
+  const items = q.options.map(o => {
+    const v = typeof o === 'object' ? o.value : o;
+    const l = typeof o === 'object' ? o.label : o;
+    const ic = typeof o === 'object' ? (o.icon || '') : '';
+    const sel = (state[q.id] ?? '') === v;
+    return `<div class="tile${sel ? ' sel' : ''}" onclick="N.tc('${q.id}','${v}',false)">
+      ${ic ? `<span class="ti">${ic}</span>` : ''}<span>${l}</span>
     </div>`;
+  }).join('');
+  return `<div class="tg ${grid}">${items}</div>`;
 }
 
-// ── NAVIGATIE ─────────────────────────────────────────────────────────────────
-function goTo(s) {
-  step = s; state._step = step; schedSave(); renderAll();
-  window.scrollTo({ top: 0, behavior: 'smooth' });
+function rChips(q, state) {
+  const multi = q.multi || false;
+  const items = q.options.map(o => {
+    const v = typeof o === 'object' ? o.value : o;
+    const l = typeof o === 'object' ? o.label : o;
+    const sel = multi
+      ? (state[q.id] || []).includes(v)
+      : (state[q.id] ?? '') === v;
+    return `<div class="chip${sel ? ' sel' : ''}" onclick="N.tc('${q.id}','${v}',${multi})">${l}</div>`;
+  }).join('');
+  return `<div class="cr">${items}</div>`;
 }
-window.goToStep = goTo;
 
-// ── TEGEL-STAPNAVIGATIE ─────────────────────────────────────────────────────────
-function renderTopNav() {
-  const mount = document.getElementById('topnav');
-  if (!mount) return;
-  // Geen navigatie op het mode-keuzescherm of als niet ingelogd
-  if (!mode || !user || step >= nSteps()) { mount.innerHTML = ''; return; }
-
-  const meta   = stepMeta();
-  const total  = nSteps();
-  const modeLbl = mode === 'kort' ? 'Korte versie' : 'Uitgebreide versie';
-  const switchLbl = mode === 'kort' ? 'Wissel naar uitgebreid' : 'Wissel naar kort';
-
-  let tiles = '';
-  for (let i = 0; i < total; i++) {
-    const { filled, total: tot } = stepCompleteness(i, QUESTIONS, state, mode);
-    const pct = tot ? Math.round((filled / tot) * 100) : 0;
-    const isActive = i === step;
-    const isDone = tot > 0 && filled === tot;
-    const m = meta[i] || { icon: '•', label: 'Stap ' + (i + 1) };
-    const cls = 'step-tile'
-      + (isActive ? ' active' : '')
-      + (isDone ? ' done' : '')
-      + (filled > 0 && !isDone ? ' partial' : '');
-    tiles += `
-      <button type="button" class="${cls}" aria-current="${isActive?'step':'false'}"
-        aria-label="${m.label}: ${filled} van ${tot} ingevuld" onclick="goToStep(${i})">
-        <span class="step-tile-ring" style="--ring:${pct}%">
-          <span class="step-tile-icon">${isDone ? '✓' : m.icon}</span>
-        </span>
-        <span class="step-tile-label">${m.label}</span>
-        <span class="step-tile-count">${tot ? `${filled}/${tot}` : ''}</span>
-      </button>`;
-  }
-
-  mount.innerHTML = `
-    <div class="mode-bar">
-      <span class="mode-tag"><span class="save-dot"></span> ${modeLbl}</span>
-      <button class="mode-switch-btn" onclick="switchMode()">${switchLbl}</button>
+function rCounter(q, state) {
+  const maxVal = q.maxRef ? (state[q.maxRef] ?? q.max) : q.max;
+  const v = Math.min(state[q.id] ?? q.default ?? 0, maxVal);
+  return `<div class="crow">
+    <div>
+      <div class="clabel">${q.label}</div>
+      ${q.sublabel ? `<div class="csub">${q.sublabel}</div>` : ''}
     </div>
-    <div class="step-nav">${tiles}</div>`;
+    <div class="cctrl">
+      <button class="cbtn" onclick="N.ct('${q.id}',-1,${q.min ?? 0},${maxVal})"
+        ${v <= (q.min ?? 0) ? 'disabled' : ''}>−</button>
+      <span class="cval">${v}</span>
+      <button class="cbtn" onclick="N.ct('${q.id}',1,${q.min ?? 0},${maxVal})"
+        ${v >= maxVal ? 'disabled' : ''}>+</button>
+    </div>
+  </div>`;
 }
 
-function renderProgress() {
-  const f = document.getElementById('pfill');
-  if (!f) return;
-  if (!mode) { f.style.width = '0%'; return; }
-  f.style.width = (Math.min(step+1, nSteps()) / nSteps() * 100) + '%';
+function rToggle(q, state) {
+  const on = state[q.id] === true;
+  return `<div class="trow">
+    <div>
+      <div class="tlabel">${q.label}</div>
+      ${q.sublabel ? `<div class="tsub">${q.sublabel}</div>` : ''}
+    </div>
+    <button class="tog${on ? ' on' : ''}" onclick="N.tt('${q.id}')" aria-pressed="${on}"></button>
+  </div>`;
 }
 
-// ── FIRESTORE OPSLAAN ─────────────────────────────────────────────────────────
-function schedSave() {
-  clearTimeout(saveTmr);
-  saveTmr = setTimeout(() => saveToFirestore(), 1500);
-}
-
-async function saveToFirestore(markComplete = false) {
-  if (!user || saving) return;
-  saving = true;
-  const comp = calcCompleteness(QUESTIONS, state, mode || 'lang');
-  const payload = {};
-  QUESTIONS.forEach(q => {
-    if (!q.dbField) return;
-    const v = state[q.dbField];
-    if (v !== undefined) payload[q.dbField] = v;
-  });
-  payload._step         = step;
-  payload._mode         = mode || 'lang';
-  payload._completeness = comp;
-  payload._status       = markComplete ? 'complete' : 'in_progress';
-  payload._updatedAt    = serverTimestamp();
-  payload._pilot        = PILOT;
-  payload._version      = '1.0';
-  if (markComplete) {
-    payload._consent = { given: true, timestamp: serverTimestamp(), version: CONSENT_VER };
-  }
-  try {
-    await setDoc(doc(db, 'households', user.uid), payload, { merge: true });
-    flashSave(true);
-  } catch (e) {
-    console.error('Firestore fout:', e);
-    flashSave(false);
-  } finally {
-    saving = false;
-  }
-}
-
-let flashTmr;
-function flashSave(ok) {
-  clearTimeout(flashTmr);
-  const el = document.getElementById('save-badge');
-  if (!el) return;
-  el.innerHTML = ok
-    ? '<span class="save-dot" style="background:var(--forest)"></span> Opgeslagen ✓'
-    : '<span class="save-dot" style="background:var(--rust)"></span> Opslaan mislukt';
-  flashTmr = setTimeout(() => {
-    el.innerHTML = '<span class="save-dot"></span> Automatisch opgeslagen';
-  }, 2500);
-}
-
-// ── FIRESTORE LADEN ───────────────────────────────────────────────────────────
-async function loadFromFirestore() {
-  if (!user) return;
-  try {
-    const snap = await getDoc(doc(db, 'households', user.uid));
-    if (snap.exists()) {
-      const data = snap.data();
-      QUESTIONS.forEach(q => {
-        if (q.dbField && data[q.dbField] !== undefined) state[q.dbField] = data[q.dbField];
-      });
-      if (data._mode === 'kort' || data._mode === 'lang') mode = data._mode;
-      if (data._step !== undefined) step = data._step;
-      if (data._status === 'complete') step = nSteps();
-      // Veiligheid: clamp step binnen geldige range voor de geladen modus
-      if (mode) step = Math.min(step, nSteps());
-    }
-  } catch (e) { console.warn('Kon profiel niet laden:', e); }
-}
-
-// ── RESULTAATSCHERM ───────────────────────────────────────────────────────────
-function renderResultScreen() {
-  const comp    = calcCompleteness(QUESTIONS, state, mode || 'lang');
-  const summary = buildSummary(QUESTIONS, state);
-  const email   = user?.email || '—';
-  const prv     = state._consent_given === true;
-  const compHint = comp >= 75 ? '✓ Goed ingevuld — we kunnen je goed matchen.'
-                : comp >= 50  ? '→ Meer invullen vergroot de kans op een betere match.'
-                              : '→ Nog beperkt ingevuld. Hoe meer details, hoe beter.';
-  const sumItems = summary.map(s =>
-    `<div class="sum-item"><div class="sum-key">${s.key}</div><div class="sum-val">${s.val}</div></div>`
-  ).join('') || '<div class="sum-item" style="grid-column:1/-1"><div class="sum-val" style="color:var(--light)">Nog geen antwoorden ingevuld</div></div>';
-  const editLinks = Array.from({length:nSteps()},(_,i) =>
-    `<button class="edit-lnk" onclick="goToStep(${i})">${stepMeta()[i].label} aanpassen</button>`
+function rScale(q, state) {
+  const v = state[q.id] ?? 0;
+  const btns = [1, 2, 3, 4, 5].map(n =>
+    `<button class="scbtn${v === n ? ' sel' : ''}" onclick="N.sc('${q.id}',${n})">${n}</button>`
   ).join('');
-
-  // Upgrade-prompt alleen tonen als iemand de korte versie afrondt
-  const upgradeBox = mode === 'kort' ? `
-    <div class="upgrade-box">
-      <div class="upgrade-box-title">Wil je je kans op een goede match vergroten?</div>
-      <div class="upgrade-box-body">Je hebt de korte versie ingevuld. Met een paar extra vragen over je buurt, energie en woonwensen kunnen we je veel gerichter matchen. Je antwoorden blijven gewoon bewaard.</div>
-      <button class="btn-upgrade" onclick="switchMode()">Profiel aanvullen →</button>
-    </div>` : '';
-
-  return `
-    <div class="ey">Jouw woonprofiel</div>
-    <h1 class="st">Dit hebben we <em>van je</em></h1>
-    <div class="pilot-banner">
-      <strong>⚠️ Pilotfase — eerlijk over onze stand van zaken</strong><br>
-      Niste is net gestart in Noord-Brabant. Er zijn op dit moment <strong>nog beperkte matches beschikbaar</strong>. Zodra er een anoniem profiel in jouw regio verschijnt dat bij jou past, ontvang je een e-mail.
-    </div>
-    ${upgradeBox}
-    <div class="comp-wrap">
-      <div class="comp-lbl"><span>Volledigheid profiel</span><span>${comp}%</span></div>
-      <div class="comp-bar"><div class="comp-fill" style="width:${comp}%"></div></div>
-      <div class="comp-hint">${compHint}</div>
-    </div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.7rem">
-      <div class="sl" style="margin:0">Samenvatting</div>
-      <button class="edit-lnk" onclick="goToStep(0)">Alles bekijken</button>
-    </div>
-    <div class="sum-grid">${sumItems}</div>
-    <div class="edit-lnk-row">${editLinks}</div>
-    <div class="cta-box">
-      <div class="cta-title">Profiel opslaan &amp; meldingen ontvangen</div>
-      <p class="cta-desc">Je bent ingelogd als onderstaand e-mailadres. Zodra er in jouw regio een anoniem profiel verschijnt dat bij jou past, ontvang je een bericht. Geen spam, geen verplichtingen.</p>
-      <div class="user-email-row">
-        <span>📧</span>
-        <div>
-          <div class="user-email-lbl">Meldingen gaan naar</div>
-          <div class="user-email-val">${email}</div>
-        </div>
-      </div>
-      <button class="btn-cta" id="submit-btn" onclick="submitProfile()" ${prv?'':'disabled'}>Profiel opslaan</button>
-      <label class="chk-row" onclick="toggleConsent()">
-        <div class="chkbox${prv?' on':''}" id="consent-chk">${prv?'✓':''}</div>
-        <span class="priv-lbl">Ik ga akkoord met de <a href="privacy.html" style="color:var(--gold-lt)">privacyverklaring</a>. Mijn gegevens worden uitsluitend gebruikt voor matching en nooit gedeeld zonder mijn toestemming.</span>
-      </label>
-      <p class="priv-note">🔒 Jouw exacte adres wordt nooit opgeslagen. Matching is volledig anoniem.</p>
-    </div>`;
+  return `<div class="scblock">
+    <div class="scq">${q.label}</div>
+    ${q.sublabel ? `<div class="scsub">${q.sublabel}</div>` : ''}
+    <div class="scrow">${btns}</div>
+    <div class="sc-ends"><span>${q.ends[0]}</span><span>${q.ends[1]}</span></div>
+  </div>`;
 }
 
-window.toggleConsent = function() {
-  state._consent_given = !(state._consent_given === true);
-  const chk = document.getElementById('consent-chk');
-  const btn = document.getElementById('submit-btn');
-  if (chk) { chk.className='chkbox'+(state._consent_given?' on':''); chk.textContent=state._consent_given?'✓':''; }
-  if (btn) btn.disabled = !state._consent_given;
-};
-
-window.submitProfile = async function() {
-  const btn = document.getElementById('submit-btn');
-  if (btn) { btn.disabled=true; btn.textContent='Opslaan…'; }
-  await saveToFirestore(true);
-  document.getElementById('topnav').innerHTML = '';
-  document.getElementById('area').innerHTML = `<div class="card"><div class="success-wrap">
-    <div class="success-ico">✅</div>
-    <div class="success-title">Profiel opgeslagen</div>
-    <p class="success-desc">Jouw woonprofiel is opgeslagen.<br><br>
-      <strong>Eerlijk gezegd:</strong> Niste is net gestart. Het kan enige tijd duren voordat er genoeg profielen zijn om te matchen. Je ontvangt een e-mail op <em>${user?.email||''}</em> zodra er een match is.
-    </p>
-    <button class="btn-edit-again" onclick="goToStep(0)">✏ Profiel aanpassen</button>
-    <a href="dashboard.html" class="btn-to-login" style="display:inline-block;text-decoration:none">Naar dashboard →</a>
-  </div></div>`;
-};
-
-// ── RENDER ────────────────────────────────────────────────────────────────────
-function renderCard() {
-  const area = document.getElementById('area');
-  if (!area) return;
-
-  // Mode nog niet gekozen → keuzescherm
-  if (!mode) {
-    area.innerHTML = `<div class="card">${renderModeChoice()}</div>`;
-    return;
-  }
-
-  // Voorbij de laatste stap → resultaatscherm
-  if (step >= nSteps()) {
-    area.innerHTML = `<div class="card">${renderResultScreen()}</div>`;
-    return;
-  }
-
-  const inner = renderStep(step, QUESTIONS, state, stepTitles(), mode);
-  const isLast = step === nSteps() - 1;
-  const nav = `
-    <div class="nav-row">
-      ${step>0 ? `<button class="btn-back" onclick="goToStep(${step-1})">← Terug</button>` : '<div></div>'}
-      <div class="btn-right">
-        <button class="btn-skip" onclick="goToStep(${step+1})">Overslaan</button>
-        <button class="btn-next" onclick="goToStep(${step+1})">
-          ${isLast?'Bekijk profiel →':'Volgende →'}
-        </button>
-      </div>
-    </div>`;
-  area.innerHTML = `<div class="card">${inner}${nav}</div>`;
+function rSlider(q, state) {
+  const v = state[q.id] ?? q.default ?? 3;
+  const pct = ((v - 1) / (q.max - q.min) * 100).toFixed(0);
+  // Descriptions in een data-attribuut (HTML-escaped). Géén JSON in oninput,
+  // want komma's/quotes in de tekst breken anders de attribuut-string op.
+  const descsAttr = JSON.stringify(q.descriptions)
+    .replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  return `<div class="sw">
+    <div class="sl-labels"><span>${q.endLabels[0]}</span><span>${q.endLabels[1]}</span></div>
+    <input type="range" id="sli-${q.id}" min="${q.min}" max="${q.max}" step="1"
+      style="--pct:${pct}%" value="${v}" data-descs="${descsAttr}"
+      oninput="N.sl('${q.id}',this.value)">
+    <div class="slval" id="slv-${q.id}">${v}/${q.max}</div>
+    <div class="sldesc" id="sld-${q.id}">${q.descriptions[v - 1]}</div>
+  </div>`;
 }
 
-function renderAll() { renderTopNav(); renderProgress(); renderCard(); }
+function rTextarea(q, state) {
+  return `<textarea class="field" placeholder="${q.placeholder || ''}"
+    oninput="N.si('${q.id}',this.value)">${state[q.id] || ''}</textarea>`;
+}
 
-// ── FIREBASE AUTH ─────────────────────────────────────────────────────────────
-onAuthStateChanged(auth, async (u) => {
-  if (!u) {
-    document.getElementById('area').innerHTML = `
-      <div class="card"><div class="auth-gate">
-        <div class="auth-gate-title">Eerst aanmelden</div>
-        <p class="auth-gate-desc">Om je woonprofiel op te slaan en matches te ontvangen, moet je ingelogd zijn. Je aanmelding is gratis en verplicht je tot niets.</p>
-        <a href="aanmelden.html" class="btn-to-login">Aanmelden of inloggen →</a>
-      </div></div>`;
-    document.getElementById('topnav').innerHTML = '';
-    return;
+function rComputedBadge(q, state) {
+  const fn = COMPUTED[q.compute];
+  const msg = fn ? fn(state) : null;
+  return msg ? `<div class="mm-badge">${msg}</div>` : '';
+}
+
+// ─── DISPATCHER ───────────────────────────────────────────────────────────────
+
+function renderQuestion(q, state) {
+  switch (q.type) {
+    case 'postcode':       return rPostcode(q, state);
+    case 'tiles':          return rTiles(q, state);
+    case 'chips':          return rChips(q, state);
+    case 'counter':        return rCounter(q, state);
+    case 'toggle':         return rToggle(q, state);
+    case 'scale':          return rScale(q, state);
+    case 'slider':         return rSlider(q, state);
+    case 'textarea':       return rTextarea(q, state);
+    case 'computed_badge': return rComputedBadge(q, state);
+    default:               return `<!-- onbekend type: ${q.type} -->`;
   }
-  user = u;
-  const nu = document.getElementById('nav-user');
-  if (nu) nu.textContent = u.email;
-  await loadFromFirestore();
-  renderAll();
-});
-</script>
-</body>
-</html>
+}
+
+// ─── HELPER: hoort een vraag bij deze stap in deze modus? ─────────────────────
+export function questionStep(q, mode) {
+  return mode === 'kort' ? q.shortStep : q.step;
+}
+
+export function questionVisibleInMode(q, mode) {
+  return mode === 'kort' ? q.short === true : true;
+}
+
+// ─── STAP RENDERER ────────────────────────────────────────────────────────────
+// Rendert alle vragen voor één stap, inclusief groepering en sectie-labels.
+//   mode: 'lang' (default) | 'kort'
+
+export function renderStep(stepIndex, questions, state, stepMeta, mode = 'lang') {
+  const meta = stepMeta[stepIndex];
+
+  // Filter: alleen vragen voor deze stap (in deze modus) én waarvan showIf geldig is
+  const visible = questions.filter(q => {
+    if (!questionVisibleInMode(q, mode)) return false;
+    if (questionStep(q, mode) !== stepIndex) return false;
+    if (!q.showIf) return true;
+    const sv = state[q.showIf.key];
+    const target = q.showIf.value;
+    const actual = sv === undefined ? (typeof target === 'boolean' ? false : undefined) : sv;
+    return actual === target;
+  });
+
+  let html = `
+    <div class="ey">${meta.eyebrow}</div>
+    <h1 class="st">${meta.title}</h1>
+    <p class="sd">${meta.desc}</p>
+    <div class="skip-notice">💡 Alle vragen zijn optioneel. Hoe meer je invult, hoe beter de match.</div>
+  `;
+
+  // Groepeer aaneengesloten counters en toggles in een wrapper-div
+  let openGroup = null; // 'counter' | 'toggle' | null
+
+  function closeGroup() {
+    if (openGroup) { html += '</div>'; openGroup = null; }
+  }
+
+  for (const q of visible) {
+    if (q.sectionLabel) {
+      closeGroup();
+      html += `<div class="sl">${q.sectionLabel}</div>`;
+    }
+
+    if (q.type === 'counter') {
+      if (openGroup !== 'counter') { closeGroup(); html += '<div class="cnt-grp">'; openGroup = 'counter'; }
+    } else if (q.type === 'toggle') {
+      if (openGroup !== 'toggle') { closeGroup(); html += '<div class="tog-grp">'; openGroup = 'toggle'; }
+    } else {
+      closeGroup();
+    }
+
+    html += renderQuestion(q, state);
+  }
+
+  closeGroup();
+  return html;
+}
+
+// ─── VOLLEDIGHEID BEREKENING ──────────────────────────────────────────────────
+// Berekent percentage op basis van ingevulde dbFields.
+//   mode: 'lang' (default) | 'kort' — in korte modus tellen alleen short-velden.
+
+export function calcCompleteness(questions, state, mode = 'lang') {
+  const fields = questions
+    .filter(q => q.dbField && questionVisibleInMode(q, mode))
+    .map(q => q.dbField);
+
+  if (fields.length === 0) return 0;
+
+  const filled = fields.filter(f => {
+    const v = state[f];
+    if (v === undefined || v === null || v === '') return false;
+    if (Array.isArray(v)) return v.length > 0;
+    return true;
+  });
+
+  return Math.round((filled.length / fields.length) * 100);
+}
+
+// ─── VOLLEDIGHEID PER STAP ────────────────────────────────────────────────────
+// Voor de tegelnavigatie: {filled, total} voor één stap in een modus.
+
+export function stepCompleteness(stepIndex, questions, state, mode = 'lang') {
+  const qs = questions.filter(q => {
+    if (q.type === 'computed_badge') return false;
+    if (!q.dbField) return false;
+    if (!questionVisibleInMode(q, mode)) return false;
+    return questionStep(q, mode) === stepIndex;
+  });
+  let filled = 0;
+  for (const q of qs) {
+    const v = state[q.dbField];
+    const isFilled = Array.isArray(v) ? v.length > 0
+      : (v !== undefined && v !== null && v !== '');
+    if (isFilled) filled++;
+  }
+  return { filled, total: qs.length };
+}
+
+// ─── SAMENVATTING VOOR RESULTAATSCHERM ────────────────────────────────────────
+
+export function buildSummary(questions, state) {
+  const summaryFields = [
+    'woning_type','oppervlak','bouwjaar','energielabel','prijs_range',
+    'kamers_totaal','kamers_gebruikt','tuin','tuin_grootte',
+    'parkeer_eigen','parkeer_voorz','schuur',
+    'verwarm','gasloos','zonnepanelen','laadpaal',
+    'huishoud_type','leeftijd_cat','woonduur',
+    'gewenst_type','gewenst_woonmilieu','gewenste_locatie',
+  ];
+
+  return summaryFields.map(field => {
+    const q = questions.find(x => x.dbField === field);
+    if (!q) return null;
+    const raw = state[field];
+    if (raw === undefined || raw === null || raw === '') return null;
+    if (Array.isArray(raw) && raw.length === 0) return null;
+
+    // Resolve label voor tiles/chips met value/label objecten
+    let display = raw;
+    if (q.options && typeof raw === 'string') {
+      const opt = q.options.find(o => (typeof o === 'object' ? o.value : o) === raw);
+      if (opt) display = typeof opt === 'object' ? opt.label : opt;
+    }
+    if (Array.isArray(raw)) {
+      display = raw.map(r => {
+        if (q.options) {
+          const opt = q.options.find(o => (typeof o === 'object' ? o.value : o) === r);
+          if (opt) return typeof opt === 'object' ? opt.label : opt;
+        }
+        return r;
+      }).join(', ');
+    }
+    if (typeof raw === 'boolean') display = raw ? 'Ja' : 'Nee';
+
+    return { key: q.sectionLabel || q.label || field, val: display };
+  }).filter(Boolean);
+}
