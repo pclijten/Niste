@@ -541,6 +541,30 @@
       </div>
     </div>
 
+    <!-- ── MATCH-CHAT PAGE (anonieme chat met de match) ── -->
+    <div class="dash-page" id="page-matchchat">
+      <div class="page-header">
+        <div class="page-eyebrow">Jouw match</div>
+        <h1 class="page-title">Chat met je <em>mogelijke match</em></h1>
+      </div>
+      <div class="chat-card">
+        <div class="chat-head">
+          <h4 id="matchchat-title">Anonieme match</h4>
+          <p>Jullie zijn (nog) anoniem voor elkaar. Deel pas persoonlijke gegevens als je je er prettig bij voelt. 🔒 Het Niste-team kan meelezen voor de veiligheid.</p>
+        </div>
+        <div class="chat-thread" id="matchchat-thread">
+          <div class="chat-empty">
+            <div style="font-size:2.2rem;margin-bottom:.5rem">👋</div>
+            <div>Zeg gerust hallo. Jullie woningen lijken goed bij elkaar te passen.</div>
+          </div>
+        </div>
+        <div class="chat-compose">
+          <textarea class="chat-input" id="matchchat-input" rows="1" placeholder="Typ een bericht…"></textarea>
+          <button class="chat-send" id="matchchat-send" onclick="sendMatchMsg()">Versturen</button>
+        </div>
+      </div>
+    </div>
+
     <!-- ── INTAKE PAGE — iframe, geen eigen padding ── -->
     <div class="dash-page" id="page-intake">
       <iframe
@@ -695,12 +719,17 @@
           <div class="match-region">📍 Regio ${m.other_pc && m.other_pc!=='—' ? m.other_pc : 'onbekend'}</div>
           <div class="feat-grid">${featGrid}</div>
 
-          ${optedIn ? `
+          ${optedIn ? (m.thread_id ? `
+            <div class="optin-row">
+              <button class="btn-optin" onclick="showPage('matchchat')">💬 Open de chat met je match</button>
+            </div>
+            <p class="optin-note">Jullie staan allebei open voor contact! Je kunt nu anoniem met elkaar chatten. Deel pas persoonlijke gegevens als je je er prettig bij voelt. Het Niste-team kan meelezen voor de veiligheid.</p>
+          ` : `
             <div class="optin-row">
               <span class="btn-optin done">✓ Je staat open voor contact</span>
             </div>
-            <p class="optin-note">Bedankt! Zodra de andere partij ook akkoord geeft, brengen wij jullie met elkaar in contact. Je hoort van ons.</p>
-          ` : `
+            <p class="optin-note">Bedankt! Zodra de andere partij ook akkoord geeft, openen we een anonieme chat zodat jullie kennis kunnen maken.</p>
+          `) : `
             <div class="optin-row">
               <button class="btn-optin" onclick="optIn('${m.matchId}')">Ik sta open voor contact</button>
               <button class="btn-optin-no" onclick="openReject('${m.matchId}')">Past niet bij mij</button>
@@ -893,6 +922,75 @@
   };
 
   function escapeHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+  // ── MATCH-CHAT (anonieme chat met de gematchte deelnemer) ──────────────────
+  let matchThreadId = null;
+  let matchUnsub    = null;
+  let matchMsgs     = [];
+
+  function activeThreadId() {
+    const matches = pendingMatches();
+    const withThread = matches.find(m => m.thread_id);
+    return withThread ? withThread.thread_id : null;
+  }
+
+  async function openMatchChat() {
+    matchThreadId = activeThreadId();
+    const thread = document.getElementById("matchchat-thread");
+    if (!matchThreadId) {
+      thread.innerHTML = `<div class="chat-empty"><div>De chat is nog niet geopend. Zodra jullie allebei open staan voor contact, kun je hier chatten.</div></div>`;
+      return;
+    }
+    // titel met het label van de tegenpartij (anoniem)
+    try {
+      const tSnap = await getDoc(doc(db, "threads", matchThreadId));
+      if (tSnap.exists()) {
+        const t = tSnap.data();
+        const mine = currentUser.uid;
+        const otherLabel = t.participants?.[0] === mine ? t.label_b : t.label_a;
+        document.getElementById("matchchat-title").textContent = "Gesprek met " + (otherLabel || "je match");
+      }
+    } catch {}
+    // live meeluisteren
+    if (matchUnsub) matchUnsub();
+    try {
+      const qy = collection(db, "threads", matchThreadId, "messages");
+      matchUnsub = onSnapshot(qy, (snap) => {
+        matchMsgs = snap.docs.map(d => ({ id: d.id, ...d.data() }))
+          .sort((a,b) => (a.createdAt?.seconds||0) - (b.createdAt?.seconds||0));
+        renderMatchChat();
+      }, (err) => console.warn("matchchat snapshot", err));
+    } catch (e) { console.warn("openMatchChat", e); }
+  }
+
+  function renderMatchChat() {
+    const thread = document.getElementById("matchchat-thread");
+    if (!thread) return;
+    if (!matchMsgs.length) {
+      thread.innerHTML = `<div class="chat-empty"><div style="font-size:2.2rem;margin-bottom:.5rem">👋</div><div>Zeg gerust hallo. Jullie woningen lijken goed bij elkaar te passen.</div></div>`;
+      return;
+    }
+    thread.innerHTML = matchMsgs.map(m => {
+      const mine = m.sender_uid === currentUser.uid;
+      const t = m.createdAt?.seconds ? new Date(m.createdAt.seconds*1000).toLocaleString('nl-NL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}) : '';
+      // 'user' (rechts, groen) = ikzelf; 'admin' (links, cream) hergebruiken we voor de ander
+      return `<div class="chat-bubble ${mine ? 'user' : 'admin'}">${escapeHtml(m.text)}<div class="chat-bubble-time">${t}</div></div>`;
+    }).join('');
+    thread.scrollTop = thread.scrollHeight;
+  }
+
+  window.sendMatchMsg = async () => {
+    const input = document.getElementById("matchchat-input");
+    const text = (input?.value || "").trim();
+    if (!text || !currentUser || !matchThreadId) return;
+    input.value = "";
+    try {
+      await addDoc(collection(db, "threads", matchThreadId, "messages"), {
+        sender_uid: currentUser.uid, text, createdAt: serverTimestamp(),
+      });
+      // onSnapshot werkt de UI vanzelf bij
+    } catch (e) { console.error("sendMatchMsg", e); showMsg("global-msg","Bericht versturen mislukt.","error"); }
+  };
   function typeLabel(v){ return ({tussenwoning:'Tussenwoning',hoekwoning:'Hoekwoning','2kap':'2-onder-1-kap',vrijstaand:'Vrijstaande woning',appartement:'Appartement',boven_beneden:'Boven-/benedenwoning',penthouse:'Penthouse',woonboerderij:'Woonboerderij'})[v] || v || 'Woning'; }
   function gewenstLabel(v){ return ({vergelijkbaar:'iets vergelijkbaars',kleiner:'kleiner',gelijkvloers:'gelijkvloers',groter:'groter',appartement:'een appartement',grondgeb:'grondgebonden',zorg:'zorggeschikt',weet_niet:'weet nog niet'})[v] || v || '—'; }
   function tuinLabel(v){ if(v==null) return null; return ({ja:'Ja',nee:'Nee',voortuin:'Voortuin',achtertuin:'Achtertuin',beide:'Voor- en achtertuin',balkon:'Balkon',geen:'Geen'})[v] || (v===true?'Ja':v===false?'Nee':v); }
@@ -902,6 +1000,7 @@
   // ── LOGOUT ──────────────────────────────────────────────────────────────────
   window.handleLogout = async () => {
     if (msgUnsub) msgUnsub();
+    if (matchUnsub) matchUnsub();
     await signOut(auth);
     window.location.href = "index.html";
   };
@@ -968,6 +1067,7 @@
       main.style.padding = "";
     }
     if (page === "messages") markUserRead();
+    if (page === "matchchat") openMatchChat();
     clearMsg("global-msg");
   };
 
@@ -980,6 +1080,9 @@
 
   document.getElementById("chat-input").addEventListener("keydown", e => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); window.sendUserMsg(); }
+  });
+  document.getElementById("matchchat-input").addEventListener("keydown", e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); window.sendMatchMsg(); }
   });
 
   // ── HELPERS ─────────────────────────────────────────────────────────────────
