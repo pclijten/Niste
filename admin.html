@@ -222,6 +222,7 @@
 
 <div class="tabs">
   <div class="tab active" onclick="switchTab('overview')">📊 Overzicht</div>
+  <div class="tab" onclick="switchTab('deelnemers')">👥 Deelnemers</div>
   <div class="tab" onclick="switchTab('review')">✅ Beoordelen <span id="review-badge"></span></div>
   <div class="tab" onclick="switchTab('matching')">🔗 Matches berekenen</div>
   <div class="tab" onclick="switchTab('messages')">💬 Berichten <span id="messages-badge"></span></div>
@@ -253,6 +254,25 @@
     <div class="card"><div class="card-lbl">Woningtype — gewenst</div><div id="gewenst-chart"><div class="empty">Laden…</div></div></div>
   </div>
   <div class="card"><div class="card-lbl">Recentste profielen (max. 20)</div><div id="recent-table"><div class="empty">Laden…</div></div></div>
+</div>
+</div>
+
+<!-- TAB DEELNEMERS -->
+<div class="tab-content" id="tab-deelnemers">
+<div class="main">
+  <div class="ph">
+    <div class="ph-ey">Deelnemers</div>
+    <h1 class="ph-title">Alle <em>inschrijvingen</em></h1>
+    <p class="ph-sub">Overzicht van iedereen die zich heeft aangemeld. Klik op een deelnemer om het gesprek te openen.</p>
+  </div>
+  <div class="card-lbl-row" style="margin-bottom:1rem">
+    <input type="text" id="deelnemer-search" placeholder="Zoek op postcode of label…" oninput="renderDeelnemers()"
+      style="flex:1;max-width:320px;padding:.6rem 1rem;border:1.5px solid rgba(42,74,62,.15);border-radius:10px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.84rem;outline:none">
+    <span id="deelnemer-count" style="font-size:.78rem;color:var(--light);font-weight:600"></span>
+  </div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div id="deelnemers-table"><div class="empty">Laden…</div></div>
+  </div>
 </div>
 </div>
 
@@ -368,10 +388,11 @@ window.loadEverything = async () => { await loadData(); await loadMatches(); awa
 window.doLogout = async () => { await signOut(auth); window.location.href='index.html'; };
 
 window.switchTab = (tab) => {
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['overview','review','matching','messages'][i]===tab));
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['overview','deelnemers','review','matching','messages'][i]===tab));
   document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
   document.getElementById('tab-'+tab).classList.add('active');
   if(tab==='messages') renderConvoList();
+  if(tab==='deelnemers') renderDeelnemers();
 };
 
 // ── TOAST ────────────────────────────────────────────────────────────────────
@@ -974,13 +995,107 @@ function renderMessagesBadge(){
     ?`<span style="background:var(--gold);color:var(--dark);border-radius:100px;padding:.1rem .45rem;font-size:.65rem;font-weight:800;margin-left:.4rem">${n}</span>`:'';
 }
 
-function householdEmail(uid){
-  // we hebben geen e-mail in households (privacy) — toon korte uid + postcode
-  const h=householdById(uid);
-  return h ? (h.postcode ? `Deelnemer · ${h.postcode}` : 'Deelnemer') : 'Onbekende deelnemer';
+// Bouwt een stabiele map uid → label "PC-N" (bijv. 5735-1, 5735-2).
+// Volgnummer is bepaald door de volgorde van uid's binnen dezelfde postcode,
+// zodat het consistent blijft tussen avatar, gesprekslijst en deelnemerstab.
+let _labelCache = null;
+function buildLabelMap(){
+  const byPc = {};
+  // sorteer huishoudens op id voor een stabiele volgorde
+  const sorted = [...allHouseholds].sort((a,b)=> (a.id<b.id?-1:1));
+  const map = {};
+  sorted.forEach(h=>{
+    const pc = h.postcode || '0000';
+    byPc[pc] = (byPc[pc]||0) + 1;
+    map[h.id] = { pc, n: byPc[pc], label: `${pc}-${byPc[pc]}` };
+  });
+  return map;
+}
+function labelFor(uid){
+  if(!_labelCache) _labelCache = buildLabelMap();
+  return _labelCache[uid] || { pc:'????', n:0, label:'Onbekend' };
+}
+function deelnemerLabel(uid){
+  const l = labelFor(uid);
+  return l.label === 'Onbekend' ? 'Onbekende deelnemer' : `Deelnemer ${l.label}`;
+}
+function deelnemerInitials(uid){
+  const l = labelFor(uid);
+  return l.label === 'Onbekend' ? '?' : l.label; // toon "5735-1" als avatar-tekst
 }
 
+// ── DEELNEMERS-OVERZICHT ──────────────────────────────────────────────────────
+window.renderDeelnemers = () => {
+  _labelCache = buildLabelMap();
+  const tbl = document.getElementById('deelnemers-table');
+  const cnt = document.getElementById('deelnemer-count');
+  const term = (document.getElementById('deelnemer-search')?.value || '').toLowerCase().trim();
+
+  let list = [...allHouseholds];
+  if (term) {
+    list = list.filter(h => {
+      const lbl = labelFor(h.id).label.toLowerCase();
+      return lbl.includes(term) || (h.postcode||'').toLowerCase().includes(term);
+    });
+  }
+  // sorteer op postcode dan volgnummer
+  list.sort((a,b)=>{
+    const la=labelFor(a.id), lb=labelFor(b.id);
+    return la.pc===lb.pc ? la.n-lb.n : (la.pc<lb.pc?-1:1);
+  });
+
+  if (cnt) cnt.textContent = `${list.length} ${list.length===1?'deelnemer':'deelnemers'}`;
+
+  if (!list.length) { tbl.innerHTML='<div class="empty">Geen deelnemers gevonden.</div>'; return; }
+
+  const rows = list.map(h => {
+    const lbl = labelFor(h.id).label;
+    const comp = h._completeness || 0;
+    const statusPill = h._status==='complete'
+      ? `<span class="status-pill sp-complete"><span class="status-dot"></span>Compleet</span>`
+      : `<span class="status-pill sp-in_progress"><span class="status-dot"></span>In bewerking</span>`;
+    // match-status afleiden uit _pending_matches
+    const pm = h._pending_matches || {};
+    const pendList = Object.values(pm).filter(e=>e && typeof e==='object');
+    let matchInfo = '—';
+    if (pendList.length) {
+      const optedIn = pendList.some(e=>e.optin_self===true);
+      const declined = pendList.every(e=>e.status==='declined');
+      matchInfo = declined ? '<span style="color:var(--rust)">afgewezen</span>'
+        : optedIn ? '<span style="color:var(--forest);font-weight:700">opt-in ✓</span>'
+        : '<span style="color:#9a7530">match open</span>';
+    }
+    // e-mail: nog niet beschikbaar (privacy-keuze nog te maken)
+    const email = h.email ? escapeHtml(h.email) : '<span style="color:var(--light)">— niet opgeslagen</span>';
+    return `<tr onclick="openConvoFromList('${h.id}')" style="cursor:pointer">
+      <td><span class="pc-pill">${lbl}</span></td>
+      <td>${WL[h.woning_type]||h.woning_type||'—'}</td>
+      <td>${GL[h.gewenst_type]||h.gewenst_type||'—'}</td>
+      <td>${h.verhuisbereidheid?h.verhuisbereidheid+'/5':'—'}</td>
+      <td><span style="font-size:.72rem;font-weight:700;color:var(--mid)">${comp}%</span><span class="comp-bar-inline"><span class="comp-fill-inline" style="width:${comp}%"></span></span></td>
+      <td>${matchInfo}</td>
+      <td>${statusPill}</td>
+      <td>${email}</td>
+    </tr>`;
+  }).join('');
+
+  tbl.innerHTML = `<table class="rec-table" style="width:100%">
+    <thead><tr>
+      <th>Deelnemer</th><th>Huidig</th><th>Gewenst</th><th>Bereid</th>
+      <th>Volledigheid</th><th>Match</th><th>Profiel</th><th>E-mail</th>
+    </tr></thead>
+    <tbody>${rows}</tbody>
+  </table>`;
+};
+
+window.openConvoFromList = (uid) => {
+  switchTab('messages');
+  setTimeout(()=>openConvo(uid), 50);
+};
+
+
 function renderConvoList(){
+  _labelCache = buildLabelMap(); // ververs zodat nieuwe deelnemers meteen kloppen
   const el=document.getElementById('msg-sidebar');
   // groepeer berichten per uid; toon ook deelnemers zonder bericht (om te starten)
   const byUid={};
@@ -1002,12 +1117,12 @@ function renderConvoList(){
     const last=msgs[msgs.length-1];
     const lastTxt=last?(last.sender==='admin'?'Jij: ':'')+last.text:'Nog geen bericht';
     const unread=msgs.some(m=>m.sender==='user' && !m.read_admin);
-    const h=householdById(uid);
-    const initials=(h?.postcode||'?').slice(0,2);
+    const initials=deelnemerInitials(uid);
     return `<div class="msg-convo${activeConvo===uid?' active':''}" onclick="openConvo('${uid}')">
-      <div class="msg-convo-avatar">${initials}</div>
+      <div class="msg-convo-avatar" style="font-size:.6rem">${initials}</div>
       <div class="msg-convo-info">
-        <div class="msg-convo-name">${householdEmail(uid)}</div>
+        <div class="msg-convo-name">${deelnemerLabel(uid)}</div>
+        <div class="msg-convo-last">${escapeHtml(lastTxt).slice(0,40)}</div>
         <div class="msg-convo-last">${escapeHtml(lastTxt).slice(0,40)}</div>
       </div>
       ${unread?'<div class="msg-convo-unread"></div>':''}
@@ -1048,9 +1163,9 @@ function renderThread(uid){
 
   panel.innerHTML=`
     <div class="msg-panel-head">
-      <div class="msg-convo-avatar">${(householdById(uid)?.postcode||'?').slice(0,2)}</div>
+      <div class="msg-convo-avatar" style="font-size:.6rem">${deelnemerInitials(uid)}</div>
       <div>
-        <div class="msg-panel-head-name">${householdEmail(uid)}</div>
+        <div class="msg-panel-head-name">${deelnemerLabel(uid)}</div>
         <div class="msg-panel-head-sub">Bericht verschijnt direct in hun dashboard</div>
       </div>
     </div>
