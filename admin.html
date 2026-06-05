@@ -199,6 +199,8 @@
     .msg-send:disabled{opacity:.4;cursor:not-allowed}
     @media(max-width:768px){.msg-layout{grid-template-columns:1fr}.msg-sidebar{max-height:200px}}
     .empty{text-align:center;padding:2.5rem 1rem;color:var(--light);font-size:.86rem}
+    .optin-track{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;font-size:.78rem;font-weight:600}
+    .optin-chip{background:#fff;border:1px solid rgba(42,74,62,.12);border-radius:100px;padding:.2rem .7rem;font-size:.74rem}
     .approved-note{background:var(--gold-pale);border-radius:10px;padding:.6rem .9rem;font-size:.74rem;color:#9a7530;margin-top:.7rem;display:flex;align-items:center;gap:.5rem;line-height:1.45}
     .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(246,241,233,.3);border-top-color:var(--cream);border-radius:50%;animation:spin .7s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
@@ -226,6 +228,7 @@
   <div class="tab" onclick="switchTab('review')">✅ Beoordelen <span id="review-badge"></span></div>
   <div class="tab" onclick="switchTab('matching')">🔗 Matches berekenen</div>
   <div class="tab" onclick="switchTab('messages')">💬 Berichten <span id="messages-badge"></span></div>
+  <div class="tab" onclick="switchTab('threads')">🔗 Match-chats</div>
 </div>
 
 <!-- TAB OVERVIEW -->
@@ -343,6 +346,26 @@
 </div>
 </div>
 
+<!-- TAB THREADS (admin meeleest match-chats) -->
+<div class="tab-content" id="tab-threads">
+<div class="main">
+  <div class="ph">
+    <div class="ph-ey">Match-chats — moderatie</div>
+    <h1 class="ph-title">Gesprekken tussen <em>deelnemers</em></h1>
+    <p class="ph-sub">Hier kun je meelezen met de anonieme gesprekken tussen gematchte deelnemers. Deelnemers zien dat het Niste-team kan meelezen.</p>
+  </div>
+  <div class="msg-layout">
+    <div class="msg-sidebar" id="thread-sidebar"><div class="empty">Laden…</div></div>
+    <div class="msg-panel" id="thread-panel">
+      <div class="msg-empty-panel">
+        <div style="font-size:2.4rem;margin-bottom:.6rem">🔗</div>
+        <div>Kies links een match-chat om mee te lezen.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script type="module">
@@ -369,6 +392,9 @@ let allHouseholds = [];
 let allMatches    = [];
 let reviewFilter  = 'suggested';   // suggested | approved | rejected | all
 let allMessages   = [];            // alle berichten (admin ziet alles)
+let allThreads    = [];            // alle match-chats (admin moderatie)
+let activeThread  = null;          // geopende thread in admin
+let threadMsgs    = [];            // berichten van de geopende thread
 let activeConvo   = null;          // uid van geopend gesprek
 let msgUnsub      = null;          // onSnapshot-unsubscribe
 
@@ -383,16 +409,17 @@ onAuthStateChanged(auth, async (user) => {
   await loadEverything();
 });
 
-window.loadEverything = async () => { await loadData(); await loadMatches(); await loadMessages(); };
+window.loadEverything = async () => { await loadData(); await loadMatches(); await loadMessages(); await loadThreads(); };
 
 window.doLogout = async () => { await signOut(auth); window.location.href='index.html'; };
 
 window.switchTab = (tab) => {
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['overview','deelnemers','review','matching','messages'][i]===tab));
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['overview','deelnemers','review','matching','messages','threads'][i]===tab));
   document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
   document.getElementById('tab-'+tab).classList.add('active');
   if(tab==='messages') renderConvoList();
   if(tab==='deelnemers') renderDeelnemers();
+  if(tab==='threads') renderThreadsAdmin();
 };
 
 // ── TOAST ────────────────────────────────────────────────────────────────────
@@ -590,9 +617,42 @@ function renderReviewList(){
         <button class="btn-detail" onclick="toggleDetail('${m.id}')">Profielen bekijken</button>`;
     }
 
-    const approvedNote = st==='approved'
-      ? `<div class="approved-note">📨 Klaargezet voor beide huishoudens. Zij zien een anonieme melding en kunnen wederzijds interesse aangeven (dubbele opt-in) voordat contact mogelijk wordt.</div>`
-      : '';
+    let approvedNote = '';
+    if(st==='approved'){
+      const ha = householdById(m.household_a);
+      const hb = householdById(m.household_b);
+      const optA = !!(ha?._pending_matches?.[m.id]?.optin_self);
+      const optB = !!(hb?._pending_matches?.[m.id]?.optin_self);
+      const declinedA = ha?._pending_matches?.[m.id]?.status === 'declined';
+      const declinedB = hb?._pending_matches?.[m.id]?.status === 'declined';
+      const threadExists = !!m.thread_id;
+      const dot = (state)=> state==='ja'?'🟢':state==='nee'?'🔴':'⚪';
+      const stA = declinedA?'nee':optA?'ja':'wacht';
+      const stB = declinedB?'nee':optB?'ja':'wacht';
+
+      let optinRow = `<div class="optin-track">
+        <span>Opt-in status:</span>
+        <span class="optin-chip">${dot(stA)} ${labelFor(m.household_a).label}: ${stA==='ja'?'akkoord':stA==='nee'?'afgewezen':'wacht'}</span>
+        <span class="optin-chip">${dot(stB)} ${labelFor(m.household_b).label}: ${stB==='ja'?'akkoord':stB==='nee'?'afgewezen':'wacht'}</span>
+      </div>`;
+
+      if(optA && optB && !threadExists){
+        approvedNote = `<div class="approved-note" style="background:rgba(42,74,62,.08);color:var(--forest)">
+          ${optinRow}
+          <div style="margin-top:.7rem;display:flex;align-items:center;gap:.7rem;flex-wrap:wrap">
+            <strong>✨ Beide huishoudens staan open voor contact!</strong>
+            <button class="btn-approve" onclick="openThread('${m.id}')">💬 Chat openen tussen deelnemers</button>
+          </div>
+        </div>`;
+      } else if(threadExists){
+        approvedNote = `<div class="approved-note" style="background:rgba(42,74,62,.08);color:var(--forest)">
+          ${optinRow}
+          <div style="margin-top:.7rem">💬 Chat is geopend. <button class="btn-detail" onclick="switchTab('threads')" style="margin-left:.3rem">Bekijk gesprek →</button></div>
+        </div>`;
+      } else {
+        approvedNote = `<div class="approved-note">${optinRow}<div style="margin-top:.5rem">Wachten op wederzijdse opt-in voordat de chat opengaat.</div></div>`;
+      }
+    }
 
     return `<div class="match-card is-${st}" id="card-${m.id}">
       <div class="match-card-head">
@@ -913,6 +973,38 @@ window.resetMatch=async(id)=>{
   refreshAfterAction();
 };
 
+// Opent een anonieme chat tussen de twee deelnemers van een match.
+// Maakt het thread-document aan (alleen admin mag dit) met beide uid's als
+// participants, en koppelt het thread-id terug aan het match-document.
+window.openThread=async(matchId)=>{
+  const m=allMatches.find(x=>x.id===matchId);
+  if(!m) return;
+  try {
+    const threadId = 't_'+matchId;
+    await setDoc(doc(db,'threads',threadId),{
+      matchId,
+      participants:[m.household_a, m.household_b],
+      label_a: labelFor(m.household_a).label,
+      label_b: labelFor(m.household_b).label,
+      createdAt: serverTimestamp(),
+    });
+    // koppel terug aan match + markeer pending als 'thread geopend' bij beide
+    await updateDoc(doc(db,'matches',matchId),{ thread_id: threadId });
+    m.thread_id = threadId;
+    // laat beide deelnemers weten dat de chat openstaat (via hun pending-entry)
+    for(const uid of [m.household_a, m.household_b]){
+      const h=householdById(uid);
+      const cur=h?._pending_matches?.[matchId]||{};
+      await setDoc(doc(db,'households',uid),{
+        _pending_matches:{ [matchId]: { ...cur, thread_id: threadId, status:'chat_open' } }
+      },{merge:true});
+      if(h?._pending_matches?.[matchId]) h._pending_matches[matchId].thread_id=threadId;
+    }
+    toast('💬 Chat geopend tussen deelnemers');
+    refreshAfterAction();
+  } catch(e){ console.error('openThread', e); toast('Kon chat niet openen'); }
+};
+
 function refreshAfterAction(){
   renderActionStrook();
   renderReviewBadge();
@@ -1190,6 +1282,59 @@ window.sendAdminMsg=async(uid)=>{
     allMessages.push({id:ref.id, uid, sender:'admin', text, createdAt:{seconds:Math.floor(Date.now()/1000)}, read_admin:true, read_user:false});
     renderThread(uid); renderConvoList();
   } catch(e){ console.error('sendAdminMsg', e); toast('Bericht versturen mislukt'); }
+};
+
+// ─── MATCH-CHATS (admin moderatie) ────────────────────────────────────────────
+async function loadThreads(){
+  try {
+    const snap=await getDocs(collection(db,'threads'));
+    allThreads=snap.docs.map(d=>({id:d.id,...d.data()}));
+  } catch(e){ console.warn('loadThreads', e); }
+}
+
+function renderThreadsAdmin(){
+  const side=document.getElementById('thread-sidebar');
+  if(!allThreads.length){ side.innerHTML='<div class="empty">Nog geen match-chats. Open er een via een goedgekeurde match met dubbele opt-in.</div>'; return; }
+  side.innerHTML=allThreads.map(t=>{
+    const la=t.label_a||labelFor(t.participants?.[0]).label;
+    const lb=t.label_b||labelFor(t.participants?.[1]).label;
+    return `<div class="msg-convo${activeThread===t.id?' active':''}" onclick="openThreadAdmin('${t.id}')">
+      <div class="msg-convo-avatar" style="font-size:.85rem">🔗</div>
+      <div class="msg-convo-info">
+        <div class="msg-convo-name">${la} ↔ ${lb}</div>
+        <div class="msg-convo-last">Match-chat</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+window.openThreadAdmin=async(threadId)=>{
+  activeThread=threadId;
+  renderThreadsAdmin();
+  const panel=document.getElementById('thread-panel');
+  panel.innerHTML='<div class="msg-empty-panel">Laden…</div>';
+  try {
+    const snap=await getDocs(collection(db,'threads',threadId,'messages'));
+    threadMsgs=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.createdAt?.seconds||0)-(b.createdAt?.seconds||0));
+  } catch(e){ threadMsgs=[]; }
+  const t=allThreads.find(x=>x.id===threadId);
+  const la=t?.label_a||'A', lb=t?.label_b||'B';
+  const bubbles=threadMsgs.length?threadMsgs.map(mm=>{
+    const who=mm.sender_uid===t.participants?.[0]?la:lb;
+    const tm=mm.createdAt?.seconds?new Date(mm.createdAt.seconds*1000).toLocaleString('nl-NL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+    const sideCls=mm.sender_uid===t.participants?.[0]?'user':'admin';
+    return `<div class="msg-bubble ${sideCls}"><div style="font-size:.6rem;font-weight:800;opacity:.7;margin-bottom:.2rem">${who}</div>${escapeHtml(mm.text)}<div class="msg-bubble-time">${tm}</div></div>`;
+  }).join(''):'<div class="msg-empty-panel" style="min-height:auto;padding:2rem">Nog geen berichten in dit gesprek.</div>';
+  panel.innerHTML=`
+    <div class="msg-panel-head">
+      <div class="msg-convo-avatar" style="font-size:.85rem">🔗</div>
+      <div><div class="msg-panel-head-name">${la} ↔ ${lb}</div>
+      <div class="msg-panel-head-sub">Je leest mee voor moderatie — deelnemers zijn hiervan op de hoogte</div></div>
+    </div>
+    <div class="msg-thread">${bubbles}</div>
+    <div class="msg-compose" style="opacity:.6;pointer-events:none">
+      <input class="msg-input" placeholder="Als moderator schrijf je niet mee in dit gesprek" disabled>
+    </div>`;
 };
 </script>
 </body>
