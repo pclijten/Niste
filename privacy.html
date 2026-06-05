@@ -214,7 +214,7 @@
 <!-- VERSION BANNER -->
 <div class="version-banner">
   <span class="version-dot"></span>
-  Versie 1.2 · Laatste wijziging: maart 2026 · Van toepassing op: niste.nl en alle subdomeinen
+  Versie 1.3 · Laatste wijziging: juni 2026 · Van toepassing op: niste.nl en alle subdomeinen
 </div>
 
 <!-- HERO -->
@@ -227,7 +227,7 @@
     <div class="hero-meta-item"><strong>Verwerkingsverantwoordelijke</strong>Niste (pilot-fase)</div>
     <div class="hero-meta-item"><strong>Toepasselijk recht</strong>AVG / GDPR (EU 2016/679)</div>
     <div class="hero-meta-item"><strong>Toezichthouder</strong>Autoriteit Persoonsgegevens (NL)</div>
-    <div class="hero-meta-item"><strong>Versiedatum</strong>Maart 2026</div>
+    <div class="hero-meta-item"><strong>Versiedatum</strong>Juni 2026</div>
   </div>
 </section>
 
@@ -299,12 +299,12 @@
         <tbody>
           <tr>
             <td>Contactgegevens</td>
-            <td>E-mailadres</td>
+            <td>E-mailadres (opgeslagen in Firebase Authentication)</td>
             <td><span class="badge badge-green">Gewoon</span></td>
           </tr>
           <tr>
             <td>Woonprofiel</td>
-            <td>Postcode (geen straat of huisnummer), globale woninggrootte, aantal bewoners, woonduur</td>
+            <td>Postcode (geen straat of huisnummer), globale woninggrootte, aantal kamers, woningtype, woonduur</td>
             <td><span class="badge badge-green">Gewoon</span></td>
           </tr>
           <tr>
@@ -313,8 +313,23 @@
             <td><span class="badge badge-green">Gewoon</span></td>
           </tr>
           <tr>
+            <td>Match-interacties</td>
+            <td>Reacties op matchmeldingen (wel/geen interesse), opgegeven redenen bij het afwijzen van een match, eventuele toelichting</td>
+            <td><span class="badge badge-green">Gewoon</span></td>
+          </tr>
+          <tr>
+            <td>Berichten met Niste</td>
+            <td>Inhoud van berichten die u via het platform naar het Niste-team stuurt of ontvangt</td>
+            <td><span class="badge badge-green">Gewoon</span></td>
+          </tr>
+          <tr>
+            <td>Match-chat (deelnemer ↔ deelnemer)</td>
+            <td>Inhoud van berichten die u na wederzijdse interesse uitwisselt met een andere deelnemer via de anonieme chat</td>
+            <td><span class="badge badge-green">Gewoon</span></td>
+          </tr>
+          <tr>
             <td>Gebruiksdata</td>
-            <td>Inlogmomenten, matchinteracties (wel/geen interesse), reacties op meldingen</td>
+            <td>Inlogmomenten, matchinteracties, reacties op meldingen</td>
             <td><span class="badge badge-green">Gewoon</span></td>
           </tr>
           <tr>
@@ -327,7 +342,12 @@
 
       <div class="info-box green">
         <span class="info-icon">🔒</span>
-        <span class="info-text"><strong>Wat wij expliciet niet verzamelen:</strong> naam, geboortedatum, BSN, inkomen, hypotheekgegevens, exacte woonadres, telefoonnummer, gezondheidsgegevens of andere bijzondere persoonsgegevens als bedoeld in artikel 9 AVG.</span>
+        <span class="info-text"><strong>Wat wij expliciet niet verzamelen:</strong> naam, geboortedatum, BSN, inkomen, hypotheekgegevens, exacte woonadres, telefoonnummer, gezondheidsgegevens of andere bijzondere persoonsgegevens als bedoeld in artikel 9 AVG. Uw e-mailadres wordt uitsluitend bewaard in Firebase Authentication en is niet zichtbaar in uw woonprofiel of voor andere deelnemers.</span>
+      </div>
+
+      <div class="info-box gold">
+        <span class="info-icon">💬</span>
+        <span class="info-text"><strong>Over berichten en chats:</strong> Berichten die u via het platform verstuurt — zowel naar het Niste-team als in de anonieme match-chat met een andere deelnemer — kunnen vrije tekst bevatten. Wat u daarin deelt bepaalt u zelf. Wij raden u aan geen gevoelige of identificerende gegevens te delen totdat u daar bewust voor kiest. Zie artikel 9 voor wie deze berichten kan inzien.</span>
       </div>
 
       <div class="info-box rust">
@@ -367,6 +387,21 @@
             <td>Uitsluitend naar geregistreerde e-mailadressen</td>
           </tr>
           <tr>
+            <td>Berichten tussen u en het Niste-team</td>
+            <td><span class="badge badge-green">Toestemming (6.1.a)</span></td>
+            <td>U start zelf het contact; bedoeld voor vragen en begeleiding</td>
+          </tr>
+          <tr>
+            <td>Anonieme match-chat tussen deelnemers</td>
+            <td><span class="badge badge-green">Toestemming (6.1.a)</span></td>
+            <td>Gaat pas open nadat beide deelnemers interesse hebben aangegeven (dubbele opt-in)</td>
+          </tr>
+          <tr>
+            <td>Bijsturen van matches op basis van uw afwijsredenen</td>
+            <td><span class="badge badge-gold">Gerechtvaardigd belang (6.1.f)</span></td>
+            <td>Om u relevantere matches te tonen en herhaling van niet-passende suggesties te voorkomen</td>
+          </tr>
+          <tr>
             <td>Verbeteren van het matchingsalgoritme</td>
             <td><span class="badge badge-gold">Gerechtvaardig belang (6.1.f)</span></td>
             <td>Geanonimiseerde aggregatiedata; geen individuele profielen</td>
@@ -375,6 +410,11 @@
             <td>Gemeente-dashboard (geaggregeerd)</td>
             <td><span class="badge badge-gold">Gerechtvaardig belang (6.1.f)</span></td>
             <td>Uitsluitend anonieme, niet-herleidbare wijkdata</td>
+          </tr>
+          <tr>
+            <td>Moderatie van match-chats</td>
+            <td><span class="badge badge-gold">Gerechtvaardigd belang (6.1.f)</span></td>
+            <td>Veiligheid en het voorkomen van misbruik; deelnemers worden hierover vooraf geïnformeerd</td>
           </tr>
           <tr>
             <td>Beveiliging en fraudepreventie</td>
@@ -386,7 +426,7 @@
 
       <div class="info-box rust">
         <span class="info-icon">⚠️</span>
-        <span class="info-text"><strong>Belangenafweging gerechtvaardig belang:</strong> Wanneer Niste zich beroept op gerechtvaardigd belang (artikel 6.1.f AVG), is een voorafgaande belangenafweging (LIA — Legitimate Interests Assessment) vereist. Niste dient voor elk van de bovenstaande verwerkingen op basis van 6.1.f een gedocumenteerde LIA op te stellen en beschikbaar te stellen indien betrokkenen of de AP daarom verzoeken.</span>
+        <span class="info-text"><strong>Belangenafweging gerechtvaardig belang:</strong> Wanneer Niste zich beroept op gerechtvaardigd belang (artikel 6.1.f AVG), is een voorafgaande belangenafweging (LIA — Legitimate Interests Assessment) vereist. Niste dient voor elk van de bovenstaande verwerkingen op basis van 6.1.f een gedocumenteerde LIA op te stellen en beschikbaar te stellen indien betrokkenen of de AP daarom verzoeken. Dit geldt nadrukkelijk ook voor de moderatie van match-chats en het bijsturen van matches op basis van afwijsredenen.</span>
       </div>
     </article>
 
@@ -407,9 +447,9 @@
         </thead>
         <tbody>
           <tr>
-            <td>Google Firebase (Firestore)</td>
+            <td>Google Firebase (Firestore &amp; Authentication)</td>
             <td>Verwerker</td>
-            <td>Opslag gebruikersdata en woonprofielen</td>
+            <td>Opslag gebruikersdata, woonprofielen, berichten en match-chats</td>
             <td>EER (eu-west1)</td>
           </tr>
           <tr>
@@ -419,6 +459,12 @@
             <td>VS — zie art. 5</td>
           </tr>
           <tr>
+            <td>Andere deelnemers</td>
+            <td>Ontvanger (na uw toestemming)</td>
+            <td>Anonieme woningkenmerken en chatberichten, uitsluitend na wederzijdse opt-in</td>
+            <td>Nederland</td>
+          </tr>
+          <tr>
             <td>Gemeenten (pilot)</td>
             <td>Verwerkingsverantwoordelijke</td>
             <td>Ontvangen uitsluitend <em>anonieme</em> wijkdata</td>
@@ -426,6 +472,11 @@
           </tr>
         </tbody>
       </table>
+
+      <div class="info-box green">
+        <span class="info-icon">✅</span>
+        <span class="info-text"><strong>Wat andere deelnemers van u zien:</strong> Bij een match zien andere deelnemers uitsluitend anonieme woningkenmerken (zoals woningtype, globale grootte en regio-postcode) en een anoniem label. Uw naam, e-mailadres en exacte adres worden nooit met andere deelnemers gedeeld. In de match-chat bepaalt u zelf of en wanneer u meer over uzelf prijsgeeft.</span>
+      </div>
 
       <div class="info-box green">
         <span class="info-icon">✅</span>
@@ -473,6 +524,21 @@
             <td>Toestemming</td>
           </tr>
           <tr>
+            <td>Berichten met het Niste-team</td>
+            <td>Tot verwijdering account; daarna direct verwijderd</td>
+            <td>Toestemming</td>
+          </tr>
+          <tr>
+            <td>Match-chats tussen deelnemers</td>
+            <td>Tot verwijdering account, of tot afsluiting van de pilot; daarna verwijderd</td>
+            <td>Toestemming</td>
+          </tr>
+          <tr>
+            <td>Afwijsredenen bij matches</td>
+            <td>Tot verwijdering account; gebruikt om matches bij te sturen</td>
+            <td>Gerechtvaardigd belang</td>
+          </tr>
+          <tr>
             <td>Matchhistorie (anoniem)</td>
             <td>Maximaal 12 maanden na afsluiting pilot</td>
             <td>Gerechtvaardig belang (onderzoek)</td>
@@ -496,6 +562,11 @@
       </table>
 
       <p>Na het verstrijken van de bewaartermijn worden persoonsgegevens <strong>definitief en onherstelbaar verwijderd</strong> of zodanig geanonimiseerd dat herleiding tot een persoon niet meer mogelijk is.</p>
+
+      <div class="info-box gold">
+        <span class="info-icon">ℹ️</span>
+        <span class="info-text"><strong>Over berichten in een gedeelde chat:</strong> Wanneer u uw account verwijdert, worden uw eigen berichten met het Niste-team verwijderd. Berichten die u in een match-chat met een andere deelnemer hebt uitgewisseld, kunnen bij die andere deelnemer en in het beheer nog zichtbaar blijven tot ook die chat of dat account wordt verwijderd, of tot de pilot wordt afgesloten. Dit is inherent aan een gedeeld gesprek tussen twee personen.</span>
+      </div>
     </article>
 
     <!-- ART 7 -->
@@ -520,7 +591,7 @@
         <div class="right-card">
           <div class="right-icon">🗑️</div>
           <div class="right-title">Recht op verwijdering</div>
-          <div class="right-body">U kunt verzoeken om verwijdering van uw persoonsgegevens ("recht op vergetelheid"), tenzij een wettelijke bewaarplicht van toepassing is.</div>
+          <div class="right-body">U kunt verzoeken om verwijdering van uw persoonsgegevens ("recht op vergetelheid"), tenzij een wettelijke bewaarplicht van toepassing is. Via "Account verwijderen" wist u zelf uw profiel, berichten en match-gegevens.</div>
           <div class="right-ref">Artikel 17 AVG</div>
         </div>
         <div class="right-card">
@@ -532,7 +603,7 @@
         <div class="right-card">
           <div class="right-icon">🚫</div>
           <div class="right-title">Recht van bezwaar</div>
-          <div class="right-body">U kunt bezwaar maken tegen verwerking op basis van gerechtvaardigd belang. Wij staken de verwerking, tenzij wij dwingende gerechtvaardigde gronden aanvoeren.</div>
+          <div class="right-body">U kunt bezwaar maken tegen verwerking op basis van gerechtvaardigd belang, waaronder het bijsturen van matches op basis van uw afwijsredenen en de moderatie van chats. Wij staken de verwerking, tenzij wij dwingende gerechtvaardigde gronden aanvoeren.</div>
           <div class="right-ref">Artikel 21 AVG</div>
         </div>
         <div class="right-card">
@@ -565,12 +636,12 @@
     <article class="art" id="art8">
       <div class="art-eyebrow"><span class="art-eyebrow-line"></span>Artikel 8</div>
       <h2>Geautomatiseerde besluiten<br><em>en profilering</em></h2>
-      <p>Het matchingsalgoritme van Niste vergelijkt woonprofielen op basis van ingevoerde kenmerken (locatie, grootte, woonwensen) en genereert een <strong>matchsuggestie</strong>.</p>
+      <p>Het matchingsalgoritme van Niste vergelijkt woonprofielen op basis van ingevoerde kenmerken (locatie, grootte, woonwensen, verhuisbereidheid) en genereert een <strong>matchsuggestie</strong>. Daarbij houdt het algoritme ook rekening met <strong>redenen die u eerder hebt opgegeven bij het afwijzen van een match</strong>, om u relevantere suggesties te tonen en te voorkomen dat u herhaaldelijk niet-passende matches ontvangt.</p>
       <p>Dit is een <strong>geautomatiseerd proces</strong>, maar het leidt <strong>niet tot een besluit met rechtsgevolg</strong> voor de betrokkene in de zin van artikel 22 AVG. Een matchmelding is uitsluitend een informatieve suggestie; de betrokkene is nimmer verplicht te reageren of actie te ondernemen.</p>
 
       <div class="info-box gold">
         <span class="info-icon">ℹ️</span>
-        <span class="info-text"><strong>Geen profilering in de zin van art. 4 lid 4 AVG</strong> met rechtsgevolgen. Niste beoordeelt niet de persoon, maar de kenmerken van het woonprofiel. Er worden geen categorieën als ras, gezondheid, financiën of gedrag gebruikt in het matchingsalgoritme.</span>
+        <span class="info-text"><strong>Geen profilering in de zin van art. 4 lid 4 AVG</strong> met rechtsgevolgen. Niste beoordeelt niet de persoon, maar de kenmerken van het woonprofiel en uw eigen aangegeven voorkeuren. Er worden geen categorieën als ras, gezondheid, financiën of gedrag gebruikt in het matchingsalgoritme. De afwijsredenen die meewegen, geeft u zelf op en kunt u via "Recht van bezwaar" laten buiten beschouwing laten.</span>
       </div>
 
       <div class="info-box rust">
@@ -591,15 +662,21 @@
           <tr><td>Versleuteling in transit</td><td>HTTPS / TLS 1.2+ via GitHub Pages en Firebase</td></tr>
           <tr><td>Versleuteling in opslag</td><td>Firebase Firestore: AES-256 encryptie at rest</td></tr>
           <tr><td>Authenticatie</td><td>Firebase Authentication; e-mailverificatie verplicht</td></tr>
-          <tr><td>Toegangsbeveiliging</td><td>Firestore Security Rules; alleen eigenaar-toegang tot eigen profiel</td></tr>
-          <tr><td>Anonimisering matching</td><td>Adressen nooit opgeslagen; postcode als enige locatie-indicator</td></tr>
+          <tr><td>Toegangsbeveiliging</td><td>Firestore Security Rules; alleen eigenaar-toegang tot eigen profiel en eigen berichten</td></tr>
+          <tr><td>Toegang tot match-chats</td><td>Uitsluitend de twee betrokken deelnemers en het Niste-team; afgedwongen via Security Rules</td></tr>
+          <tr><td>Anonimisering matching</td><td>Adressen nooit opgeslagen; postcode als enige locatie-indicator; deelnemers herkenbaar via anoniem label</td></tr>
           <tr><td>Datalekprocedure</td><td>Melding aan AP binnen 72 uur (art. 33 AVG) indien van toepassing</td></tr>
         </tbody>
       </table>
 
+      <div class="info-box gold">
+        <span class="info-icon">👁️</span>
+        <span class="info-text"><strong>Moderatie van match-chats:</strong> Om de veiligheid te waarborgen en misbruik te voorkomen, kan het Niste-team tijdens de pilot meelezen met de chats tussen gematchte deelnemers. Deelnemers worden hier vooraf en zichtbaar in het chatvenster over geïnformeerd. Wij lezen niet mee uit nieuwsgierigheid, maar uitsluitend voor moderatie en op signaal. Bij doorontwikkeling streeft Niste naar verdere beperking van deze toegang.</span>
+      </div>
+
       <div class="info-box rust">
         <span class="info-icon">⚠️</span>
-        <span class="info-text"><strong>DPIA-beoordeling:</strong> Niste dient te beoordelen of een Data Protection Impact Assessment (DPIA, artikel 35 AVG) vereist is. Matching op woongegevens van mogelijk kwetsbare groepen (ouderen) in combinatie met locatiedata kan onder de criteria van de AP-lijst verplichte DPIA's vallen. Niste adviseert deze beoordeling voor aanvang van de pilot uit te voeren.</span>
+        <span class="info-text"><strong>DPIA-beoordeling:</strong> Niste dient te beoordelen of een Data Protection Impact Assessment (DPIA, artikel 35 AVG) vereist is. Matching op woongegevens van mogelijk kwetsbare groepen (ouderen) in combinatie met locatiedata en onderlinge communicatie kan onder de criteria van de AP-lijst verplichte DPIA's vallen. Niste adviseert deze beoordeling voor aanvang van de pilot uit te voeren.</span>
       </div>
     </article>
 
@@ -659,7 +736,7 @@
 <!-- FOOTER -->
 <footer>
   <a href="index.html" class="f-logo">niste·</a>
-  <p class="f-meta">Privacyverklaring v1.2 · Maart 2026 · AVG-conform</p>
+  <p class="f-meta">Privacyverklaring v1.3 · Juni 2026 · AVG-conform</p>
   <nav class="f-nav">
     <a href="index.html">Hoe het werkt</a>
     <a href="onderbouwing.html">Onderbouwing</a>
