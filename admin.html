@@ -170,6 +170,34 @@
     .analyse-point strong{color:var(--dark);font-weight:700}
     .analyse-empty{font-size:.76rem;color:var(--light);font-style:italic;padding:.3rem 0}
     @media(max-width:768px){.analyse-intent{grid-template-columns:1fr}.intent-mid{transform:rotate(90deg)}.analyse-cols{grid-template-columns:1fr}}
+    /* ── BERICHTEN ── */
+    .msg-layout{display:grid;grid-template-columns:300px 1fr;gap:1.2rem;align-items:start}
+    .msg-sidebar{background:#fff;border:1px solid rgba(42,74,62,.07);border-radius:18px;padding:.6rem;max-height:70vh;overflow-y:auto}
+    .msg-convo{display:flex;align-items:center;gap:.7rem;padding:.7rem .8rem;border-radius:12px;cursor:pointer;transition:background .15s}
+    .msg-convo:hover{background:var(--cream)}
+    .msg-convo.active{background:var(--gold-pale)}
+    .msg-convo-avatar{width:36px;height:36px;border-radius:50%;background:var(--forest);color:var(--cream);display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:600;flex-shrink:0}
+    .msg-convo-info{flex:1;min-width:0}
+    .msg-convo-name{font-size:.82rem;font-weight:700;color:var(--dark);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .msg-convo-last{font-size:.72rem;color:var(--light);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .msg-convo-unread{width:8px;height:8px;border-radius:50%;background:var(--gold);flex-shrink:0}
+    .msg-panel{background:#fff;border:1px solid rgba(42,74,62,.07);border-radius:18px;display:flex;flex-direction:column;min-height:60vh;max-height:70vh}
+    .msg-empty-panel{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--light);font-size:.86rem;text-align:center;padding:2rem}
+    .msg-panel-head{padding:1rem 1.4rem;border-bottom:1px solid rgba(217,206,188,.4);display:flex;align-items:center;gap:.7rem}
+    .msg-panel-head-name{font-size:.92rem;font-weight:700;color:var(--dark)}
+    .msg-panel-head-sub{font-size:.72rem;color:var(--light)}
+    .msg-thread{flex:1;overflow-y:auto;padding:1.2rem 1.4rem;display:flex;flex-direction:column;gap:.7rem}
+    .msg-bubble{max-width:75%;padding:.6rem .9rem;border-radius:14px;font-size:.84rem;line-height:1.45}
+    .msg-bubble-time{font-size:.62rem;opacity:.6;margin-top:.25rem}
+    .msg-bubble.admin{align-self:flex-end;background:var(--forest);color:var(--cream);border-bottom-right-radius:4px}
+    .msg-bubble.user{align-self:flex-start;background:var(--cream);color:var(--dark);border-bottom-left-radius:4px}
+    .msg-compose{padding:.8rem 1rem;border-top:1px solid rgba(217,206,188,.4);display:flex;gap:.6rem}
+    .msg-input{flex:1;padding:.6rem .9rem;border:1.5px solid rgba(217,206,188,.7);border-radius:12px;font-family:'Plus Jakarta Sans',sans-serif;font-size:.86rem;resize:none;outline:none;max-height:100px}
+    .msg-input:focus{border-color:var(--forest)}
+    .msg-send{background:var(--forest);color:var(--cream);border:none;border-radius:12px;padding:0 1.2rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:.82rem;font-weight:700;cursor:pointer;transition:background .2s}
+    .msg-send:hover{background:var(--moss)}
+    .msg-send:disabled{opacity:.4;cursor:not-allowed}
+    @media(max-width:768px){.msg-layout{grid-template-columns:1fr}.msg-sidebar{max-height:200px}}
     .empty{text-align:center;padding:2.5rem 1rem;color:var(--light);font-size:.86rem}
     .approved-note{background:var(--gold-pale);border-radius:10px;padding:.6rem .9rem;font-size:.74rem;color:#9a7530;margin-top:.7rem;display:flex;align-items:center;gap:.5rem;line-height:1.45}
     .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(246,241,233,.3);border-top-color:var(--cream);border-radius:50%;animation:spin .7s linear infinite}
@@ -196,6 +224,7 @@
   <div class="tab active" onclick="switchTab('overview')">📊 Overzicht</div>
   <div class="tab" onclick="switchTab('review')">✅ Beoordelen <span id="review-badge"></span></div>
   <div class="tab" onclick="switchTab('matching')">🔗 Matches berekenen</div>
+  <div class="tab" onclick="switchTab('messages')">💬 Berichten <span id="messages-badge"></span></div>
 </div>
 
 <!-- TAB OVERVIEW -->
@@ -274,12 +303,32 @@
 </div>
 </div>
 
+<!-- TAB MESSAGES -->
+<div class="tab-content" id="tab-messages">
+<div class="main">
+  <div class="ph">
+    <div class="ph-ey">Berichten</div>
+    <h1 class="ph-title">Gesprekken met <em>deelnemers</em></h1>
+    <p class="ph-sub">Stuur een bericht naar een deelnemer of beantwoord hun vraag. Berichten verschijnen direct in hun dashboard.</p>
+  </div>
+  <div class="msg-layout">
+    <div class="msg-sidebar" id="msg-sidebar"><div class="empty">Laden…</div></div>
+    <div class="msg-panel" id="msg-panel">
+      <div class="msg-empty-panel">
+        <div style="font-size:2.4rem;margin-bottom:.6rem">💬</div>
+        <div>Kies links een deelnemer om het gesprek te openen.</div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <script type="module">
 import { initializeApp, getApps, getApp } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js';
 import { getAuth, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js';
-import { getFirestore, collection, getDocs, doc, setDoc, updateDoc, deleteDoc, serverTimestamp }
+import { getFirestore, collection, getDocs, doc, setDoc, updateDoc, deleteDoc, serverTimestamp, addDoc, query, where, orderBy, onSnapshot }
   from 'https://www.gstatic.com/firebasejs/10.14.0/firebase-firestore.js';
 import { computeAllMatches, scoreLabel } from './matching.js';
 
@@ -299,6 +348,9 @@ const db   = getFirestore(app);
 let allHouseholds = [];
 let allMatches    = [];
 let reviewFilter  = 'suggested';   // suggested | approved | rejected | all
+let allMessages   = [];            // alle berichten (admin ziet alles)
+let activeConvo   = null;          // uid van geopend gesprek
+let msgUnsub      = null;          // onSnapshot-unsubscribe
 
 const WL = {tussenwoning:'Tussenwoning',hoekwoning:'Hoekwoning','2kap':'2-onder-1-kap',vrijstaand:'Vrijstaand',appartement:'Appartement',boven_beneden:'Boven/beneden',penthouse:'Penthouse',woonboerderij:'Woonboerderij'};
 const GL = {vergelijkbaar:'Vergelijkbaar',kleiner:'Kleiner',gelijkvloers:'Gelijkvloers',groter:'Groter',appartement:'Appartement',grondgeb:'Grondgebonden',zorg:'Zorggeschikt',weet_niet:'Weet nog niet'};
@@ -311,14 +363,15 @@ onAuthStateChanged(auth, async (user) => {
   await loadEverything();
 });
 
-window.loadEverything = async () => { await loadData(); await loadMatches(); };
+window.loadEverything = async () => { await loadData(); await loadMatches(); await loadMessages(); };
 
 window.doLogout = async () => { await signOut(auth); window.location.href='index.html'; };
 
 window.switchTab = (tab) => {
-  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['overview','review','matching'][i]===tab));
+  document.querySelectorAll('.tab').forEach((t,i)=>t.classList.toggle('active',['overview','review','matching','messages'][i]===tab));
   document.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
   document.getElementById('tab-'+tab).classList.add('active');
+  if(tab==='messages') renderConvoList();
 };
 
 // ── TOAST ────────────────────────────────────────────────────────────────────
@@ -790,7 +843,8 @@ async function writePending(householdId, m, side){
     // alleen geanonimiseerde tegenpartij-info
     other_pc: other.pc, other_type: other.type, other_gewenst: other.gewenst,
     optin_self: false,   // deze gebruiker heeft nog niet ge-opt-in
-    approvedAt: serverTimestamp(),
+    status: 'pending',   // pending → interested → declined
+    approvedAt: Date.now(),  // client-tijd: serverTimestamp() mag niet in geneste map
   };
   // sla op als map onder _pending_matches.<matchId> via merge
   await setDoc(doc(db,'households',householdId), {
@@ -887,6 +941,127 @@ window.runMatching = async () => {
     toast(`${added} nieuwe/ververste matches · ${pending} te beoordelen`);
   } catch(e){L('FOUT: '+e.message);console.error(e);}
   finally{btn.disabled=false;spin.style.display='none';}
+};
+
+// ─── BERICHTEN ────────────────────────────────────────────────────────────────
+async function loadMessages(){
+  try {
+    const snap=await getDocs(collection(db,'messages'));
+    allMessages=snap.docs.map(d=>({id:d.id,...d.data()}));
+    renderMessagesBadge();
+    if(document.getElementById('tab-messages').classList.contains('active')) renderConvoList();
+  } catch(e){ console.warn('loadMessages', e); }
+}
+
+function renderMessagesBadge(){
+  // tel gesprekken met ongelezen user-berichten
+  const unreadUids=new Set(allMessages.filter(m=>m.sender==='user' && !m.read_admin).map(m=>m.uid));
+  const n=unreadUids.size;
+  document.getElementById('messages-badge').innerHTML=n>0
+    ?`<span style="background:var(--gold);color:var(--dark);border-radius:100px;padding:.1rem .45rem;font-size:.65rem;font-weight:800;margin-left:.4rem">${n}</span>`:'';
+}
+
+function householdEmail(uid){
+  // we hebben geen e-mail in households (privacy) — toon korte uid + postcode
+  const h=householdById(uid);
+  return h ? (h.postcode ? `Deelnemer · ${h.postcode}` : 'Deelnemer') : 'Onbekende deelnemer';
+}
+
+function renderConvoList(){
+  const el=document.getElementById('msg-sidebar');
+  // groepeer berichten per uid; toon ook deelnemers zonder bericht (om te starten)
+  const byUid={};
+  allMessages.forEach(m=>{ (byUid[m.uid]=byUid[m.uid]||[]).push(m); });
+  // voeg alle huishoudens toe zodat je een gesprek kunt beginnen
+  allHouseholds.forEach(h=>{ if(!byUid[h.id]) byUid[h.id]=[]; });
+
+  const uids=Object.keys(byUid);
+  if(!uids.length){ el.innerHTML='<div class="empty">Nog geen deelnemers.</div>'; return; }
+
+  // sorteer: gesprekken met ongelezen user-bericht eerst, dan op laatste activiteit
+  uids.sort((a,b)=>{
+    const la=lastMsgTime(byUid[a]), lb=lastMsgTime(byUid[b]);
+    return lb-la;
+  });
+
+  el.innerHTML=uids.map(uid=>{
+    const msgs=byUid[uid].slice().sort((a,b)=>(a.createdAt?.seconds||0)-(b.createdAt?.seconds||0));
+    const last=msgs[msgs.length-1];
+    const lastTxt=last?(last.sender==='admin'?'Jij: ':'')+last.text:'Nog geen bericht';
+    const unread=msgs.some(m=>m.sender==='user' && !m.read_admin);
+    const h=householdById(uid);
+    const initials=(h?.postcode||'?').slice(0,2);
+    return `<div class="msg-convo${activeConvo===uid?' active':''}" onclick="openConvo('${uid}')">
+      <div class="msg-convo-avatar">${initials}</div>
+      <div class="msg-convo-info">
+        <div class="msg-convo-name">${householdEmail(uid)}</div>
+        <div class="msg-convo-last">${escapeHtml(lastTxt).slice(0,40)}</div>
+      </div>
+      ${unread?'<div class="msg-convo-unread"></div>':''}
+    </div>`;
+  }).join('');
+}
+
+function lastMsgTime(msgs){
+  if(!msgs.length) return 0;
+  return Math.max(...msgs.map(m=>m.createdAt?.seconds||0));
+}
+
+function escapeHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+window.openConvo=(uid)=>{
+  activeConvo=uid;
+  renderConvoList();
+  renderThread(uid);
+  // markeer user-berichten als gelezen door admin
+  markAdminRead(uid);
+};
+
+async function markAdminRead(uid){
+  const unread=allMessages.filter(m=>m.uid===uid && m.sender==='user' && !m.read_admin);
+  for(const m of unread){
+    try { await updateDoc(doc(db,'messages',m.id),{read_admin:true}); m.read_admin=true; } catch(e){}
+  }
+  renderMessagesBadge();
+}
+
+function renderThread(uid){
+  const panel=document.getElementById('msg-panel');
+  const msgs=allMessages.filter(m=>m.uid===uid).sort((a,b)=>(a.createdAt?.seconds||0)-(b.createdAt?.seconds||0));
+  const bubbles=msgs.length?msgs.map(m=>{
+    const t=m.createdAt?.seconds?new Date(m.createdAt.seconds*1000).toLocaleString('nl-NL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):'';
+    return `<div class="msg-bubble ${m.sender}">${escapeHtml(m.text)}<div class="msg-bubble-time">${t}</div></div>`;
+  }).join(''):'<div class="msg-empty-panel" style="min-height:auto;padding:2rem">Nog geen berichten. Stuur het eerste bericht hieronder.</div>';
+
+  panel.innerHTML=`
+    <div class="msg-panel-head">
+      <div class="msg-convo-avatar">${(householdById(uid)?.postcode||'?').slice(0,2)}</div>
+      <div>
+        <div class="msg-panel-head-name">${householdEmail(uid)}</div>
+        <div class="msg-panel-head-sub">Bericht verschijnt direct in hun dashboard</div>
+      </div>
+    </div>
+    <div class="msg-thread" id="msg-thread">${bubbles}</div>
+    <div class="msg-compose">
+      <textarea class="msg-input" id="msg-input" rows="1" placeholder="Typ een bericht…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendAdminMsg('${uid}');}"></textarea>
+      <button class="msg-send" onclick="sendAdminMsg('${uid}')">Versturen</button>
+    </div>`;
+  const th=document.getElementById('msg-thread'); if(th) th.scrollTop=th.scrollHeight;
+}
+
+window.sendAdminMsg=async(uid)=>{
+  const input=document.getElementById('msg-input');
+  const text=(input?.value||'').trim();
+  if(!text) return;
+  input.value='';
+  try {
+    const ref=await addDoc(collection(db,'messages'),{
+      uid, sender:'admin', text, createdAt:serverTimestamp(),
+      read_admin:true, read_user:false,
+    });
+    allMessages.push({id:ref.id, uid, sender:'admin', text, createdAt:{seconds:Math.floor(Date.now()/1000)}, read_admin:true, read_user:false});
+    renderThread(uid); renderConvoList();
+  } catch(e){ console.error('sendAdminMsg', e); toast('Bericht versturen mislukt'); }
 };
 </script>
 </body>
