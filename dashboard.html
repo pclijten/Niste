@@ -224,6 +224,25 @@
     }
     .match-anon-info h4 { font-size: .9rem; font-weight: 700; color: var(--dark); margin-bottom: .15rem; }
     .match-anon-info p { font-size: .78rem; color: var(--mid); }
+    /* kenmerkenraster */
+    .match-region { display:inline-block; background:rgba(42,74,62,.07); color:var(--forest); font-size:.74rem; font-weight:700; padding:.3rem .8rem; border-radius:100px; margin:1rem 0 .8rem; }
+    .feat-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:.6rem; margin-bottom:.4rem; }
+    .feat { display:flex; gap:.7rem; align-items:center; background:var(--cream); border-radius:12px; padding:.7rem .9rem; }
+    .feat-ico { font-size:1.2rem; flex-shrink:0; }
+    .feat-lbl { font-size:.6rem; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:var(--light); }
+    .feat-val { font-size:.85rem; font-weight:700; color:var(--dark); }
+    /* afwijs-paneel */
+    .reject-panel { margin-top:1.2rem; padding-top:1.2rem; border-top:1px solid rgba(217,206,188,.5); }
+    .reject-title { font-size:.84rem; font-weight:700; color:var(--dark); margin-bottom:.7rem; }
+    .reject-reasons { display:flex; flex-wrap:wrap; gap:.5rem; margin-bottom:.8rem; }
+    .reason-chip { background:#fff; border:1.5px solid rgba(42,74,62,.18); border-radius:100px; padding:.45rem .9rem; font-family:'Plus Jakarta Sans',sans-serif; font-size:.78rem; font-weight:600; color:var(--mid); cursor:pointer; transition:all .15s; }
+    .reason-chip:hover { border-color:var(--forest); color:var(--forest); }
+    .reason-chip.sel { background:var(--forest); border-color:var(--forest); color:var(--cream); }
+    .reject-text { width:100%; background:var(--cream); border:1.5px solid transparent; border-radius:12px; padding:.7rem 1rem; font-family:'Plus Jakarta Sans',sans-serif; font-size:.84rem; color:var(--dark); outline:none; resize:vertical; margin-bottom:.8rem; }
+    .reject-text:focus { background:#fff; border-color:var(--forest); }
+    .reject-actions { display:flex; gap:.7rem; justify-content:flex-end; }
+    .btn-reject-confirm { background:var(--rust); color:#fff; border:none; border-radius:100px; padding:.65rem 1.4rem; font-family:'Plus Jakarta Sans',sans-serif; font-size:.8rem; font-weight:700; cursor:pointer; transition:background .2s; }
+    .btn-reject-confirm:hover { background:#a0502e; }
     .optin-row { display: flex; gap: .7rem; flex-wrap: wrap; margin-top: 1rem; align-items: center; }
     .btn-optin {
       background: var(--forest); color: var(--cream);
@@ -631,21 +650,51 @@
     const isComplete = householdData?._status === 'complete';
 
     if (matches.length > 0) {
-      statusVal.textContent = "🟢";
-      const m = matches[0];
+      // toon de eerste match die nog niet is afgewezen
+      const active = matches.find(m => m.status !== 'declined') || matches[0];
+      const m = active;
       const optedIn = m.optin_self === true;
+      const declined = m.status === 'declined';
+      statusVal.textContent = declined ? "🟡" : "🟢";
+
+      if (declined) {
+        // afgewezen: toon korte bevestiging, geen kenmerken meer
+        slot.innerHTML = `
+          <div class="card match-status-card">
+            <div class="card-label">Match afgewezen</div>
+            <h3>Bedankt voor je reactie</h3>
+            <p>Je hebt aangegeven dat deze match niet bij je past. We houden hier rekening mee bij het zoeken naar een volgende, beter passende match. Je hoeft verder niets te doen.</p>
+          </div>`;
+        return;
+      }
+
+      // bouw kenmerkenraster (alleen ingevulde, niet-identificerende velden)
+      const feats = [
+        ['🏠','Woningtype', typeLabel(m.other_type)],
+        ['📐','Oppervlak', m.other_oppervlak],
+        ['🚪','Kamers', m.other_kamers != null ? m.other_kamers : null],
+        ['🌳','Tuin', tuinLabel(m.other_tuin)],
+        ['⚡','Energielabel', m.other_energie],
+        ['🏘️','Buurt', milieuLabel(m.other_buurt)],
+        ['🔑','Woonvorm', koopLabel(m.other_koop_huur)],
+        ['➡️','Zoekt', gewenstLabel(m.other_gewenst)],
+      ].filter(f => f[2] != null && f[2] !== '' && f[2] !== '—');
+
+      const featGrid = feats.map(f => `
+        <div class="feat">
+          <div class="feat-ico">${f[0]}</div>
+          <div class="feat-body"><div class="feat-lbl">${f[1]}</div><div class="feat-val">${f[2]}</div></div>
+        </div>`).join('');
+
       slot.innerHTML = `
         <div class="card match-status-card has-match">
           <div class="card-label">Mogelijke match</div>
           <h3>Er is een mogelijke match in jouw regio ✨</h3>
-          <p>We hebben een huishouden gevonden waarvan het woonprofiel mogelijk goed bij dat van jou past. De identiteit blijft verborgen totdat jullie allebei aangeven open te staan voor contact.</p>
-          <div class="match-anon">
-            <div class="match-anon-icon">🏡</div>
-            <div class="match-anon-info">
-              <h4>${typeLabel(m.other_type)}${m.other_pc && m.other_pc!=='—' ? ' · regio '+m.other_pc : ''}</h4>
-              <p>Zoekt: ${gewenstLabel(m.other_gewenst)}</p>
-            </div>
-          </div>
+          <p>We hebben een huishouden gevonden waarvan de woning mogelijk goed bij jouw wensen past. De identiteit en het exacte adres blijven verborgen totdat jullie allebei aangeven open te staan voor contact.</p>
+
+          <div class="match-region">📍 Regio ${m.other_pc && m.other_pc!=='—' ? m.other_pc : 'onbekend'}</div>
+          <div class="feat-grid">${featGrid}</div>
+
           ${optedIn ? `
             <div class="optin-row">
               <span class="btn-optin done">✓ Je staat open voor contact</span>
@@ -654,10 +703,23 @@
           ` : `
             <div class="optin-row">
               <button class="btn-optin" onclick="optIn('${m.matchId}')">Ik sta open voor contact</button>
-              <button class="btn-optin-no" onclick="optOut('${m.matchId}')">Nu even niet</button>
+              <button class="btn-optin-no" onclick="openReject('${m.matchId}')">Past niet bij mij</button>
             </div>
             <p class="optin-note">Geen verplichtingen. Pas als <strong>beide</strong> huishoudens "ja" zeggen, wordt een kennismaking mogelijk. Je adres blijft tot dat moment privé.</p>
           `}
+
+          <!-- afwijs-paneel (verborgen tot 'Past niet bij mij') -->
+          <div class="reject-panel" id="reject-panel-${m.matchId}" style="display:none">
+            <div class="reject-title">Wat past er niet? <span style="font-weight:500;color:var(--light)">(helpt ons bij een volgende match)</span></div>
+            <div class="reject-reasons" id="reject-reasons-${m.matchId}">
+              ${REJECT_REASONS.map(r => `<button type="button" class="reason-chip" data-reason="${r.key}" onclick="toggleReason(this)">${r.label}</button>`).join('')}
+            </div>
+            <textarea class="reject-text" id="reject-text-${m.matchId}" rows="2" placeholder="Eventuele toelichting (optioneel)…"></textarea>
+            <div class="reject-actions">
+              <button class="btn-optin-no" onclick="closeReject('${m.matchId}')">Annuleren</button>
+              <button class="btn-reject-confirm" onclick="confirmReject('${m.matchId}')">Match afwijzen</button>
+            </div>
+          </div>
         </div>`;
     } else if (isComplete) {
       statusVal.textContent = "🟡";
@@ -673,6 +735,23 @@
       slot.innerHTML = "";
     }
   }
+
+  // Vaste afwijsredenen
+  const REJECT_REASONS = [
+    { key: 'te_groot',     label: 'Te groot' },
+    { key: 'te_klein',     label: 'Te klein' },
+    { key: 'locatie',      label: 'Verkeerde locatie' },
+    { key: 'type',         label: 'Verkeerd woningtype' },
+    { key: 'geen_tuin',    label: 'Tuin/buitenruimte' },
+    { key: 'energie',      label: 'Energie/onderhoud' },
+    { key: 'niet_klaar',   label: 'Nog niet zover' },
+    { key: 'anders',       label: 'Anders' },
+  ];
+
+  window.openReject  = (matchId) => { const p=document.getElementById('reject-panel-'+matchId); if(p) p.style.display='block'; };
+  window.closeReject = (matchId) => { const p=document.getElementById('reject-panel-'+matchId); if(p) p.style.display='none'; };
+  window.toggleReason = (btn) => { btn.classList.toggle('sel'); };
+
 
   window.optIn = async (matchId) => {
     if (!currentUser || !householdData) return;
@@ -691,16 +770,52 @@
     } catch (e) { console.error(e); showMsg("global-msg","Kon je keuze niet opslaan. Probeer het opnieuw.","error"); }
   };
 
-  window.optOut = async (matchId) => {
+  window.confirmReject = async (matchId) => {
     if (!currentUser) return;
+    // verzamel gekozen redenen + toelichting
+    const chips = document.querySelectorAll(`#reject-reasons-${matchId} .reason-chip.sel`);
+    const reasons = Array.from(chips).map(c => c.dataset.reason);
+    const note = (document.getElementById('reject-text-'+matchId)?.value || '').trim();
+    const pending = findPending(matchId);
     try {
+      // 1) markeer de pending-match als afgewezen (lokaal zichtbaar voor gebruiker)
       await setDoc(doc(db, "households", currentUser.uid), {
-        _pending_matches: { [matchId]: { ...findPending(matchId), optin_self: false } }
+        _pending_matches: { [matchId]: { ...pending, status: 'declined', optin_self: false, declinedAt: Date.now(), reject_reasons: reasons, reject_note: note } },
+        // 2) bewaar afgewezen kenmerken zodat matching hier later rekening mee houdt
+        _rejected_signals: arrayMergeSignals(householdData?._rejected_signals, reasons, pending),
       }, { merge: true });
-      if (householdData._pending_matches?.[matchId]) householdData._pending_matches[matchId].optin_self = false;
+      if (householdData._pending_matches?.[matchId]) {
+        householdData._pending_matches[matchId].status = 'declined';
+      }
+      // 3) laat de admin weten via het match-document (best effort; rules kunnen dit beperken)
+      try {
+        await updateDoc(doc(db, "matches", matchId), {
+          user_feedback: { uid: currentUser.uid, reasons, note, at: Date.now() },
+        });
+      } catch (e) { /* gebruiker mag matches mogelijk niet schrijven; admin ziet het via household */ }
+      // 4) systeembericht voor de admin
+      await addDoc(collection(db, "messages"), {
+        uid: currentUser.uid, sender: 'user',
+        text: 'Heeft een mogelijke match afgewezen' + (reasons.length ? ' (reden: ' + reasons.join(', ') + ')' : '') + (note ? ' — ' + note : '') + '.',
+        createdAt: serverTimestamp(), read_admin: false, read_user: true, system: true,
+      });
       renderMatchStatus();
-    } catch (e) { console.error(e); }
+      renderTimeline();
+    } catch (e) { console.error(e); showMsg("global-msg","Kon je keuze niet opslaan. Probeer het opnieuw.","error"); }
   };
+
+  // Voegt afgewezen kenmerken samen tot een telling, zodat matching.js later
+  // herhaalde afkeuringen (bijv. steeds "te groot") kan meewegen.
+  function arrayMergeSignals(existing, reasons, pending) {
+    const sig = existing && typeof existing === 'object' ? { ...existing } : {};
+    reasons.forEach(r => { sig[r] = (sig[r] || 0) + 1; });
+    // leg ook het afgewezen woningtype vast als signaal (lichtgewicht)
+    if (pending?.other_type && reasons.includes('type')) {
+      const k = 'type:' + pending.other_type;
+      sig[k] = (sig[k] || 0) + 1;
+    }
+    return sig;
+  }
 
   function findPending(matchId) { return householdData?._pending_matches?.[matchId] || {}; }
 
@@ -780,6 +895,9 @@
   function escapeHtml(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
   function typeLabel(v){ return ({tussenwoning:'Tussenwoning',hoekwoning:'Hoekwoning','2kap':'2-onder-1-kap',vrijstaand:'Vrijstaande woning',appartement:'Appartement',boven_beneden:'Boven-/benedenwoning',penthouse:'Penthouse',woonboerderij:'Woonboerderij'})[v] || v || 'Woning'; }
   function gewenstLabel(v){ return ({vergelijkbaar:'iets vergelijkbaars',kleiner:'kleiner',gelijkvloers:'gelijkvloers',groter:'groter',appartement:'een appartement',grondgeb:'grondgebonden',zorg:'zorggeschikt',weet_niet:'weet nog niet'})[v] || v || '—'; }
+  function tuinLabel(v){ if(v==null) return null; return ({ja:'Ja',nee:'Nee',voortuin:'Voortuin',achtertuin:'Achtertuin',beide:'Voor- en achtertuin',balkon:'Balkon',geen:'Geen'})[v] || (v===true?'Ja':v===false?'Nee':v); }
+  function milieuLabel(v){ if(v==null) return null; return ({dorps:'Dorps/rustig',suburb:'Woonwijk',stedelijk:'Stedelijk',landelijk:'Landelijk'})[v] || v; }
+  function koopLabel(v){ if(v==null) return null; return ({koop:'Koop',huur_corp:'Huur (corporatie)',huur_part:'Huur (particulier)'})[v] || v; }
 
   // ── LOGOUT ──────────────────────────────────────────────────────────────────
   window.handleLogout = async () => {
