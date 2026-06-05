@@ -285,7 +285,7 @@ window.N = {
   ct(k, d, mn, mx) { state[k] = Math.min(mx, Math.max(mn, (state[k] ?? 0) + d)); schedSave(); renderCard(); renderTopNav(); },
   tt(k)            { state[k] = !(state[k] === true); schedSave(); renderCard(); renderTopNav(); },
   sc(k, n)         { state[k] = n === (state[k] ?? 0) ? 0 : n; schedSave(); renderCard(); renderTopNav(); },
-  sl(k, v, descs)  {
+  sl(k, v)  {
     state[k] = parseInt(v, 10);
     schedSave();
     const pct = ((parseInt(v,10)-1)/4*100).toFixed(0);
@@ -294,7 +294,11 @@ window.N = {
     const sld = document.getElementById('sld-'+k);
     if (si)  si.style.setProperty('--pct', pct+'%');
     if (slv) slv.textContent = v+'/5';
-    if (sld) sld.textContent = descs[parseInt(v,10)-1];
+    if (sld && si) {
+      let descs = [];
+      try { descs = JSON.parse(si.getAttribute('data-descs') || '[]'); } catch (e) {}
+      if (descs[parseInt(v,10)-1]) sld.textContent = descs[parseInt(v,10)-1];
+    }
     renderTopNav();
   },
   goTo(s) { goTo(s); },
@@ -317,6 +321,16 @@ window.switchMode = function() {
   state._mode = target;
   step = Math.min(step, nSteps() - 1);
   schedSave();
+  renderAll();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+window.restartIntake = function() {
+  // Terug naar het keuzescherm om opnieuw te beginnen. Antwoorden blijven
+  // bewaard; de gebruiker kiest opnieuw kort of uitgebreid en kan alles
+  // nalopen vanaf stap 1.
+  mode = null;
+  step = 0;
   renderAll();
   window.scrollTo({ top: 0, behavior: 'smooth' });
 };
@@ -467,11 +481,28 @@ async function loadFromFirestore() {
       QUESTIONS.forEach(q => {
         if (q.dbField && data[q.dbField] !== undefined) state[q.dbField] = data[q.dbField];
       });
+      // Bewaar de eerder gekozen modus indien aanwezig.
       if (data._mode === 'kort' || data._mode === 'lang') mode = data._mode;
-      if (data._step !== undefined) step = data._step;
-      if (data._status === 'complete') step = nSteps();
-      // Veiligheid: clamp step binnen geldige range voor de geladen modus
-      if (mode) step = Math.min(step, nSteps());
+      // Eerder opgeslagen consent overnemen zodat opslaan direct kan.
+      if (data._consent?.given || data._consent_given) state._consent_given = true;
+
+      // Bepaal waar de gebruiker landt:
+      // - Geen modus bekend (oud profiel of nooit gekozen) → laat mode-keuze zien.
+      // - Wél een modus → ga naar de opgeslagen stap. Een 'complete' profiel
+      //   landt op het resultaatscherm, MAAR de gebruiker kan daar altijd
+      //   "Opnieuw invullen" of een stap-tegel kiezen om aan te passen.
+      if (mode) {
+        if (data._status === 'complete') {
+          step = nSteps();                 // toon resultaatscherm (met opnieuw-knop)
+        } else if (data._step !== undefined) {
+          step = Math.min(data._step, nSteps());
+        } else {
+          step = 0;
+        }
+      } else {
+        // Geen modus → niet vastpinnen op eindscherm; gebruiker kiest opnieuw.
+        step = 0;
+      }
     }
   } catch (e) { console.warn('Kon profiel niet laden:', e); }
 }
@@ -519,6 +550,9 @@ function renderResultScreen() {
     </div>
     <div class="sum-grid">${sumItems}</div>
     <div class="edit-lnk-row">${editLinks}</div>
+    <div style="margin:-.4rem 0 1.2rem">
+      <button class="btn-upgrade" style="background:transparent;color:var(--forest);border:1.5px solid rgba(42,74,62,.2)" onclick="restartIntake()">↻ Opnieuw invullen (vanaf het begin)</button>
+    </div>
     <div class="cta-box">
       <div class="cta-title">Profiel opslaan &amp; meldingen ontvangen</div>
       <p class="cta-desc">Je bent ingelogd als onderstaand e-mailadres. Zodra er in jouw regio een anoniem profiel verschijnt dat bij jou past, ontvang je een bericht. Geen spam, geen verplichtingen.</p>
