@@ -525,14 +525,31 @@
   <div class="hero-blob hero-blob-1"></div>
   <div class="hero-blob hero-blob-2"></div>
   <div class="hero-blob hero-blob-3"></div>
-  <div class="hero-eyebrow"><span class="hero-dot"></span>Schrijf je in en help jezelf en een ander</div>
+  <div class="hero-eyebrow"><span class="hero-dot"></span>Kijk eerst — zonder te beslissen</div>
   <h1>De woningmarkt zit vast.<br><em>Niste maakt haar los.</em></h1>
   <p class="hero-lead">Niet door nieuwe woningen te bouwen, maar door te laten zien welke verhuismogelijkheden er al zijn. Veilig, anoniem en zonder verkoopdruk.</p>
-  <div class="hero-stat-row">
-    <div><div class="hero-stat-val">2,5 mln</div><div class="hero-stat-lbl">65+ huishoudens in NL</div></div>
-    <div><div class="hero-stat-val">750.000</div><div class="hero-stat-lbl">Potentieel te groot gehuisvest</div></div>
-    <div><div class="hero-stat-val">400.000</div><div class="hero-stat-lbl">Woningtekort Nederland</div></div>
+  <div style="margin-bottom:2.5rem;position:relative;z-index:1;">
+    <a href="intake.html" style="display:inline-flex;align-items:center;gap:.5rem;background:var(--gold);color:var(--dark);border:none;border-radius:100px;padding:1rem 2rem;font-family:'Plus Jakarta Sans',sans-serif;font-size:.85rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;text-decoration:none;cursor:pointer;transition:all .2s;box-shadow:0 5px 20px rgba(196,154,74,.35);">Kijk wat er mogelijk is <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+    <p style="font-size:.72rem;color:rgba(246,241,233,.4);margin-top:.75rem;letter-spacing:.04em;">Vrijblijvend &nbsp;·&nbsp; Anoniem &nbsp;·&nbsp; Geen verkoopdruk</p>
   </div>
+  <div class="hero-stat-row">
+    <div>
+      <div class="hero-stat-val">2,5 mln</div>
+      <div class="hero-stat-lbl">65+ huishoudens in NL</div>
+      <div style="font-size:.58rem;color:rgba(246,241,233,.22);margin-top:.3rem;">CBS 2024</div>
+    </div>
+    <div>
+      <div class="hero-stat-val">~750.000</div>
+      <div class="hero-stat-lbl">Potentieel te groot gehuisvest*</div>
+      <div style="font-size:.58rem;color:rgba(246,241,233,.22);margin-top:.3rem;">WoON 2024 / schatting</div>
+    </div>
+    <div>
+      <div class="hero-stat-val">400.000</div>
+      <div class="hero-stat-lbl">Woningtekort Nederland</div>
+      <div style="font-size:.58rem;color:rgba(246,241,233,.22);margin-top:.3rem;">Primos 2024</div>
+    </div>
+  </div>
+  <p style="font-size:.6rem;color:rgba(246,241,233,.2);margin-top:1.2rem;position:relative;z-index:1;">* Schatting op basis van WoON 2024 (20–30% van 65+ huishoudens). <a href="onderbouwing.html" style="color:rgba(246,241,233,.3);text-decoration:underline;">Zie onderbouwing →</a></p>
 </section>
 
 
@@ -597,11 +614,16 @@
       <hr class="mini-divider">
       <div class="mini-result">
         <span class="mini-result-label">LVI</span>
-        <span class="mini-result-score">Score</span>
-        <span class="mini-result-verdict">→ Latent bereid, actief of buiten bereik</span>
+        <span class="mini-result-score" id="lvi-demo">7.4</span>
+        <span class="mini-result-verdict">→ <span id="lvi-verdict" style="color:var(--forest);font-weight:700;">Latent bereid</span></span>
+      </div>
+      <div style="margin-top:.6rem;padding-top:.6rem;border-top:1px solid rgba(42,74,62,.08);">
+        <div style="font-size:.68rem;color:var(--light);margin-bottom:.35rem;">Voorbeeld: senior, 3 ongebruikte kamers, 22 jaar woonduur</div>
+        <input type="range" min="1" max="10" value="7" step="1" style="width:100%;accent-color:var(--forest);" oninput="updateLVI(this.value)">
+        <div style="display:flex;justify-content:space-between;font-size:.6rem;color:var(--light);margin-top:.25rem;"><span>Laag</span><span>Hoog</span></div>
       </div>
       <div style="margin-top:1.1rem;padding-top:1rem;border-top:1px solid rgba(42,74,62,.08);">
-        <a href="lvi_model.html" style="font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-decoration:none;">Probeer de interactieve calculator →</a>
+        <a href="lvi_model.html" style="font-size:.75rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--gold);text-decoration:none;">Probeer de volledige calculator →</a>
       </div>
     </div>
   </div>
@@ -619,10 +641,11 @@
       <button class="audience-tab" onclick="showAudience('gezin',this)">Gezinnen</button>
       <button class="audience-tab" onclick="showAudience('gemeente',this)">Gemeenten &amp; corporaties</button>
     </div>
-    <div class="audience-panel active" id="panel-senior">
-      <div class="audience-text">
+    <div class="audience-panel active" id="panel-senior" data-anchor="senior">
+      <div class="audience-text" id="senior">
         <h3>U staat misschien al<br><em>langer bij stil</em></h3>
-        <p class="audience-intro">De kinderen zijn allang het huis uit. De trap voelt zwaarder dan vroeger. U gebruikt misschien nog maar twee of drie kamers. De gedachte aan een andere, passender woning heeft u al vaker gehad — maar wat dan? Waar naartoe? En wat als u uw woning verkoopt terwijl er nog niets anders is?</p>
+        <p class="audience-intro">De kinderen zijn allang het huis uit. De trap voelt zwaarder dan vroeger. U gebruikt misschien nog maar twee of drie kamers. De gedachte aan een andere, meer passende woning heeft u al vaker gehad — maar wat dan? Waar naartoe? En wat als u uw woning verkoopt terwijl er nog niets anders is?</p>
+        <p style="font-size:.82rem;line-height:1.7;color:var(--forest);background:rgba(42,74,62,.06);border-radius:12px;padding:.9rem 1.1rem;margin-bottom:1.2rem;"><strong>Eén stap van een senior zet gemiddeld 2,5 verhuizingen in gang</strong> — voor gezinnen en starters die al jaren wachten. U helpt niet alleen uzelf, maar ook anderen die ruimte nodig hebben.</p>
         <div class="audience-benefits">
           <div class="benefit-row"><div class="benefit-icon">👀</div><div class="benefit-text"><strong>Eerst kijken, dan beslissen</strong><span>U ziet mogelijkheden voordat u ook maar één stap hoeft te zetten. Geen makelaar, geen verkoopdruk.</span></div></div>
           <div class="benefit-row"><div class="benefit-icon">🔒</div><div class="benefit-text"><strong>Uw adres blijft privé</strong><span>Zolang u dat wilt, weet niemand wie u bent of waar u woont. Pas bij wederzijdse interesse wordt contact mogelijk.</span></div></div>
@@ -633,11 +656,11 @@
       <div class="audience-quote">
         <p class="audience-quote-text">"Ik wilde best eens kijken, maar het idee om mijn huis op Funda te zetten terwijl ik nog niets anders heb — dat voelt niet goed. Hier kan ik eerst gewoon eens kijken."</p>
         <div class="audience-quote-source">Herkenbaar voor veel 65+ bewoners</div>
-        <div class="audience-quote-chips"><span class="audience-quote-chip">Gelijkvloers wonen</span><span class="audience-quote-chip">Kleiner &amp; makkelijker</span><span class="audience-quote-chip">Buurt behouden</span><span class="audience-quote-chip">Geen haast</span></div>
+        <div class="audience-quote-chips"><span class="audience-quote-chip">Passend wonen</span><span class="audience-quote-chip">Gelijkvloers &amp; makkelijker</span><span class="audience-quote-chip">Buurt behouden</span><span class="audience-quote-chip">Geen haast</span></div>
       </div>
     </div>
     <div class="audience-panel" id="panel-gezin">
-      <div class="audience-text">
+      <div class="audience-text" id="gezin">
         <h3>De woning die jullie<br><em>zoeken bestaat al</em></h3>
         <p class="audience-intro">Jullie gezin is gegroeid maar de woning niet mee. Jullie willen meer ruimte, een tuin, een extra kamer — maar het liefst blijven jullie in dezelfde wijk. Op Funda staat er niets. Toch zijn die woningen er wél. Ze staan alleen niet te koop — nog niet.</p>
         <div class="audience-benefits">
@@ -654,7 +677,7 @@
       </div>
     </div>
     <div class="audience-panel" id="panel-gemeente">
-      <div class="audience-text">
+      <div class="audience-text" id="gemeente">
         <h3>Inzicht in wat<br><em>nog verborgen is</em></h3>
         <p class="audience-intro">Gemeenten en woningcorporaties zoeken naar manieren om de bestaande voorraad beter te benutten. Doorstroming staat hoog op de beleidsagenda — maar de data over latente verhuisbereidheid ontbreekt. Niste maakt zichtbaar wat er al is.</p>
         <div class="audience-benefits">
@@ -690,9 +713,9 @@
       <div class="chain-node" style="background:rgba(196,154,74,.12);border-color:rgba(196,154,74,.2);"><div class="chain-node-emoji">🏘</div><div class="chain-node-who">Resultaat</div><div class="chain-node-label">Drie huishoudens beter gehuisvest</div><div class="chain-node-desc">Zonder één nieuwe woning te bouwen. Alleen door bestaande woonruimte beter te benutten.</div></div>
     </div>
     <div class="chain-impact-row">
-      <div class="chain-impact-card"><div class="chain-impact-val">1%</div><div class="chain-impact-label">Van de 750.000 senioren met overruimte verhuist → <strong style="color:rgba(246,241,233,.7)">≈ 18.750 verhuizingen</strong></div></div>
-      <div class="chain-impact-card"><div class="chain-impact-val">2,5×</div><div class="chain-impact-label">Is de gemiddelde ketenlengte per starttransactie volgens woningmarktonderzoek</div></div>
-      <div class="chain-impact-card"><div class="chain-impact-val">50%</div><div class="chain-impact-label">Van het woningtekort kan via doorstroming worden opgelost — zonder nieuwbouw</div></div>
+      <div class="chain-impact-card"><div class="chain-impact-val">1%</div><div class="chain-impact-label">Van de ~750.000 senioren met overruimte verhuist → <strong style="color:rgba(246,241,233,.7)">≈ 18.750 verhuizingen</strong></div></div>
+      <div class="chain-impact-card"><div class="chain-impact-val">1,8–2,5×</div><div class="chain-impact-label">Gemiddelde ketenlengte per starttransactie (EIB 2024 / Stec)</div></div>
+      <div class="chain-impact-card"><div class="chain-impact-val">Tot 50%</div><div class="chain-impact-label">Van het woningtekort via doorstroming oplosbaar — <em style="color:rgba(246,241,233,.4)">theoretisch scenario bij structurele schaal</em></div></div>
     </div>
   </div>
 </section>
@@ -725,11 +748,11 @@
 <section class="cta-section">
   <div class="cta-inner">
     <div class="section-eyebrow" style="justify-content:center;"><span class="section-eyebrow-line"></span>Doe mee<span class="section-eyebrow-line"></span></div>
-    <h2 class="section-title">Klaar om te kijken<br><em>wat er mogelijk is?</em></h2>
-    <p class="section-lead">Aanmelden voor de pilot kost niets en verplicht tot niets. Je vult een korte wooncheck in, en wij laten je weten of er een match is in jouw buurt.</p>
+    <h2 class="section-title">Kijk eerst wat er<br><em>mogelijk is — zonder te beslissen.</em></h2>
+    <p class="section-lead">Aanmelden kost niets en verplicht tot niets. U vult een korte wooncheck in, en wij laten u weten of er een match is in uw buurt. Uw adres blijft privé. U houdt altijd de controle.</p>
     <div class="cta-buttons">
-      <a href="intake.html" class="btn-primary">Aanmelden voor de pilot <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
-      <a href="privacy.html" class="btn-secondary">Privacyverklaring lezen</a>
+      <a href="intake.html" class="btn-primary">Kijk wat er mogelijk is <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></a>
+      <a href="over.html" class="btn-secondary">Over Niste</a>
     </div>
   </div>
 </section>
@@ -756,6 +779,31 @@
     document.querySelectorAll('.audience-panel').forEach(p => p.classList.remove('active'));
     document.getElementById('panel-' + id).classList.add('active');
     if (btn) btn.classList.add('active');
+    history.replaceState(null, '', '#' + id);
+  }
+
+  // Activate tab from URL hash
+  function activateFromHash() {
+    const hash = location.hash.replace('#','');
+    const tabs = { senior: 0, gezin: 1, gemeente: 2 };
+    if (hash in tabs) {
+      const btn = document.querySelectorAll('.audience-tab')[tabs[hash]];
+      showAudience(hash, btn);
+      document.getElementById('voor-wie')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }
+  window.addEventListener('hashchange', activateFromHash);
+  activateFromHash();
+
+  // LVI demo slider
+  function updateLVI(val) {
+    const score = parseFloat(val).toFixed(1);
+    document.getElementById('lvi-demo').textContent = score;
+    const v = document.getElementById('lvi-verdict');
+    if (val >= 8)      { v.textContent = 'Actief zoekend';  v.style.color = '#2A4A3E'; }
+    else if (val >= 6) { v.textContent = 'Latent bereid';   v.style.color = '#3D6B5C'; }
+    else if (val >= 4) { v.textContent = 'Potentieel';      v.style.color = '#C49A4A'; }
+    else               { v.textContent = 'Buiten bereik';   v.style.color = '#9A9A8E'; }
   }
 
   // Hamburger
@@ -772,7 +820,6 @@
     document.body.style.overflow = '';
   }
 
-  // Anchor links: sluit mobiel menu bij klik
   document.querySelectorAll('.nav-mobile-link[href^="index.html#"]').forEach(link => {
     link.addEventListener('click', closeMobile);
   });
