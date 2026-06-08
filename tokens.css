@@ -1,0 +1,60 @@
+/* tokens.css — Niste gedeelde design tokens v1
+ *
+ * Importeer dit als EERSTE stylesheet in elk HTML-bestand:
+ *   <link rel="stylesheet" href="tokens.css">
+ *
+ * Alle :root variabelen staan hier centraal.
+ * Verwijder :root blokken uit individuele HTML-bestanden.
+ */
+
+:root {
+  /* Kleurpalet */
+  --cream:      #F6F1E9;
+  --warm:       #EDE5D4;
+  --sand:       #D9CEBC;
+  --forest:     #2A4A3E;
+  --moss:       #3D6B5C;
+  --gold:       #C49A4A;
+  --gold-lt:    #E8C97A;
+  --gold-pale:  #F5EDD6;
+  --rust:       #B85C38;
+  --dark:       #1A1A16;
+  --mid:        #5A5A50;
+  --light:      #9A9A8E;
+
+  /* Typografie */
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans:  'Plus Jakarta Sans', system-ui, sans-serif;
+
+  /* Spacing */
+  --section-pad: 6rem 3rem;
+  --section-max:  1100px;
+
+  /* Radius */
+  --radius-sm:  10px;
+  --radius-md:  16px;
+  --radius-lg:  24px;
+  --radius-pill: 100px;
+
+  /* Schaduwen */
+  --shadow-card: 0 2px 24px rgba(26,26,22,.06);
+  --shadow-btn:  0 5px 20px rgba(42,74,62,.26);
+  --shadow-hover: 0 12px 32px rgba(42,74,62,.12);
+}
+
+/* Gedeelde reset */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-sans);
+  background: var(--cream);
+  color: var(--dark);
+  line-height: 1.7;
+}
+
+/* Gedeelde utility classes */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
