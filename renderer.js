@@ -13,7 +13,23 @@ const COMPUTED = {
   mismatch(state) {
     const delta = (state.kamers_totaal ?? 4) - (state.kamers_gebruikt ?? 3);
     if (delta < 2) return null;
-    return `⚡ ${delta} kamer${delta > 1 ? 's' : ''} ongebruikt — sterk matchsignaal voor matching`;
+    return `⚡ ${delta} kamer${delta > 1 ? 's' : ''} ongebruikt — sterk matchsignaal`;
+  },
+  buurt_binding(state) {
+    const thuis  = state.thuis  ?? 0;
+    const sociaal = state.sociaal ?? 0;
+    if (thuis >= 4 && sociaal >= 4) {
+      return `🏡 U heeft een sterke binding met uw buurt — Niste zoekt uitsluitend matches in uw directe omgeving`;
+    }
+    return null;
+  },
+  verhuisdrempel(state) {
+    const thuis  = state.thuis  ?? 0;
+    const bereid = state.verhuisbereidheid ?? 3;
+    if (thuis >= 4 && bereid <= 2) {
+      return `💡 Uw thuisgevoel is hoog en uw verhuisbereidheid is laag — dat begrijpen we. Niste toont alleen mogelijkheden die bij uw situatie passen, zonder druk.`;
+    }
+    return null;
   },
 };
 
@@ -21,10 +37,17 @@ const COMPUTED = {
 
 function rPostcode(q, state) {
   const v = (state[q.id] || '').replace(/\D/g, '').slice(0, 4);
+  const invalid = v.length === 4 && parseInt(v, 10) < 1000;
   return `<input class="field" type="text" inputmode="numeric" maxlength="4"
     placeholder="bijv. 5737" value="${v}"
-    oninput="N.si('${q.id}',this.value.replace(/\\D/g,'').slice(0,4))">`;
-}
+    style="${invalid ? 'border-color:var(--rust);' : ''}"
+    oninput="
+      const val = this.value.replace(/\\D/g,'').slice(0,4);
+      N.si('${q.id}', val);
+      const n = parseInt(val,10);
+      this.style.borderColor = (val.length===4 && n < 1000) ? 'var(--rust)' : '';
+    ">
+  ${invalid ? `<div style="font-size:.72rem;color:var(--rust);margin-top:.3rem;">Vul een geldige Nederlandse postcode in (bijv. 5735)</div>` : ''}`;
 
 function rTiles(q, state) {
   const grid = q.grid || 'g2';
@@ -120,7 +143,9 @@ function rTextarea(q, state) {
 function rComputedBadge(q, state) {
   const fn = COMPUTED[q.compute];
   const msg = fn ? fn(state) : null;
-  return msg ? `<div class="mm-badge">${msg}</div>` : '';
+  if (!msg) return '';
+  const color = q.compute === 'verhuisdrempel' ? 'rgba(196,154,74,.12)' : 'rgba(42,74,62,.07)';
+  return `<div class="mm-badge" style="background:${color};">${msg}</div>`;
 }
 
 // ─── DISPATCHER ───────────────────────────────────────────────────────────────
