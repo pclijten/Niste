@@ -180,7 +180,6 @@
       align-items: center;
       margin-top: 4rem;
     }
-    .problem-text-col {}
     .problem-text-col p {
       font-size: .92rem; line-height: 1.85;
       color: var(--mid); margin-bottom: 1.2rem;
@@ -284,6 +283,17 @@
       letter-spacing: .1em; text-transform: uppercase;
       color: var(--forest);
     }
+    .step-link {
+      display: inline-flex; align-items: center; gap: .3rem;
+      margin-top: .85rem;
+      font-size: .72rem; font-weight: 700;
+      letter-spacing: .05em; text-transform: uppercase;
+      color: var(--gold); text-decoration: none;
+      transition: color .2s;
+    }
+    .step-link:hover { color: var(--forest); }
+    .step-link svg { transition: transform .2s; }
+    .step-link:hover svg { transform: translateX(3px); }
 
     /* ── SECTION: VOOR WIE ── */
     .audience-section { background: var(--cream); }
@@ -498,6 +508,65 @@
       color: var(--forest);
     }
 
+    /* ── SECTION: MODEL TEASER ── */
+    .model-teaser {
+      background: var(--cream);
+      border-top: 1px solid rgba(42,74,62,.08);
+      padding: 4rem 3rem;
+    }
+    .model-teaser-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; align-items: center;
+      gap: 4rem; flex-wrap: wrap;
+    }
+    .model-teaser-text { flex: 1; min-width: 260px; }
+    .model-teaser-text .section-eyebrow { margin-bottom: .75rem; }
+    .model-teaser-text h2 {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: clamp(1.6rem, 2.5vw, 2.4rem);
+      font-weight: 300; line-height: 1.15;
+      color: var(--dark); margin-bottom: .75rem;
+    }
+    .model-teaser-text h2 em { font-style: italic; color: var(--forest); }
+    .model-teaser-text p {
+      font-size: .88rem; line-height: 1.8;
+      color: var(--mid); margin-bottom: 1.5rem;
+    }
+    .model-teaser-visual {
+      flex: 1; min-width: 260px;
+      background: white;
+      border: 1px solid rgba(42,74,62,.08);
+      border-radius: 20px;
+      padding: 1.75rem 2rem;
+    }
+    .mini-formula {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 1.05rem; line-height: 2.2;
+      color: var(--dark);
+    }
+    .mini-pos { color: #1D7A5A; font-weight: 500; }
+    .mini-neg { color: var(--rust); font-weight: 500; }
+    .mini-divider {
+      border: none; border-top: 1px solid rgba(42,74,62,.1);
+      margin: 1rem 0;
+    }
+    .mini-result {
+      display: flex; align-items: baseline; gap: .75rem;
+    }
+    .mini-result-label {
+      font-size: .68rem; font-weight: 700;
+      letter-spacing: .1em; text-transform: uppercase;
+      color: var(--light);
+    }
+    .mini-result-score {
+      font-family: 'Cormorant Garamond', serif;
+      font-size: 2.2rem; font-weight: 500;
+      color: var(--forest); line-height: 1;
+    }
+    .mini-result-verdict {
+      font-size: .75rem; color: var(--mid);
+    }
+
     /* ── SECTION: CTA ── */
     .cta-section {
       background: var(--cream);
@@ -576,12 +645,12 @@
       .problem-grid,
       .privacy-grid { grid-template-columns: 1fr; gap: 2.5rem; }
       .audience-panel.active { grid-template-columns: 1fr; gap: 2rem; }
-      .steps-grid {
-        grid-template-columns: 1fr 1fr;
-      }
+      .steps-grid { grid-template-columns: 1fr 1fr; }
       .steps-grid::before { display: none; }
       .chain-impact-row { grid-template-columns: 1fr; }
       .cta-section { padding: 4rem 1.4rem; }
+      .model-teaser { padding: 3rem 1.4rem; }
+      .model-teaser-inner { gap: 2rem; }
       footer { padding: 2rem 1.4rem; }
       .footer-links { display: none; }
     }
@@ -659,31 +728,25 @@
           <div class="impasse-card-title">Senioren wachten</div>
           <div class="impasse-card-body">Ze staan open voor verandering, maar zien geen alternatief dat bij hen past — dus zetten ze hun woning niet te koop.</div>
         </div>
-
         <div class="impasse-connector">
           <div class="impasse-connector-icon">⟳</div>
         </div>
-
         <div class="impasse-card">
           <div class="impasse-card-label">Gevolg</div>
           <div class="impasse-card-title">Gezinnen blijven wachten</div>
           <div class="impasse-card-body">Ruimere woningen verschijnen niet op Funda, dus gezinnen vinden geen woning in hun eigen wijk.</div>
         </div>
-
         <div class="impasse-connector">
           <div class="impasse-connector-icon">⟳</div>
         </div>
-
         <div class="impasse-card">
           <div class="impasse-card-label">Eindresultaat</div>
           <div class="impasse-card-title">Starters komen niet aan de beurt</div>
           <div class="impasse-card-body">Omdat gezinnen niet doorstromen, komt er geen kleinere woning vrij voor starters. De keten staat volledig stil.</div>
         </div>
-
         <div class="impasse-connector">
           <div class="impasse-connector-icon">→</div>
         </div>
-
         <div class="impasse-solution">
           <div class="impasse-card-label">De Niste-aanpak</div>
           <div class="impasse-card-title">Zichtbaar maken wat verborgen blijft</div>
@@ -719,8 +782,12 @@
       <div class="step-card">
         <div class="step-number">2</div>
         <div class="step-title">Jouw woonprofiel</div>
-        <div class="step-body">Op basis van jouw antwoorden maakt het platform een woonprofiel aan. Geen adres, geen persoonlijke gegevens — alleen een indicatie van je woonsituatie en woonwensen.</div>
+        <div class="step-body">Op basis van jouw antwoorden berekent het platform een woonprofiel. Daarin zit ook een inschatting van je verhuisbereidheid — een score die bepaalt hoe je gematcht wordt.</div>
         <span class="step-tag">Privacyveilig</span>
+        <a href="lvi_model.html" class="step-link">
+          Hoe werkt die score?
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </a>
       </div>
 
       <div class="step-card">
@@ -743,6 +810,46 @@
 
 
 <!-- ══════════════════════════════════════════════════
+     MODEL TEASER
+══════════════════════════════════════════════════ -->
+<div class="model-teaser">
+  <div class="model-teaser-inner">
+    <div class="model-teaser-text">
+      <div class="section-eyebrow">
+        <span class="section-eyebrow-line"></span>
+        Het matchmodel
+      </div>
+      <h2>Niet iedereen wil verhuizen.<br><em>Maar meer mensen dan je denkt staan er voor open.</em></h2>
+      <p>Niste berekent voor elk huishouden een Latente Verhuisintentie Score — een maat voor hoe open iemand staat voor een woonverandering, gebaseerd op vijf meetbare dimensies. Zo matchen we niet op basis van wat mensen zeggen, maar op basis van hun situatie.</p>
+      <a href="lvi_model.html" class="btn-primary" style="display:inline-flex;">
+        Bekijk het model en de calculator
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+
+    <div class="model-teaser-visual">
+      <div class="mini-formula">
+        <span class="mini-pos">Mismatch + Levensfase + Financieel</span><br>
+        <span class="mini-neg">− Emotionele binding × 1,3</span><br>
+        <span class="mini-neg">− Praktische drempels × 1,2</span>
+      </div>
+      <hr class="mini-divider">
+      <div class="mini-result">
+        <span class="mini-result-label">LVI</span>
+        <span class="mini-result-score">Score</span>
+        <span class="mini-result-verdict">→ Latent bereid, actief of buiten bereik</span>
+      </div>
+      <div style="margin-top: 1.1rem; padding-top: 1rem; border-top: 1px solid rgba(42,74,62,.08);">
+        <a href="lvi_model.html" style="font-size:.75rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--gold); text-decoration:none;">
+          Probeer de interactieve calculator →
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ══════════════════════════════════════════════════
      VOOR WIE
 ══════════════════════════════════════════════════ -->
 <section class="audience-section">
@@ -754,7 +861,6 @@
     <h2 class="section-title">Niste is voor iedereen<br><em>die open staat voor verandering</em></h2>
     <p class="section-lead">Je hoeft niet actief te zoeken. Je hoeft alleen open te staan voor de vraag: zou ik misschien beter af zijn in een andere woning?</p>
 
-    <!-- TABS -->
     <div class="audience-tabs">
       <button class="audience-tab active" onclick="showAudience('senior')">Senioren</button>
       <button class="audience-tab" onclick="showAudience('gezin')">Gezinnen</button>
@@ -765,9 +871,7 @@
     <div class="audience-panel active" id="panel-senior">
       <div class="audience-text">
         <h3>U staat misschien al<br><em>langer bij stil</em></h3>
-        <p class="audience-intro">
-          De kinderen zijn allang het huis uit. De trap voelt zwaarder dan vroeger. U gebruikt misschien nog maar twee of drie kamers. De gedachte aan een andere, passender woning heeft u al vaker gehad — maar wat dan? Waar naartoe? En wat als u uw woning verkoopt terwijl er nog niets anders is?
-        </p>
+        <p class="audience-intro">De kinderen zijn allang het huis uit. De trap voelt zwaarder dan vroeger. U gebruikt misschien nog maar twee of drie kamers. De gedachte aan een andere, passender woning heeft u al vaker gehad — maar wat dan? Waar naartoe? En wat als u uw woning verkoopt terwijl er nog niets anders is?</p>
         <div class="audience-benefits">
           <div class="benefit-row">
             <div class="benefit-icon">👀</div>
@@ -800,9 +904,7 @@
         </div>
       </div>
       <div class="audience-quote">
-        <p class="audience-quote-text">
-          "Ik wilde best eens kijken, maar het idee om mijn huis op Funda te zetten terwijl ik nog niets anders heb — dat voelt niet goed. Hier kan ik eerst gewoon eens kijken."
-        </p>
+        <p class="audience-quote-text">"Ik wilde best eens kijken, maar het idee om mijn huis op Funda te zetten terwijl ik nog niets anders heb — dat voelt niet goed. Hier kan ik eerst gewoon eens kijken."</p>
         <div class="audience-quote-source">Herkenbaar voor veel 65+ bewoners</div>
         <div class="audience-quote-chips">
           <span class="audience-quote-chip">Gelijkvloers wonen</span>
@@ -817,9 +919,7 @@
     <div class="audience-panel" id="panel-gezin">
       <div class="audience-text">
         <h3>De woning die jullie<br><em>zoeken bestaat al</em></h3>
-        <p class="audience-intro">
-          Jullie gezin is gegroeid maar de woning niet mee. Jullie willen meer ruimte, een tuin, een extra kamer — maar het liefst blijven jullie in dezelfde wijk, bij dezelfde school, bij hetzelfde netwerk. Op Funda staat er niets. Toch zijn die woningen er wél. Ze staan alleen niet te koop — nog niet.
-        </p>
+        <p class="audience-intro">Jullie gezin is gegroeid maar de woning niet mee. Jullie willen meer ruimte, een tuin, een extra kamer — maar het liefst blijven jullie in dezelfde wijk, bij dezelfde school, bij hetzelfde netwerk. Op Funda staat er niets. Toch zijn die woningen er wél. Ze staan alleen niet te koop — nog niet.</p>
         <div class="audience-benefits">
           <div class="benefit-row">
             <div class="benefit-icon">🔍</div>
@@ -852,9 +952,7 @@
         </div>
       </div>
       <div class="audience-quote">
-        <p class="audience-quote-text">
-          "We zoeken al twee jaar naar iets groters in onze wijk. Op Funda staat nooit iets. We wisten niet dat we ook konden kijken naar woningen die misschien binnenkort beschikbaar komen."
-        </p>
+        <p class="audience-quote-text">"We zoeken al twee jaar naar iets groters in onze wijk. Op Funda staat nooit iets. We wisten niet dat we ook konden kijken naar woningen die misschien binnenkort beschikbaar komen."</p>
         <div class="audience-quote-source">Herkenbaar voor doorstromende gezinnen</div>
         <div class="audience-quote-chips">
           <span class="audience-quote-chip">Meer kamers</span>
@@ -869,9 +967,7 @@
     <div class="audience-panel" id="panel-gemeente">
       <div class="audience-text">
         <h3>Inzicht in wat<br><em>nog verborgen is</em></h3>
-        <p class="audience-intro">
-          Gemeenten en woningcorporaties zoeken naar manieren om de bestaande voorraad beter te benutten. Doorstroming staat hoog op de beleidsagenda — maar de data over latente verhuisbereidheid ontbreekt. Niste maakt zichtbaar wat er al is.
-        </p>
+        <p class="audience-intro">Gemeenten en woningcorporaties zoeken naar manieren om de bestaande voorraad beter te benutten. Doorstroming staat hoog op de beleidsagenda — maar de data over latente verhuisbereidheid ontbreekt. Niste maakt zichtbaar wat er al is.</p>
         <div class="audience-benefits">
           <div class="benefit-row">
             <div class="benefit-icon">📊</div>
@@ -904,9 +1000,7 @@
         </div>
       </div>
       <div class="audience-quote">
-        <p class="audience-quote-text">
-          "We weten dat er doorstroompotentieel is in onze gemeente, maar we hebben geen instrument om dat zichtbaar te maken. Dat is precies waar we behoefte aan hebben."
-        </p>
+        <p class="audience-quote-text">"We weten dat er doorstroompotentieel is in onze gemeente, maar we hebben geen instrument om dat zichtbaar te maken. Dat is precies waar we behoefte aan hebben."</p>
         <div class="audience-quote-source">Herkenbaar voor woonbeleidsmedewerkers</div>
         <div class="audience-quote-chips">
           <span class="audience-quote-chip">Wijkrapportages</span>
@@ -941,9 +1035,7 @@
         <div class="chain-node-desc">Gelijkvloers, dichter bij voorzieningen. Precies wat past bij deze levensfase.</div>
       </div>
       <div class="chain-arrow">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M5 12h14M14 6l6 6-6 6" stroke="rgba(246,241,233,.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M14 6l6 6-6 6" stroke="rgba(246,241,233,.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <div class="chain-node">
         <div class="chain-node-emoji">👨‍👩‍👧‍👦</div>
@@ -952,20 +1044,16 @@
         <div class="chain-node-desc">Meer ruimte, tuin, in de vertrouwde wijk. Zonder concurrentiestrijd.</div>
       </div>
       <div class="chain-arrow">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M5 12h14M14 6l6 6-6 6" stroke="rgba(246,241,233,.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M14 6l6 6-6 6" stroke="rgba(246,241,233,.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <div class="chain-node">
         <div class="chain-node-emoji">👩‍💼</div>
         <div class="chain-node-who">Starter</div>
-        <div class="chain-node-label">Koopt de achtergelaten tussenwoningvan het gezin</div>
+        <div class="chain-node-label">Koopt de achtergelaten tussenwoning van het gezin</div>
         <div class="chain-node-desc">Eindelijk een betaalbare eerste woning — die eerder onbereikbaar leek.</div>
       </div>
       <div class="chain-arrow">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-          <path d="M5 12h14M14 6l6 6-6 6" stroke="rgba(246,241,233,.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 12h14M14 6l6 6-6 6" stroke="rgba(246,241,233,.6)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </div>
       <div class="chain-node" style="background: rgba(196,154,74,.12); border-color: rgba(196,154,74,.2);">
         <div class="chain-node-emoji">🏘</div>
@@ -1007,7 +1095,6 @@
 
     <div class="privacy-grid">
       <div class="privacy-principles">
-
         <div class="privacy-principle">
           <div class="privacy-principle-num">1</div>
           <div>
@@ -1015,7 +1102,6 @@
             <span>Jouw exacte adres is niet zichtbaar in het platform. Matches zien alleen een indicatieve locatie, nooit jouw straat of huisnummer.</span>
           </div>
         </div>
-
         <div class="privacy-principle">
           <div class="privacy-principle-num">2</div>
           <div>
@@ -1023,7 +1109,6 @@
             <span>Contact is alleen mogelijk als beide partijen expliciet aangeven dat ze dat willen. Er wordt nooit eenzijdig informatie gedeeld.</span>
           </div>
         </div>
-
         <div class="privacy-principle">
           <div class="privacy-principle-num">3</div>
           <div>
@@ -1031,7 +1116,6 @@
             <span>We vragen alleen wat nodig is voor matching. Geen onnodige velden, geen profilering, geen data voor advertenties.</span>
           </div>
         </div>
-
         <div class="privacy-principle">
           <div class="privacy-principle-num">4</div>
           <div>
@@ -1039,7 +1123,6 @@
             <span>Je kunt op elk moment je volledige account verwijderen. Alle gegevens en matches verdwijnen dan permanent uit onze systemen.</span>
           </div>
         </div>
-
         <div class="privacy-principle">
           <div class="privacy-principle-num">5</div>
           <div>
@@ -1047,27 +1130,21 @@
             <span>Jouw gegevens worden nooit verkocht of gedeeld met makelaars, adverteerders of andere commerciële partijen zonder jouw toestemming.</span>
           </div>
         </div>
-
       </div>
 
       <div class="privacy-badges">
         <div class="privacy-badge-block">
           <div class="privacy-badge-title">AVG-conform by design</div>
-          <div class="privacy-badge-body">
-            Het platform is gebouwd met privacy als uitgangspunt, niet als nagedachte. Gegevensminimalisatie, anonimisering en toestemmingsbeheer zijn onderdeel van de architectuur — niet een laag die er later overheen is gelegd.
-          </div>
+          <div class="privacy-badge-body">Het platform is gebouwd met privacy als uitgangspunt, niet als nagedachte. Gegevensminimalisatie, anonimisering en toestemmingsbeheer zijn onderdeel van de architectuur — niet een laag die er later overheen is gelegd.</div>
           <div class="privacy-badge-tags">
             <span class="privacy-badge-tag">GDPR / AVG</span>
             <span class="privacy-badge-tag">Privacy by design</span>
             <span class="privacy-badge-tag">Opt-in only</span>
           </div>
         </div>
-
         <div class="privacy-badge-block">
           <div class="privacy-badge-title">Transparantie over gebruik</div>
-          <div class="privacy-badge-body">
-            We leggen in begrijpelijke taal uit wat we bewaren, waarom en hoe lang. Geen juridische kleinlettertjes die niemand leest. Je kunt altijd een overzicht opvragen van wat we over jou hebben.
-          </div>
+          <div class="privacy-badge-body">We leggen in begrijpelijke taal uit wat we bewaren, waarom en hoe lang. Geen juridische kleinlettertjes die niemand leest. Je kunt altijd een overzicht opvragen van wat we over jou hebben.</div>
           <div class="privacy-badge-tags">
             <span class="privacy-badge-tag">Inzagerecht</span>
             <span class="privacy-badge-tag">Verwijderrecht</span>
@@ -1091,17 +1168,13 @@
       <span class="section-eyebrow-line"></span>
     </div>
     <h2 class="section-title">Klaar om te kijken<br><em>wat er mogelijk is?</em></h2>
-    <p class="section-lead">
-      Aanmelden voor de pilot kost niets en verplicht tot niets. Je vult een korte wooncheck in, en wij laten je weten of er een match is in jouw buurt.
-    </p>
+    <p class="section-lead">Aanmelden voor de pilot kost niets en verplicht tot niets. Je vult een korte wooncheck in, en wij laten je weten of er een match is in jouw buurt.</p>
     <div class="cta-buttons">
       <a href="aanmelden.html" class="btn-primary">
         Aanmelden voor de pilot
         <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
-      <a href="privacy.html" class="btn-secondary">
-        Privacyverklaring lezen
-      </a>
+      <a href="privacy.html" class="btn-secondary">Privacyverklaring lezen</a>
     </div>
   </div>
 </section>
@@ -1113,14 +1186,15 @@
   <p class="footer-meta">Pilot 2026 · Noord-Brabant · Woningmatch op basis van latente verhuisintentie</p>
   <div class="footer-links">
     <a href="over.html" class="footer-link">Hoe het werkt</a>
-    <a href="onderbouwing.html" class="footer-link">Onderbouwing</a>a>
+    <a href="lvi_model.html" class="footer-link">Het matchmodel</a>
+    <a href="onderbouwing.html" class="footer-link">Onderbouwing</a>
     <a href="privacy.html" class="footer-link">Privacy</a>
     <a href="aanmelden.html" class="footer-link">Aanmelden</a>
   </div>
 </footer>
 
 
-<!-- ── SCRIPTS ── -->
+<!-- ── SCRIPTS ── */
 <script>
   function showAudience(id) {
     document.querySelectorAll('.audience-tab').forEach(t => t.classList.remove('active'));
