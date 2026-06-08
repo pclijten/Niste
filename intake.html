@@ -46,6 +46,7 @@
     .mode-choice-title { font-family:'Cormorant Garamond',serif; font-size:2.4rem; font-weight:600; color:var(--forest); line-height:1.12; margin-bottom:.6rem; }
     .mode-choice-title em { font-style:italic; color:var(--dark); }
     .mode-choice-desc { font-size:.9rem; color:var(--mid); line-height:1.65; max-width:460px; margin:0 auto; }
+    .mode-choice-reassure { font-size:.82rem; color:var(--forest); background:rgba(42,74,62,.07); border-radius:10px; padding:.7rem 1.1rem; max-width:460px; margin:.75rem auto 0; font-weight:600; }
     .mode-cards { display:grid; grid-template-columns:1fr 1fr; gap:1.1rem; }
     .mode-card { background:#fff; border:1.5px solid rgba(42,74,62,.1); border-radius:20px; padding:1.8rem 1.6rem; cursor:pointer; transition:transform .2s, box-shadow .25s, border-color .2s; text-align:left; display:flex; flex-direction:column; }
     .mode-card:hover { transform:translateY(-3px); box-shadow:0 14px 36px rgba(42,74,62,.12); border-color:var(--forest); }
@@ -340,12 +341,13 @@ function renderModeChoice() {
     <div class="mode-choice">
       <div class="mode-choice-head">
         <div class="mode-choice-ey">Wooncheck</div>
-        <h1 class="mode-choice-title">Hoe wil je <em>beginnen</em>?</h1>
-        <p class="mode-choice-desc">Je kunt snel kennismaken of meteen je volledige profiel invullen. Je kunt later altijd wisselen — je antwoorden blijven bewaard.</p>
+        <h1 class="mode-choice-title">Kijk eerst — <em>beslis later</em></h1>
+        <p class="mode-choice-desc">U verplicht zich tot niets. U kijkt alleen welke mogelijkheden er zijn.</p>
+        <p class="mode-choice-reassure">🔒 Geen adres, geen naam, geen makelaar — gewoon kijken.</p>
       </div>
       <div class="mode-cards">
         <button class="mode-card short" onclick="chooseMode('kort')">
-          <span class="mode-card-badge">Aanrader om te starten</span>
+          <span class="mode-card-badge">Meest gekozen</span>
           <span class="mode-card-icon">⚡</span>
           <span class="mode-card-title">Snel kennismaken</span>
           <span class="mode-card-time">± 2 minuten · 13 vragen</span>
@@ -353,7 +355,7 @@ function renderModeChoice() {
           <span class="mode-card-cta">Start kort →</span>
         </button>
         <button class="mode-card long" onclick="chooseMode('lang')">
-          <span class="mode-card-badge">Volledig profiel</span>
+          <span class="mode-card-badge">Beste match</span>
           <span class="mode-card-icon">📋</span>
           <span class="mode-card-title">Uitgebreid invullen</span>
           <span class="mode-card-time">± 8 minuten · 7 onderdelen</span>
@@ -361,7 +363,7 @@ function renderModeChoice() {
           <span class="mode-card-cta">Start uitgebreid →</span>
         </button>
       </div>
-      <p class="mode-switch-hint">Twijfel je? Begin kort. Aanvullen kan altijd.</p>
+      <p class="mode-switch-hint">Twijfel je? Begin kort. Aanvullen kan altijd — je antwoorden blijven bewaard.</p>
     </div>`;
 }
 
