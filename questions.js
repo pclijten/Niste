@@ -136,6 +136,7 @@ export const QUESTIONS = [
   {
     id: 'prijs_range', step: 0, type: 'chips',
     sectionLabel: 'Geschatte woningwaarde (indicatief)',
+    sublabel: 'Helpt ons bepalen of een woningruil reëel is. Wordt nooit gedeeld met derden en is alleen zichtbaar voor Niste.',
     options: ['< €200k','€200–300k','€300–400k','€400–500k','€500–600k','€600–750k','€750k–€1M','> €1M'],
     dbField: 'prijs_range', optional: true,
   },
@@ -526,6 +527,16 @@ export const QUESTIONS = [
     dbField: 'emotie_vs_ratio', optional: true,
   },
   {
+    id: '_buurt_binding_badge', step: 4, type: 'computed_badge',
+    compute: 'buurt_binding',
+    dbField: null, optional: true,
+  },
+  {
+    id: '_verhuisdrempel_badge', step: 5, type: 'computed_badge',
+    compute: 'verhuisdrempel',
+    dbField: null, optional: true,
+  },
+  {
     id: 'frictie_score', step: 4, type: 'scale',
     sectionLabel: 'Mismatch',
     label: 'Hoe goed past deze woning nog bij je leven?',
@@ -641,7 +652,7 @@ export const QUESTIONS = [
     sectionLabel: 'Gewenst woningtype',
     options: [
       { value: 'vergelijkbaar', label: 'Vergelijkbaar',      icon: '↔️' },
-      { value: 'kleiner',       label: 'Kleiner',            icon: '⬇️' },
+      { value: 'kleiner',       label: 'Kleiner / passend', icon: '⬇️' },
       { value: 'gelijkvloers',  label: 'Gelijkvloers',       icon: '♿' },
       { value: 'groter',        label: 'Groter',             icon: '⬆️' },
       { value: 'appartement',   label: 'Appartement',        icon: '🏢' },
@@ -675,6 +686,7 @@ export const QUESTIONS = [
   {
     id: 'gewenste_locatie', step: 6, type: 'chips',
     sectionLabel: 'Zoekradius',
+    sublabel: 'Matching werkt alleen als we weten hoe ver u bereid bent te kijken. Hoe dichter bij, hoe relevanter de match.',
     options: ['Zelfde wijk','Zelfde gemeente','Tot 5 km','Tot 15 km','Tot 30 km','Heel Nederland'],
     dbField: 'gewenste_locatie', optional: true,
     short: true, shortStep: 2,
