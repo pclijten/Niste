@@ -27,6 +27,15 @@
 //      nauwelijks bereid is, is de kans op een echte verhuisbeweging minimaal —
 //      ongeacht hoe bereid de ander is. Drempel: één partij ≤ 1 én de ander < 4.
 
+// ─── ADMIN CONFIG (aanpasbaar via admin-interface) ────────────────────────────
+// Drempelwaarden zijn initiële schattingen — worden bijgesteld op basis van
+// pilotdata (Noord-Brabant 2026). Zie admin.html voor UI om deze aan te passen.
+export const ADMIN_CONFIG = {
+  MATCH_THRESHOLD:       40,   // minimale score om op te slaan
+  DEALBREAKER_BEREID_MIN: 1,   // eenzijdig bereidheid ≤ dit = dealbreaker
+  DEALBREAKER_OTHER_MIN:  4,   // tenzij andere partij ≥ dit
+};
+
 // ─── WONINGGROOTTE-RANGORDE ───────────────────────────────────────────────────
 const OPP_RANK = {
   '< 50 m²':1, '50–75 m²':2, '75–100 m²':3, '100–125 m²':4,
@@ -66,6 +75,29 @@ function locatieOk(a, b) {
   }
 }
 
+// ─── HUISHOUDENSGROOTTE NAAR GETAL ────────────────────────────────────────────
+const HH_SIZE = {
+  'alleenstaand': 1, 'stel': 2, 'stel_kind': 3.5,
+  'eenouder': 2.5, 'samen': 2,
+};
+function hhSize(h) { return HH_SIZE[h && h.huishoud_type] || null; }
+
+// ─── RUIMTE PER PERSOON BONUS ────────────────────────────────────────────────
+// Geeft bonus als de woningruil per saldo ruimtewinst oplevert voor degene
+// die groter wil wonen — de kern van de woningmismatch propositie.
+function ruimteWinstBonus(seeker, provider) {
+  const rs = oppRank(seeker), rp = oppRank(provider);
+  const sizeS = hhSize(seeker), sizeP = hhSize(provider);
+  if (!rs || !rp || !sizeS || !sizeP) return 0;
+
+  const ruimteS = rs / sizeS; // m²-rank per persoon, seeker
+  const ruimteP = rp / sizeP; // m²-rank per persoon, provider
+
+  if (WANTS_BIGGER.includes(seeker.gewenst_type) && ruimteP > ruimteS) return 8;
+  if (WANTS_SMALLER.includes(seeker.gewenst_type) && ruimteP < ruimteS) return 5;
+  return 0;
+}
+
 // ─── WONING SWAP FIT (max 35) ─────────────────────────────────────────────────
 const SWAP_MATRIX = {
   groter:        ['vrijstaand','2kap','woonboerderij','hoekwoning'],
@@ -99,6 +131,8 @@ function oneWayFit(seeker, provider) {
 
 function swapScore(a, b) {
   let score = oneWayFit(a, b) + oneWayFit(b, a);
+  // Bonus als ruil ook per persoon ruimtewinst oplevert (huishoudensgrootte-factor)
+  score += ruimteWinstBonus(a, b) + ruimteWinstBonus(b, a);
   if (a.woning_type && b.woning_type && a.gewenst_type && b.gewenst_type) score += 1;
   return Math.min(35, score);
 }
@@ -271,7 +305,7 @@ export function matchScore(a, b) {
 }
 
 // ─── ALLE PAREN BEREKENEN ─────────────────────────────────────────────────────
-export function computeAllMatches(households, threshold = 40) {
+export function computeAllMatches(households, threshold = ADMIN_CONFIG.MATCH_THRESHOLD) {
   const results = [];
 
   for (let i = 0; i < households.length; i++) {
