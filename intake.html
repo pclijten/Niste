@@ -17,7 +17,6 @@
     }
     html { scroll-behavior: smooth; }
     body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--dark); min-height: 100vh; }
-
     nav { display:flex; align-items:center; justify-content:space-between; padding:1.15rem 2.5rem; border-bottom:1px solid rgba(42,74,62,.08); background:rgba(246,241,233,.96); backdrop-filter:blur(20px); position:sticky; top:0; z-index:50; }
     .nav-logo { font-family:'Cormorant Garamond',serif; font-size:1.65rem; font-weight:600; color:var(--forest); text-decoration:none; display:flex; align-items:center; }
     .logo-dot { width:7px; height:7px; border-radius:50%; background:var(--gold); display:inline-block; animation:pulse 2.2s ease-in-out infinite; margin-left:2px; }
@@ -28,20 +27,31 @@
     .nav-user { font-size:.75rem; color:var(--mid); max-width:160px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
     .nav-back { font-size:.76rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:var(--mid); text-decoration:none; transition:color .2s; }
     .nav-back:hover { color:var(--forest); }
-
-    body.embedded nav { display: none; }
-    body.embedded .progress-outer { display: none; }
-    body.embedded .intake-wrap { padding-top: 1.5rem; }
-
+    body.embedded nav { display:none; }
+    body.embedded .progress-outer { display:none; }
+    body.embedded .intake-wrap { padding-top:1.5rem; }
     .progress-outer { width:100%; height:3px; background:rgba(42,74,62,.08); position:sticky; top:65px; z-index:49; }
     .progress-fill { height:100%; background:var(--gold); transition:width .5s cubic-bezier(.4,0,.2,1); }
     .intake-wrap { max-width:700px; margin:0 auto; padding:3rem 1.5rem 7rem; }
 
-    /* ── ANON BANNER ── */
+    /* Loading state */
+    .loading-wrap { display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:50vh; gap:1rem; }
+    .loading-spinner { width:36px; height:36px; border:3px solid var(--warm); border-top-color:var(--forest); border-radius:50%; animation:spin .8s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .loading-label { font-size:.8rem; color:var(--light); font-weight:600; letter-spacing:.06em; text-transform:uppercase; }
+
+    /* Error state */
+    .error-wrap { text-align:center; padding:3rem 1.5rem; }
+    .error-title { font-family:'Cormorant Garamond',serif; font-size:1.6rem; color:var(--forest); margin-bottom:.6rem; }
+    .error-desc { font-size:.85rem; color:var(--mid); line-height:1.6; margin-bottom:1.4rem; }
+    .error-detail { font-size:.72rem; color:var(--light); background:var(--warm); border-radius:8px; padding:.6rem 1rem; margin-bottom:1.4rem; font-family:monospace; word-break:break-all; }
+    .btn-retry { background:var(--forest); color:var(--cream); border:none; border-radius:100px; padding:.75rem 1.8rem; font-family:'Plus Jakarta Sans',sans-serif; font-size:.84rem; font-weight:700; cursor:pointer; }
+
+    /* Anon banner */
     .anon-banner { display:flex; align-items:center; gap:.9rem; background:rgba(196,154,74,.08); border:1px solid rgba(196,154,74,.25); border-radius:12px; padding:.75rem 1.1rem; margin-bottom:1.4rem; font-size:.8rem; color:var(--mid); line-height:1.5; }
     .anon-banner-icon { font-size:1.3rem; flex-shrink:0; }
 
-    /* ── EMAIL UPGRADE MODAL ── */
+    /* Modal */
     .modal-overlay { position:fixed; inset:0; background:rgba(26,26,22,.55); backdrop-filter:blur(4px); z-index:200; display:flex; align-items:center; justify-content:center; padding:1rem; animation:fadeIn .2s ease; }
     @keyframes fadeIn { from{opacity:0} to{opacity:1} }
     .modal-box { background:#fff; border-radius:20px; padding:2rem; max-width:420px; width:100%; box-shadow:0 20px 60px rgba(26,26,22,.18); position:relative; }
@@ -65,7 +75,7 @@
     .modal-success-title { font-family:'Cormorant Garamond',serif; font-size:1.5rem; color:var(--forest); margin-bottom:.5rem; }
     .modal-success-desc { font-size:.82rem; color:var(--mid); line-height:1.6; }
 
-    /* ── MODE-KEUZE ── */
+    /* Mode keuze */
     .mode-choice { animation:fadeUp .3s ease forwards; }
     .mode-choice-head { text-align:center; margin-bottom:2rem; }
     .mode-choice-ey { font-size:.65rem; font-weight:800; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); margin-bottom:.6rem; }
@@ -85,7 +95,7 @@
     .mode-card-cta { font-size:.78rem; font-weight:800; letter-spacing:.05em; text-transform:uppercase; color:var(--forest); display:flex; align-items:center; gap:.4rem; }
     .mode-switch-hint { text-align:center; font-size:.78rem; color:var(--light); margin-top:1.4rem; }
 
-    /* ── STAP-NAVIGATIE ── */
+    /* Stap-navigatie */
     .step-nav { display:flex; gap:8px; overflow-x:auto; padding:6px 2px 10px; margin:0 0 1.4rem; scrollbar-width:thin; -webkit-overflow-scrolling:touch; scroll-snap-type:x proximity; }
     .step-nav::-webkit-scrollbar { height:6px; }
     .step-nav::-webkit-scrollbar-thumb { background:var(--warm); border-radius:999px; }
@@ -110,7 +120,7 @@
     .mode-switch-btn { background:transparent; border:1px solid rgba(42,74,62,.15); border-radius:100px; padding:.35rem .9rem; font-family:'Plus Jakarta Sans',sans-serif; font-size:.7rem; font-weight:700; letter-spacing:.04em; color:var(--mid); cursor:pointer; transition:all .2s; }
     .mode-switch-btn:hover { border-color:var(--forest); color:var(--forest); background:rgba(42,74,62,.04); }
 
-    /* ── KAART & ELEMENTEN ── */
+    /* Kaart & elementen */
     .card { background:#fff; border-radius:24px; padding:2.6rem; box-shadow:0 2px 48px rgba(26,26,22,.07); animation:fadeUp .3s ease forwards; }
     @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
     .ey { font-size:.65rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--gold); margin-bottom:.5rem; }
@@ -218,7 +228,6 @@
     .btn-edit-again { background:transparent; border:1.5px solid rgba(42,74,62,.2); border-radius:100px; padding:.7rem 1.6rem; font-family:'Plus Jakarta Sans',sans-serif; font-size:.82rem; font-weight:700; color:var(--forest); cursor:pointer; transition:all .2s; margin-right:.6rem; }
     .btn-edit-again:hover { background:rgba(42,74,62,.06); }
     .btn-to-login { background:var(--forest); color:var(--cream); border:none; border-radius:100px; padding:.8rem 2rem; font-family:'Plus Jakarta Sans',sans-serif; font-size:.85rem; font-weight:700; cursor:pointer; text-decoration:none; display:inline-block; }
-
     @media(max-width:560px) {
       .card { padding:1.5rem 1.1rem; }
       .g3,.g4 { grid-template-columns:1fr 1fr; }
@@ -243,14 +252,20 @@
 </nav>
 <div class="progress-outer"><div class="progress-fill" id="pfill" style="width:0%"></div></div>
 
-<!-- Email-upgrade modal -->
+<!-- Modal: altijd in de DOM, verborgen via display:none -->
 <div id="upgrade-modal" class="modal-overlay" style="display:none" role="dialog" aria-modal="true" aria-label="E-mailadres koppelen">
   <div class="modal-box" id="upgrade-modal-box"></div>
 </div>
 
 <div class="intake-wrap">
   <div id="topnav"></div>
-  <div id="area"></div>
+  <!-- Direct een loading-state tonen zodat er nooit een leeg scherm is -->
+  <div id="area">
+    <div class="loading-wrap">
+      <div class="loading-spinner"></div>
+      <div class="loading-label">Laden…</div>
+    </div>
+  </div>
 </div>
 
 <script type="module">
@@ -258,7 +273,6 @@ import { auth, db } from './firebase-init.js';
 import {
   onAuthStateChanged,
   signInAnonymously,
-  createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   linkWithCredential,
   EmailAuthProvider,
@@ -274,7 +288,6 @@ import { renderStep, calcCompleteness, buildSummary, stepCompleteness } from './
 if (new URLSearchParams(location.search).get('embedded') === 'true')
   document.body.classList.add('embedded');
 
-// ── CONSTANTEN ────────────────────────────────────────────────────────────────
 const CONSENT_VER = '1.0';
 const PILOT       = '2026';
 
@@ -293,7 +306,6 @@ const STEP_META_SHORT = [
   { icon:'🎯', label:'Wat zoek je'  },
 ];
 
-// ── STATE ─────────────────────────────────────────────────────────────────────
 let state   = {};
 let step    = 0;
 let mode    = null;
@@ -306,19 +318,25 @@ function stepTitles() { return mode === 'kort' ? SHORT_STEP_TITLES : STEP_TITLES
 function stepMeta()   { return mode === 'kort' ? STEP_META_SHORT   : STEP_META;   }
 function nSteps()     { return stepTitles().length; }
 
+// ── DOM-klaar: sluit modal bij klik buiten de box ─────────────────────────────
+// Dit is nu BINNEN de module, na import — DOM is altijd beschikbaar
+document.getElementById('upgrade-modal').addEventListener('click', function(e) {
+  if (e.target === this) closeUpgradeModal();
+});
+
 // ── GLOBALE HANDLERS ──────────────────────────────────────────────────────────
 window.N = {
-  si(k,v)         { state[k]=v; schedSave(); },
-  tc(k,v,multi)   {
+  si(k,v)       { state[k]=v; schedSave(); },
+  tc(k,v,multi) {
     if (multi) {
       const a=[...(state[k]||[])], i=a.indexOf(v);
       if(i===-1) a.push(v); else a.splice(i,1); state[k]=a;
     } else { state[k]=v===(state[k]??'')?'':v; }
     schedSave(); renderCard(); renderTopNav();
   },
-  ct(k,d,mn,mx)   { state[k]=Math.min(mx,Math.max(mn,(state[k]??0)+d)); schedSave(); renderCard(); renderTopNav(); },
-  tt(k)           { state[k]=!(state[k]===true); schedSave(); renderCard(); renderTopNav(); },
-  sc(k,n)         { state[k]=n===(state[k]??0)?0:n; schedSave(); renderCard(); renderTopNav(); },
+  ct(k,d,mn,mx) { state[k]=Math.min(mx,Math.max(mn,(state[k]??0)+d)); schedSave(); renderCard(); renderTopNav(); },
+  tt(k)         { state[k]=!(state[k]===true); schedSave(); renderCard(); renderTopNav(); },
+  sc(k,n)       { state[k]=n===(state[k]??0)?0:n; schedSave(); renderCard(); renderTopNav(); },
   sl(k,v) {
     state[k]=parseInt(v,10); schedSave();
     const pct=((parseInt(v,10)-1)/4*100).toFixed(0);
@@ -333,7 +351,7 @@ window.N = {
   goTo(s) { goTo(s); },
 };
 
-// ── MODE-KEUZE ────────────────────────────────────────────────────────────────
+// ── MODE ──────────────────────────────────────────────────────────────────────
 window.chooseMode = function(m) {
   mode=m; step=0; state._mode=m; schedSave(); renderAll();
   window.scrollTo({top:0,behavior:'smooth'});
@@ -347,6 +365,223 @@ window.restartIntake = function() {
   mode=null; step=0; renderAll();
   window.scrollTo({top:0,behavior:'smooth'});
 };
+
+// ── NAVIGATIE ─────────────────────────────────────────────────────────────────
+function goTo(s) {
+  step=s; state._step=step; schedSave(); renderAll();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+window.goToStep = goTo;
+
+// ── MODAL ─────────────────────────────────────────────────────────────────────
+let _modalTab = 'register';
+
+window.openUpgradeModal = function(tab='register') {
+  _modalTab=tab; renderUpgradeModal();
+  document.getElementById('upgrade-modal').style.display='flex';
+  setTimeout(()=>{ const f=document.querySelector('#upgrade-modal-box input'); if(f) f.focus(); },80);
+};
+window.closeUpgradeModal = function() {
+  document.getElementById('upgrade-modal').style.display='none';
+};
+
+function renderUpgradeModal(errorMsg='') {
+  const box=document.getElementById('upgrade-modal-box');
+  const isReg=_modalTab==='register';
+  box.innerHTML=`
+    <button class="modal-close" onclick="closeUpgradeModal()" aria-label="Sluiten">✕</button>
+    <div class="modal-eyebrow">Niste</div>
+    <div class="modal-title">${isReg?'Bewaar je profiel':'Al een account?'}</div>
+    <p class="modal-desc">${isReg
+      ?'Voeg een e-mailadres toe. Alles wat je al hebt ingevuld blijft bewaard.'
+      :'Log in om je eerdere antwoorden te herstellen.'
+    }</p>
+    <div class="modal-tabs">
+      <button class="modal-tab ${isReg?'active':''}" onclick="switchModalTab('register')">Account aanmaken</button>
+      <button class="modal-tab ${!isReg?'active':''}" onclick="switchModalTab('login')">Inloggen</button>
+    </div>
+    <label class="modal-field-label" for="modal-email">E-mailadres</label>
+    <input id="modal-email" type="email" class="modal-field" placeholder="jouw@email.nl" autocomplete="email">
+    <label class="modal-field-label" for="modal-pw">Wachtwoord</label>
+    <input id="modal-pw" type="password" class="modal-field"
+      placeholder="${isReg?'Minimaal 8 tekens':'Wachtwoord'}"
+      autocomplete="${isReg?'new-password':'current-password'}">
+    <div class="modal-error" id="modal-error">${errorMsg}</div>
+    <button class="modal-btn" id="modal-submit-btn" onclick="submitUpgrade()">
+      ${isReg?'Account aanmaken & opslaan →':'Inloggen & doorgaan →'}
+    </button>
+    <p style="font-size:.72rem;color:var(--light);text-align:center;">
+      🔒 Je antwoorden blijven bewaard. Geen spam.
+    </p>`;
+}
+
+window.switchModalTab = function(tab) {
+  _modalTab=tab; renderUpgradeModal();
+  setTimeout(()=>{ const f=document.querySelector('#upgrade-modal-box input'); if(f) f.focus(); },60);
+};
+
+window.submitUpgrade = async function() {
+  const email=document.getElementById('modal-email')?.value?.trim();
+  const pw   =document.getElementById('modal-pw')?.value;
+  const btn  =document.getElementById('modal-submit-btn');
+  const err  =document.getElementById('modal-error');
+
+  if(!email||!pw){ if(err) err.textContent='Vul je e-mailadres en wachtwoord in.'; return; }
+  if(_modalTab==='register'&&pw.length<8){ if(err) err.textContent='Wachtwoord moet minimaal 8 tekens zijn.'; return; }
+  if(btn){ btn.disabled=true; btn.textContent='Even geduld…'; }
+  if(err) err.textContent='';
+
+  try {
+    if (_modalTab==='register') {
+      const methods=await fetchSignInMethodsForEmail(auth,email);
+      if(methods.length>0){
+        _modalTab='login';
+        renderUpgradeModal('Dit e-mailadres heeft al een account. Log hieronder in.');
+        return;
+      }
+      const credential=EmailAuthProvider.credential(email,pw);
+      await linkWithCredential(auth.currentUser,credential);
+      isAnon=false; user=auth.currentUser;
+      const nu=document.getElementById('nav-user');
+      if(nu) nu.textContent=user.email;
+      await saveToFirestore();
+      showModalSuccess(email);
+    } else {
+      const anonState={...state};
+      const cred=await signInWithEmailAndPassword(auth,email,pw);
+      user=cred.user; isAnon=false;
+      await loadFromFirestore();
+      Object.keys(anonState).forEach(k=>{ if(state[k]===undefined) state[k]=anonState[k]; });
+      await saveToFirestore();
+      const nu=document.getElementById('nav-user');
+      if(nu) nu.textContent=user.email;
+      showModalSuccess(email);
+    }
+  } catch(e) {
+    const map={
+      'auth/email-already-in-use':    'Dit e-mailadres is al in gebruik. Probeer in te loggen.',
+      'auth/invalid-email':            'Ongeldig e-mailadres.',
+      'auth/wrong-password':           'Onjuist wachtwoord.',
+      'auth/invalid-credential':       'Onjuiste combinatie van e-mailadres en wachtwoord.',
+      'auth/user-not-found':           'Geen account gevonden met dit e-mailadres.',
+      'auth/weak-password':            'Wachtwoord is te zwak (minimaal 8 tekens).',
+      'auth/too-many-requests':        'Te veel pogingen. Probeer het later opnieuw.',
+      'auth/credential-already-in-use':'Dit e-mailadres is al aan een account gekoppeld.',
+    };
+    if(err) err.textContent=map[e.code]||('Fout: '+e.code);
+    if(btn){ btn.disabled=false; btn.textContent=_modalTab==='register'?'Account aanmaken & opslaan →':'Inloggen & doorgaan →'; }
+  }
+};
+
+function showModalSuccess(email) {
+  document.getElementById('upgrade-modal-box').innerHTML=`
+    <div class="modal-success">
+      <div class="modal-success-ico">✅</div>
+      <div class="modal-success-title">Gelukt!</div>
+      <p class="modal-success-desc">Je profiel is gekoppeld aan <strong>${email}</strong>.<br><br>
+        Je ontvangt een bericht zodra er een match voor je is.</p>
+      <button class="modal-btn" style="margin-top:1.4rem" onclick="closeUpgradeModal(); renderAll();">Doorgaan →</button>
+    </div>`;
+}
+
+// ── FIRESTORE ─────────────────────────────────────────────────────────────────
+function schedSave() { clearTimeout(saveTmr); saveTmr=setTimeout(()=>saveToFirestore(),1500); }
+
+async function saveToFirestore(markComplete=false) {
+  if(!user||saving) return;
+  saving=true;
+  const comp=calcCompleteness(QUESTIONS,state,mode||'lang');
+  const payload={};
+  QUESTIONS.forEach(q=>{ if(!q.dbField) return; const v=state[q.dbField]; if(v!==undefined) payload[q.dbField]=v; });
+  payload._step=step; payload._mode=mode||'lang'; payload._completeness=comp;
+  payload._status=markComplete?'complete':'in_progress';
+  payload._updatedAt=serverTimestamp(); payload._pilot=PILOT; payload._version='1.0';
+  payload._isAnon=isAnon;
+  if(!isAnon&&user.email) payload._email_linked=true;
+  if(markComplete) payload._consent={given:true,timestamp:serverTimestamp(),version:CONSENT_VER};
+  try { await setDoc(doc(db,'households',user.uid),payload,{merge:true}); flashSave(true); }
+  catch(e) { console.error('Firestore fout:',e); flashSave(false); }
+  finally { saving=false; }
+}
+
+let flashTmr;
+function flashSave(ok) {
+  clearTimeout(flashTmr);
+  const el=document.getElementById('save-badge'); if(!el) return;
+  el.innerHTML=ok
+    ?'<span class="save-dot" style="background:var(--forest)"></span> Opgeslagen ✓'
+    :'<span class="save-dot" style="background:var(--rust)"></span> Opslaan mislukt';
+  flashTmr=setTimeout(()=>{ el.innerHTML='<span class="save-dot"></span> Automatisch opgeslagen'; },2500);
+}
+
+async function loadFromFirestore() {
+  if(!user) return;
+  try {
+    const snap=await getDoc(doc(db,'households',user.uid));
+    if(snap.exists()) {
+      const data=snap.data();
+      QUESTIONS.forEach(q=>{ if(q.dbField&&data[q.dbField]!==undefined) state[q.dbField]=data[q.dbField]; });
+      if(data._mode==='kort'||data._mode==='lang') mode=data._mode;
+      if(data._consent?.given||data._consent_given) state._consent_given=true;
+      if(mode) {
+        if(data._status==='complete') step=nSteps();
+        else if(data._step!==undefined) step=Math.min(data._step,nSteps());
+        else step=0;
+      } else { step=0; }
+    }
+  } catch(e) { console.warn('Kon profiel niet laden:',e); }
+}
+
+// ── RENDER HELPERS ────────────────────────────────────────────────────────────
+function renderAnonBanner() {
+  if(!isAnon||!mode) return '';
+  return `
+    <div class="anon-banner">
+      <span class="anon-banner-icon">💡</span>
+      <span>Je antwoorden worden al opgeslagen — anoniem en veilig.
+        <button onclick="openUpgradeModal('register')"
+          style="color:var(--gold);font-weight:700;text-decoration:underline;text-underline-offset:2px;
+                 cursor:pointer;background:none;border:none;font-family:inherit;font-size:inherit;padding:0;">
+          E-mailadres toevoegen</button>
+        om matches te ontvangen.</span>
+    </div>`;
+}
+
+function renderTopNav() {
+  const mount=document.getElementById('topnav'); if(!mount) return;
+  if(!mode||step>=nSteps()) { mount.innerHTML=''; return; }
+  const meta=stepMeta(), total=nSteps();
+  const modeLbl=mode==='kort'?'Korte versie':'Uitgebreide versie';
+  const switchLbl=mode==='kort'?'Wissel naar uitgebreid':'Wissel naar kort';
+  let tiles='';
+  for(let i=0;i<total;i++){
+    const {filled,total:tot}=stepCompleteness(i,QUESTIONS,state,mode);
+    const pct=tot?Math.round((filled/tot)*100):0;
+    const isActive=i===step, isDone=tot>0&&filled===tot;
+    const m=meta[i]||{icon:'•',label:'Stap '+(i+1)};
+    const cls='step-tile'+(isActive?' active':'')+(isDone?' done':'')+(filled>0&&!isDone?' partial':'');
+    tiles+=`
+      <button type="button" class="${cls}" aria-current="${isActive?'step':'false'}"
+        aria-label="${m.label}: ${filled} van ${tot} ingevuld" onclick="goToStep(${i})">
+        <span class="step-tile-ring" style="--ring:${pct}%">
+          <span class="step-tile-icon">${isDone?'✓':m.icon}</span>
+        </span>
+        <span class="step-tile-label">${m.label}</span>
+        <span class="step-tile-count">${tot?`${filled}/${tot}`:''}</span>
+      </button>`;
+  }
+  mount.innerHTML=`
+    <div class="mode-bar">
+      <span class="mode-tag"><span class="save-dot"></span> ${modeLbl}</span>
+      <button class="mode-switch-btn" onclick="switchMode()">${switchLbl}</button>
+    </div>
+    <div class="step-nav">${tiles}</div>`;
+}
+
+function renderProgress() {
+  const f=document.getElementById('pfill'); if(!f) return;
+  f.style.width=!mode?'0%':(Math.min(step+1,nSteps())/nSteps()*100)+'%';
+}
 
 function renderModeChoice() {
   return `
@@ -379,263 +614,14 @@ function renderModeChoice() {
     </div>`;
 }
 
-// ── NAVIGATIE ─────────────────────────────────────────────────────────────────
-function goTo(s) {
-  step=s; state._step=step; schedSave(); renderAll();
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-window.goToStep = goTo;
-
-// ── ANONIEM BANNER ────────────────────────────────────────────────────────────
-function renderAnonBanner() {
-  if (!isAnon || !mode) return '';
-  return `
-    <div class="anon-banner">
-      <span class="anon-banner-icon">💡</span>
-      <span>Je antwoorden worden al opgeslagen — anoniem en veilig.
-        <button onclick="openUpgradeModal('register')"
-          style="color:var(--gold);font-weight:700;text-decoration:underline;text-underline-offset:2px;
-                 cursor:pointer;background:none;border:none;font-family:inherit;font-size:inherit;padding:0;">
-          E-mailadres toevoegen</button>
-        om matches te ontvangen.</span>
-    </div>`;
-}
-
-// ── STAP-NAVIGATIE ─────────────────────────────────────────────────────────────
-function renderTopNav() {
-  const mount = document.getElementById('topnav');
-  if (!mount) return;
-  if (!mode || step >= nSteps()) { mount.innerHTML=''; return; }
-
-  const meta      = stepMeta();
-  const total     = nSteps();
-  const modeLbl   = mode==='kort' ? 'Korte versie' : 'Uitgebreide versie';
-  const switchLbl = mode==='kort' ? 'Wissel naar uitgebreid' : 'Wissel naar kort';
-
-  let tiles = '';
-  for (let i=0; i<total; i++) {
-    const {filled,total:tot} = stepCompleteness(i,QUESTIONS,state,mode);
-    const pct      = tot ? Math.round((filled/tot)*100) : 0;
-    const isActive = i===step;
-    const isDone   = tot>0 && filled===tot;
-    const m        = meta[i]||{icon:'•',label:'Stap '+(i+1)};
-    const cls = 'step-tile'+(isActive?' active':'')+(isDone?' done':'')+(filled>0&&!isDone?' partial':'');
-    tiles += `
-      <button type="button" class="${cls}" aria-current="${isActive?'step':'false'}"
-        aria-label="${m.label}: ${filled} van ${tot} ingevuld" onclick="goToStep(${i})">
-        <span class="step-tile-ring" style="--ring:${pct}%">
-          <span class="step-tile-icon">${isDone?'✓':m.icon}</span>
-        </span>
-        <span class="step-tile-label">${m.label}</span>
-        <span class="step-tile-count">${tot?`${filled}/${tot}`:''}</span>
-      </button>`;
-  }
-  mount.innerHTML = `
-    <div class="mode-bar">
-      <span class="mode-tag"><span class="save-dot"></span> ${modeLbl}</span>
-      <button class="mode-switch-btn" onclick="switchMode()">${switchLbl}</button>
-    </div>
-    <div class="step-nav">${tiles}</div>`;
-}
-
-function renderProgress() {
-  const f = document.getElementById('pfill');
-  if (!f) return;
-  f.style.width = !mode ? '0%' : (Math.min(step+1,nSteps())/nSteps()*100)+'%';
-}
-
-// ── FIRESTORE ─────────────────────────────────────────────────────────────────
-function schedSave() { clearTimeout(saveTmr); saveTmr=setTimeout(()=>saveToFirestore(),1500); }
-
-async function saveToFirestore(markComplete=false) {
-  if (!user||saving) return;
-  saving=true;
-  const comp=calcCompleteness(QUESTIONS,state,mode||'lang');
-  const payload={};
-  QUESTIONS.forEach(q=>{ if(!q.dbField) return; const v=state[q.dbField]; if(v!==undefined) payload[q.dbField]=v; });
-  payload._step         = step;
-  payload._mode         = mode||'lang';
-  payload._completeness = comp;
-  payload._status       = markComplete?'complete':'in_progress';
-  payload._updatedAt    = serverTimestamp();
-  payload._pilot        = PILOT;
-  payload._version      = '1.0';
-  payload._isAnon       = isAnon;
-  if (!isAnon && user.email) payload._email_linked=true;
-  if (markComplete) payload._consent={given:true,timestamp:serverTimestamp(),version:CONSENT_VER};
-  try { await setDoc(doc(db,'households',user.uid),payload,{merge:true}); flashSave(true); }
-  catch(e) { console.error('Firestore fout:',e); flashSave(false); }
-  finally { saving=false; }
-}
-
-let flashTmr;
-function flashSave(ok) {
-  clearTimeout(flashTmr);
-  const el=document.getElementById('save-badge');
-  if(!el) return;
-  el.innerHTML=ok
-    ?'<span class="save-dot" style="background:var(--forest)"></span> Opgeslagen ✓'
-    :'<span class="save-dot" style="background:var(--rust)"></span> Opslaan mislukt';
-  flashTmr=setTimeout(()=>{ el.innerHTML='<span class="save-dot"></span> Automatisch opgeslagen'; },2500);
-}
-
-async function loadFromFirestore() {
-  if (!user) return;
-  try {
-    const snap=await getDoc(doc(db,'households',user.uid));
-    if (snap.exists()) {
-      const data=snap.data();
-      QUESTIONS.forEach(q=>{ if(q.dbField&&data[q.dbField]!==undefined) state[q.dbField]=data[q.dbField]; });
-      if(data._mode==='kort'||data._mode==='lang') mode=data._mode;
-      if(data._consent?.given||data._consent_given) state._consent_given=true;
-      if (mode) {
-        if(data._status==='complete') step=nSteps();
-        else if(data._step!==undefined) step=Math.min(data._step,nSteps());
-        else step=0;
-      } else { step=0; }
-    }
-  } catch(e) { console.warn('Kon profiel niet laden:',e); }
-}
-
-// ── EMAIL-UPGRADE MODAL ───────────────────────────────────────────────────────
-let _modalTab = 'register';
-
-window.openUpgradeModal = function(tab='register') {
-  _modalTab=tab; renderUpgradeModal();
-  document.getElementById('upgrade-modal').style.display='flex';
-  setTimeout(()=>{ const f=document.querySelector('#upgrade-modal-box input'); if(f) f.focus(); },80);
-};
-window.closeUpgradeModal = function() {
-  document.getElementById('upgrade-modal').style.display='none';
-};
-document.getElementById('upgrade-modal').addEventListener('click',function(e){
-  if(e.target===this) closeUpgradeModal();
-});
-
-function renderUpgradeModal(errorMsg='') {
-  const box=document.getElementById('upgrade-modal-box');
-  const isReg=_modalTab==='register';
-  box.innerHTML=`
-    <button class="modal-close" onclick="closeUpgradeModal()" aria-label="Sluiten">✕</button>
-    <div class="modal-eyebrow">Niste</div>
-    <div class="modal-title">${isReg?'Bewaar je profiel':'Al een account?'}</div>
-    <p class="modal-desc">${isReg
-      ?'Voeg een e-mailadres toe. Alles wat je al hebt ingevuld blijft bewaard — we koppelen het aan je account.'
-      :'Log in om je eerdere antwoorden te herstellen of door te gaan op een ander apparaat.'
-    }</p>
-    <div class="modal-tabs">
-      <button class="modal-tab ${isReg?'active':''}" onclick="switchModalTab('register')">Account aanmaken</button>
-      <button class="modal-tab ${!isReg?'active':''}" onclick="switchModalTab('login')">Inloggen</button>
-    </div>
-    <label class="modal-field-label" for="modal-email">E-mailadres</label>
-    <input id="modal-email" type="email" class="modal-field" placeholder="jouw@email.nl" autocomplete="email">
-    <label class="modal-field-label" for="modal-pw">Wachtwoord</label>
-    <input id="modal-pw" type="password" class="modal-field"
-      placeholder="${isReg?'Minimaal 8 tekens':'Wachtwoord'}"
-      autocomplete="${isReg?'new-password':'current-password'}">
-    <div class="modal-error" id="modal-error">${errorMsg}</div>
-    <button class="modal-btn" id="modal-submit-btn" onclick="submitUpgrade()">
-      ${isReg?'Account aanmaken & opslaan →':'Inloggen & doorgaan →'}
-    </button>
-    <p style="font-size:.72rem;color:var(--light);text-align:center;">
-      🔒 Je antwoorden blijven gekoppeld aan je profiel. Geen spam.
-    </p>`;
-}
-
-window.switchModalTab = function(tab) {
-  _modalTab=tab; renderUpgradeModal();
-  setTimeout(()=>{ const f=document.querySelector('#upgrade-modal-box input'); if(f) f.focus(); },60);
-};
-
-window.submitUpgrade = async function() {
-  const email=document.getElementById('modal-email')?.value?.trim();
-  const pw   =document.getElementById('modal-pw')?.value;
-  const btn  =document.getElementById('modal-submit-btn');
-  const err  =document.getElementById('modal-error');
-
-  if(!email||!pw){ if(err) err.textContent='Vul je e-mailadres en wachtwoord in.'; return; }
-  if(_modalTab==='register'&&pw.length<8){ if(err) err.textContent='Wachtwoord moet minimaal 8 tekens zijn.'; return; }
-
-  if(btn){ btn.disabled=true; btn.textContent='Even geduld…'; }
-  if(err) err.textContent='';
-
-  try {
-    if (_modalTab==='register') {
-      // Controleer of e-mail al bestaat → switch naar login
-      const methods=await fetchSignInMethodsForEmail(auth,email);
-      if(methods.length>0){
-        _modalTab='login';
-        renderUpgradeModal('Dit e-mailadres heeft al een account. Log hieronder in.');
-        return;
-      }
-      // Link anonieme sessie aan e-mail (uid blijft hetzelfde!)
-      const credential=EmailAuthProvider.credential(email,pw);
-      await linkWithCredential(auth.currentUser,credential);
-      isAnon=false;
-      user=auth.currentUser;
-      const nu=document.getElementById('nav-user');
-      if(nu) nu.textContent=user.email;
-      await saveToFirestore();
-      showModalSuccess(email);
-
-    } else {
-      // Inloggen als bestaand account
-      // Sla huidige anonieme antwoorden op als fallback
-      const anonState={...state};
-
-      const cred=await signInWithEmailAndPassword(auth,email,pw);
-      user=cred.user; isAnon=false;
-
-      // Laad bestaand profiel; merge anonieme antwoorden in lege velden
-      await loadFromFirestore();
-      Object.keys(anonState).forEach(k=>{ if(state[k]===undefined) state[k]=anonState[k]; });
-
-      await saveToFirestore();
-      const nu=document.getElementById('nav-user');
-      if(nu) nu.textContent=user.email;
-      showModalSuccess(email);
-    }
-  } catch(e) {
-    const map={
-      'auth/email-already-in-use':    'Dit e-mailadres is al in gebruik. Probeer in te loggen.',
-      'auth/invalid-email':            'Ongeldig e-mailadres.',
-      'auth/wrong-password':           'Onjuist wachtwoord.',
-      'auth/invalid-credential':       'Onjuiste combinatie van e-mailadres en wachtwoord.',
-      'auth/user-not-found':           'Geen account gevonden met dit e-mailadres.',
-      'auth/weak-password':            'Wachtwoord is te zwak (minimaal 8 tekens).',
-      'auth/too-many-requests':        'Te veel pogingen. Probeer het later opnieuw.',
-      'auth/credential-already-in-use':'Dit e-mailadres is al aan een account gekoppeld.',
-      'auth/provider-already-linked':  'Je account is al gekoppeld.',
-    };
-    const msg=map[e.code]||('Er ging iets mis: '+(e.message||e.code));
-    if(err) err.textContent=msg;
-    if(btn){ btn.disabled=false; btn.textContent=_modalTab==='register'?'Account aanmaken & opslaan →':'Inloggen & doorgaan →'; }
-  }
-};
-
-function showModalSuccess(email) {
-  document.getElementById('upgrade-modal-box').innerHTML=`
-    <div class="modal-success">
-      <div class="modal-success-ico">✅</div>
-      <div class="modal-success-title">Gelukt!</div>
-      <p class="modal-success-desc">Je profiel is gekoppeld aan <strong>${email}</strong>.<br><br>
-        Zodra er een anoniem profiel in jouw regio verschijnt dat bij jou past, ontvang je een bericht.
-        Geen spam, geen verplichtingen.</p>
-      <button class="modal-btn" style="margin-top:1.4rem" onclick="closeUpgradeModal(); renderAll();">
-        Doorgaan →
-      </button>
-    </div>`;
-}
-
-// ── RESULTAATSCHERM ───────────────────────────────────────────────────────────
 function renderResultScreen() {
-  const comp    = calcCompleteness(QUESTIONS,state,mode||'lang');
-  const summary = buildSummary(QUESTIONS,state);
-  const prv     = state._consent_given===true;
-  const compHint= comp>=75?'✓ Goed ingevuld — we kunnen je goed matchen.'
-                : comp>=50?'→ Meer invullen vergroot de kans op een betere match.'
-                          :'→ Nog beperkt ingevuld. Hoe meer details, hoe beter.';
-  const sumItems= summary.map(s=>
+  const comp=calcCompleteness(QUESTIONS,state,mode||'lang');
+  const summary=buildSummary(QUESTIONS,state);
+  const prv=state._consent_given===true;
+  const compHint=comp>=75?'✓ Goed ingevuld — we kunnen je goed matchen.'
+    :comp>=50?'→ Meer invullen vergroot de kans op een betere match.'
+    :'→ Nog beperkt ingevuld. Hoe meer details, hoe beter.';
+  const sumItems=summary.map(s=>
     `<div class="sum-item"><div class="sum-key">${s.key}</div><div class="sum-val">${s.val}</div></div>`
   ).join('')||'<div class="sum-item" style="grid-column:1/-1"><div class="sum-val" style="color:var(--light)">Nog geen antwoorden ingevuld</div></div>';
   const editLinks=Array.from({length:nSteps()},(_,i)=>
@@ -644,12 +630,10 @@ function renderResultScreen() {
   const upgradeBox=mode==='kort'?`
     <div class="upgrade-box">
       <div class="upgrade-box-title">Wil je je kans op een goede match vergroten?</div>
-      <div class="upgrade-box-body">Je hebt de korte versie ingevuld. Met een paar extra vragen over je buurt, energie en woonwensen kunnen we je veel gerichter matchen. Je antwoorden blijven gewoon bewaard.</div>
+      <div class="upgrade-box-body">Je hebt de korte versie ingevuld. Met een paar extra vragen over je buurt, energie en woonwensen kunnen we je veel gerichter matchen.</div>
       <button class="btn-upgrade" onclick="switchMode()">Profiel aanvullen →</button>
     </div>`:'';
-
-  // CTA verschilt voor anonieme vs ingelogde gebruikers
-  const ctaBox = isAnon ? `
+  const ctaBox=isAnon?`
     <div class="cta-box">
       <div class="cta-title">Matches ontvangen?</div>
       <p class="cta-desc">Voeg een e-mailadres toe. Alles wat je hebt ingevuld blijft bewaard.</p>
@@ -662,15 +646,14 @@ function renderResultScreen() {
         <div class="chkbox${prv?' on':''}" id="consent-chk">${prv?'✓':''}</div>
         <span class="priv-lbl">Ik ga akkoord met de <a href="privacy.html" style="color:var(--gold-lt)">privacyverklaring</a>. Mijn gegevens worden uitsluitend gebruikt voor matching en nooit gedeeld zonder mijn toestemming.</span>
       </label>
-      <button class="btn-cta" style="margin-top:1rem" id="submit-btn"
-        onclick="onAnonCta()" ${prv?'':'disabled'}>
+      <button class="btn-cta" style="margin-top:1rem" id="submit-btn" onclick="onAnonCta()" ${prv?'':'disabled'}>
         E-mailadres toevoegen →
       </button>
       <p class="priv-note">🔒 Je exacte adres wordt nooit opgeslagen. Matching is volledig anoniem.</p>
-    </div>` : `
+    </div>`:`
     <div class="cta-box">
       <div class="cta-title">Profiel opslaan &amp; meldingen ontvangen</div>
-      <p class="cta-desc">Je bent ingelogd als onderstaand e-mailadres. Zodra er in jouw regio een anoniem profiel verschijnt dat bij jou past, ontvang je een bericht. Geen spam, geen verplichtingen.</p>
+      <p class="cta-desc">Je bent ingelogd als onderstaand e-mailadres. Zodra er in jouw regio een match is, ontvang je een bericht.</p>
       <div class="user-email-row">
         <span>📧</span>
         <div>
@@ -678,22 +661,19 @@ function renderResultScreen() {
           <div class="user-email-val">${user?.email||'—'}</div>
         </div>
       </div>
-      <button class="btn-cta" id="submit-btn" onclick="submitProfile()" ${prv?'':'disabled'}>
-        Profiel opslaan
-      </button>
+      <button class="btn-cta" id="submit-btn" onclick="submitProfile()" ${prv?'':'disabled'}>Profiel opslaan</button>
       <label class="chk-row" onclick="toggleConsent()">
         <div class="chkbox${prv?' on':''}" id="consent-chk">${prv?'✓':''}</div>
         <span class="priv-lbl">Ik ga akkoord met de <a href="privacy.html" style="color:var(--gold-lt)">privacyverklaring</a>. Mijn gegevens worden uitsluitend gebruikt voor matching en nooit gedeeld zonder mijn toestemming.</span>
       </label>
       <p class="priv-note">🔒 Jouw exacte adres wordt nooit opgeslagen. Matching is volledig anoniem.</p>
     </div>`;
-
   return `
     <div class="ey">Jouw woonprofiel</div>
     <h1 class="st">Dit hebben we <em>van je</em></h1>
     <div class="pilot-banner">
       <strong>⚠️ Pilotfase — eerlijk over onze stand van zaken</strong><br>
-      Niste is net gestart. Er zijn op dit moment <strong>nog beperkte matches beschikbaar</strong>. Zodra er een anoniem profiel in jouw regio verschijnt dat bij jou past, ontvang je een e-mail. Kijk ook regelmatig in je profiel en als je wensen veranderen, pas dit dan aan. Zo kunnen we je nog beter matchen.
+      Niste is net gestart. Er zijn op dit moment <strong>nog beperkte matches beschikbaar</strong>. Zodra er een anoniem profiel in jouw regio verschijnt dat bij jou past, ontvang je een e-mail.
     </div>
     ${upgradeBox}
     <div class="comp-wrap">
@@ -708,15 +688,12 @@ function renderResultScreen() {
     <div class="sum-grid">${sumItems}</div>
     <div class="edit-lnk-row">${editLinks}</div>
     <div style="margin:-.4rem 0 1.2rem">
-      <button class="btn-upgrade"
-        style="background:transparent;color:var(--forest);border:1.5px solid rgba(42,74,62,.2)"
-        onclick="restartIntake()">↻ Opnieuw invullen (vanaf het begin)</button>
+      <button class="btn-upgrade" style="background:transparent;color:var(--forest);border:1.5px solid rgba(42,74,62,.2)" onclick="restartIntake()">↻ Opnieuw invullen</button>
     </div>
     ${ctaBox}`;
 }
 
-window.onAnonCta = function() { schedSave(); openUpgradeModal('register'); };
-
+window.onAnonCta    = function() { schedSave(); openUpgradeModal('register'); };
 window.toggleConsent = function() {
   state._consent_given=!(state._consent_given===true);
   const chk=document.getElementById('consent-chk');
@@ -725,7 +702,6 @@ window.toggleConsent = function() {
   if(btn) btn.disabled=!state._consent_given;
   schedSave();
 };
-
 window.submitProfile = async function() {
   const btn=document.getElementById('submit-btn');
   if(btn){ btn.disabled=true; btn.textContent='Opslaan…'; }
@@ -735,7 +711,7 @@ window.submitProfile = async function() {
     <div class="success-ico">✅</div>
     <div class="success-title">Profiel opgeslagen</div>
     <p class="success-desc">Jouw woonprofiel is opgeslagen.<br><br>
-      <strong>Eerlijk gezegd:</strong> Niste is net gestart. Het kan enige tijd duren voordat er genoeg profielen zijn om te matchen. Je ontvangt een e-mail op <em>${user?.email||''}</em> zodra er een match is.
+      <strong>Eerlijk gezegd:</strong> Niste is net gestart. Je ontvangt een e-mail op <em>${user?.email||''}</em> zodra er een match is.
     </p>
     <button class="btn-edit-again" onclick="goToStep(0)">✏ Profiel aanpassen</button>
     <a href="dashboard.html" class="btn-to-login" style="display:inline-block;text-decoration:none">Naar dashboard →</a>
@@ -744,11 +720,9 @@ window.submitProfile = async function() {
 
 // ── RENDER ────────────────────────────────────────────────────────────────────
 function renderCard() {
-  const area=document.getElementById('area');
-  if (!area) return;
-  if (!mode) { area.innerHTML=`<div class="card">${renderModeChoice()}</div>`; return; }
-  if (step>=nSteps()) { area.innerHTML=`<div class="card">${renderResultScreen()}</div>`; return; }
-  const anonBanner=renderAnonBanner();
+  const area=document.getElementById('area'); if(!area) return;
+  if(!mode) { area.innerHTML=`<div class="card">${renderModeChoice()}</div>`; return; }
+  if(step>=nSteps()) { area.innerHTML=`<div class="card">${renderResultScreen()}</div>`; return; }
   const inner=renderStep(step,QUESTIONS,state,stepTitles(),mode);
   const isLast=step===nSteps()-1;
   const nav=`
@@ -759,29 +733,53 @@ function renderCard() {
         <button class="btn-next" onclick="goToStep(${step+1})">${isLast?'Bekijk profiel →':'Volgende →'}</button>
       </div>
     </div>`;
-  area.innerHTML=`${anonBanner}<div class="card">${inner}${nav}</div>`;
+  area.innerHTML=`${renderAnonBanner()}<div class="card">${inner}${nav}</div>`;
 }
 
 function renderAll() { renderTopNav(); renderProgress(); renderCard(); }
 
-// ── FIREBASE AUTH — altijd anoniem starten als niet ingelogd ─────────────────
+function showError(msg, detail='') {
+  document.getElementById('area').innerHTML=`
+    <div class="card"><div class="error-wrap">
+      <div class="error-title">Oeps, iets ging mis</div>
+      <p class="error-desc">${msg}</p>
+      ${detail?`<div class="error-detail">${detail}</div>`:''}
+      <button class="btn-retry" onclick="location.reload()">Opnieuw proberen</button>
+    </div></div>`;
+}
+
+// ── AUTH ──────────────────────────────────────────────────────────────────────
+// Veiligheidsnet: als na 8 seconden nog steeds geen auth-callback is gekomen,
+// toon dan een foutmelding in plaats van een eeuwig lege pagina.
+const authTimeout = setTimeout(() => {
+  showError(
+    'De verbinding met Firebase duurt te lang.',
+    'Controleer of Anonymous Authentication is ingeschakeld in de Firebase Console (Authentication → Sign-in providers) en of firebase-init.js correct is geconfigureerd.'
+  );
+}, 8000);
+
 onAuthStateChanged(auth, async (u) => {
+  clearTimeout(authTimeout); // auth werkt → timeout annuleren
+
   if (!u) {
-    // Geen sessie → maak transparante anonieme sessie aan
-    // onAuthStateChanged vuurt daarna opnieuw met de anonieme user
-    try { await signInAnonymously(auth); }
-    catch(e) {
-      console.error('Anoniem inloggen mislukt:',e);
-      // Fallback: toon intake toch (zonder opslaan)
-      renderAll();
+    // Geen sessie → anoniem inloggen
+    try {
+      await signInAnonymously(auth);
+      // onAuthStateChanged vuurt daarna opnieuw met de anonieme user → return
+    } catch(e) {
+      console.error('signInAnonymously mislukt:', e);
+      showError(
+        'Anoniem inloggen is niet mogelijk.',
+        e.code + (e.code === 'auth/operation-not-allowed'
+          ? ' — Zet "Anonymous" aan onder Authentication → Sign-in providers in de Firebase Console.'
+          : '')
+      );
     }
     return;
   }
 
   user   = u;
   isAnon = u.isAnonymous;
-
-  // Nav: toon e-mail alleen voor ingelogde gebruikers
   const nu=document.getElementById('nav-user');
   if(nu) nu.textContent=isAnon?'':u.email;
 
