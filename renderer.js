@@ -1,14 +1,6 @@
 // renderer.js — Niste vraag-renderer
-//
-// Dit bestand weet HOE vragen getekend worden, maar niet WELKE vragen er zijn.
-// Alle onderdelen zijn pure functies die HTML strings teruggeven.
-// Event handlers refereren aan window.N (opgezet in intake.html).
-//
-// v2: ondersteunt korte/lange modus. renderStep en calcCompleteness krijgen
-//     een optionele `mode` parameter ('lang' | 'kort'). In korte modus wordt
-//     gefilterd op q.shortStep en alleen vragen met q.short === true.
-//
-// BEREKENDE BADGES — voeg hier nieuwe compute-functies toe:
+// v2: ondersteunt korte/lange modus.
+
 const COMPUTED = {
   mismatch(state) {
     const delta = (state.kamers_totaal ?? 4) - (state.kamers_gebruikt ?? 3);
@@ -16,19 +8,17 @@ const COMPUTED = {
     return `⚡ ${delta} kamer${delta > 1 ? 's' : ''} ongebruikt — sterk matchsignaal`;
   },
   buurt_binding(state) {
-    const thuis  = state.thuis  ?? 0;
+    const thuis   = state.thuis   ?? 0;
     const sociaal = state.sociaal ?? 0;
-    if (thuis >= 4 && sociaal >= 4) {
+    if (thuis >= 4 && sociaal >= 4)
       return `🏡 U heeft een sterke binding met uw buurt — Niste zoekt uitsluitend matches in uw directe omgeving`;
-    }
     return null;
   },
   verhuisdrempel(state) {
     const thuis  = state.thuis  ?? 0;
     const bereid = state.verhuisbereidheid ?? 3;
-    if (thuis >= 4 && bereid <= 2) {
+    if (thuis >= 4 && bereid <= 2)
       return `💡 Uw thuisgevoel is hoog en uw verhuisbereidheid is laag — dat begrijpen we. Niste toont alleen mogelijkheden die bij uw situatie passen, zonder druk.`;
-    }
     return null;
   },
 };
@@ -48,12 +38,13 @@ function rPostcode(q, state) {
       this.style.borderColor = (val.length===4 && n < 1000) ? 'var(--rust)' : '';
     ">
   ${invalid ? `<div style="font-size:.72rem;color:var(--rust);margin-top:.3rem;">Vul een geldige Nederlandse postcode in (bijv. 5735)</div>` : ''}`;
+}  // ← deze sluitende accolade ontbrak in het origineel
 
 function rTiles(q, state) {
   const grid = q.grid || 'g2';
   const items = q.options.map(o => {
-    const v = typeof o === 'object' ? o.value : o;
-    const l = typeof o === 'object' ? o.label : o;
+    const v  = typeof o === 'object' ? o.value : o;
+    const l  = typeof o === 'object' ? o.label : o;
     const ic = typeof o === 'object' ? (o.icon || '') : '';
     const sel = (state[q.id] ?? '') === v;
     return `<div class="tile${sel ? ' sel' : ''}" onclick="N.tc('${q.id}','${v}',false)">
@@ -66,8 +57,8 @@ function rTiles(q, state) {
 function rChips(q, state) {
   const multi = q.multi || false;
   const items = q.options.map(o => {
-    const v = typeof o === 'object' ? o.value : o;
-    const l = typeof o === 'object' ? o.label : o;
+    const v  = typeof o === 'object' ? o.value : o;
+    const l  = typeof o === 'object' ? o.label : o;
     const sel = multi
       ? (state[q.id] || []).includes(v)
       : (state[q.id] ?? '') === v;
@@ -119,10 +110,8 @@ function rScale(q, state) {
 }
 
 function rSlider(q, state) {
-  const v = state[q.id] ?? q.default ?? 3;
+  const v   = state[q.id] ?? q.default ?? 3;
   const pct = ((v - 1) / (q.max - q.min) * 100).toFixed(0);
-  // Descriptions in een data-attribuut (HTML-escaped). Géén JSON in oninput,
-  // want komma's/quotes in de tekst breken anders de attribuut-string op.
   const descsAttr = JSON.stringify(q.descriptions)
     .replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   return `<div class="sw">
@@ -141,7 +130,7 @@ function rTextarea(q, state) {
 }
 
 function rComputedBadge(q, state) {
-  const fn = COMPUTED[q.compute];
+  const fn  = COMPUTED[q.compute];
   const msg = fn ? fn(state) : null;
   if (!msg) return '';
   const color = q.compute === 'verhuisdrempel' ? 'rgba(196,154,74,.12)' : 'rgba(42,74,62,.07)';
@@ -165,7 +154,8 @@ function renderQuestion(q, state) {
   }
 }
 
-// ─── HELPER: hoort een vraag bij deze stap in deze modus? ─────────────────────
+// ─── HELPERS ──────────────────────────────────────────────────────────────────
+
 export function questionStep(q, mode) {
   return mode === 'kort' ? q.shortStep : q.step;
 }
@@ -175,18 +165,15 @@ export function questionVisibleInMode(q, mode) {
 }
 
 // ─── STAP RENDERER ────────────────────────────────────────────────────────────
-// Rendert alle vragen voor één stap, inclusief groepering en sectie-labels.
-//   mode: 'lang' (default) | 'kort'
 
 export function renderStep(stepIndex, questions, state, stepMeta, mode = 'lang') {
   const meta = stepMeta[stepIndex];
 
-  // Filter: alleen vragen voor deze stap (in deze modus) én waarvan showIf geldig is
   const visible = questions.filter(q => {
     if (!questionVisibleInMode(q, mode)) return false;
     if (questionStep(q, mode) !== stepIndex) return false;
     if (!q.showIf) return true;
-    const sv = state[q.showIf.key];
+    const sv     = state[q.showIf.key];
     const target = q.showIf.value;
     const actual = sv === undefined ? (typeof target === 'boolean' ? false : undefined) : sv;
     return actual === target;
@@ -199,18 +186,14 @@ export function renderStep(stepIndex, questions, state, stepMeta, mode = 'lang')
     <div class="skip-notice">💡 Alle vragen zijn optioneel. Hoe meer je invult, hoe beter de match.</div>
   `;
 
-  // Groepeer aaneengesloten counters en toggles in een wrapper-div
-  let openGroup = null; // 'counter' | 'toggle' | null
+  let openGroup = null;
 
   function closeGroup() {
     if (openGroup) { html += '</div>'; openGroup = null; }
   }
 
   for (const q of visible) {
-    if (q.sectionLabel) {
-      closeGroup();
-      html += `<div class="sl">${q.sectionLabel}</div>`;
-    }
+    if (q.sectionLabel) { closeGroup(); html += `<div class="sl">${q.sectionLabel}</div>`; }
 
     if (q.type === 'counter') {
       if (openGroup !== 'counter') { closeGroup(); html += '<div class="cnt-grp">'; openGroup = 'counter'; }
@@ -227,9 +210,7 @@ export function renderStep(stepIndex, questions, state, stepMeta, mode = 'lang')
   return html;
 }
 
-// ─── VOLLEDIGHEID BEREKENING ──────────────────────────────────────────────────
-// Berekent percentage op basis van ingevulde dbFields.
-//   mode: 'lang' (default) | 'kort' — in korte modus tellen alleen short-velden.
+// ─── VOLLEDIGHEID ─────────────────────────────────────────────────────────────
 
 export function calcCompleteness(questions, state, mode = 'lang') {
   const fields = questions
@@ -248,9 +229,6 @@ export function calcCompleteness(questions, state, mode = 'lang') {
   return Math.round((filled.length / fields.length) * 100);
 }
 
-// ─── VOLLEDIGHEID PER STAP ────────────────────────────────────────────────────
-// Voor de tegelnavigatie: {filled, total} voor één stap in een modus.
-
 export function stepCompleteness(stepIndex, questions, state, mode = 'lang') {
   const qs = questions.filter(q => {
     if (q.type === 'computed_badge') return false;
@@ -268,7 +246,7 @@ export function stepCompleteness(stepIndex, questions, state, mode = 'lang') {
   return { filled, total: qs.length };
 }
 
-// ─── SAMENVATTING VOOR RESULTAATSCHERM ────────────────────────────────────────
+// ─── SAMENVATTING ─────────────────────────────────────────────────────────────
 
 export function buildSummary(questions, state) {
   const summaryFields = [
@@ -287,7 +265,6 @@ export function buildSummary(questions, state) {
     if (raw === undefined || raw === null || raw === '') return null;
     if (Array.isArray(raw) && raw.length === 0) return null;
 
-    // Resolve label voor tiles/chips met value/label objecten
     let display = raw;
     if (q.options && typeof raw === 'string') {
       const opt = q.options.find(o => (typeof o === 'object' ? o.value : o) === raw);
