@@ -11,12 +11,10 @@
 
 const NAV_ITEMS = [
   { label: "Hoe het werkt",  href: "index.html",        id: "hoe"          },
-  { label: "Onderbouwing",   href: "onderbouwing.html",  id: "onderbouwing" },
-  { label: "Privacy",        href: "privacy.html",       id: "privacy"      },
-  // Toekomstige pagina's hier toevoegen:
-  // { label: "Over ons",    href: "over.html",          id: "over"         },
-  // { label: "Gemeenten",   href: "gemeenten.html",     id: "gemeenten"    },
-  // { label: "Partners",    href: "partners.html",      id: "partners"     },
+  { label: "Over Niste",     href: "over.html",         id: "over"         },
+  { label: "Het matchmodel", href: "lvi_model.html",    id: "lvi"          },
+  { label: "Onderbouwing",   href: "onderbouwing.html", id: "onderbouwing" },
+  { label: "Privacy",        href: "privacy.html",      id: "privacy"      },
 ];
 
 const NAV_CTA = {
