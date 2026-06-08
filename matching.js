@@ -1,4 +1,4 @@
-// matching.js — Niste matchingalgoritme
+// matching.js — Niste matchingalgoritme v3
 //
 // Dit bestand berekent matchscores tussen huishoudprofielen.
 // Wordt aangeroepen vanuit admin.html. Schrijft resultaten naar /matches in Firestore.
@@ -12,32 +12,36 @@
 //
 // DREMPEL: score >= 40 → match opslaan
 //
-// Belangrijk ontwerpprincipe (gewijzigd t.o.v. v1):
-//   Verhuisbereidheid geeft niet langer "gratis" punten. Twee enthousiaste
-//   maar niet-passende huishoudens horen geen match te zijn. Bereidheid werkt nu
-//   als vermenigvuldiger op de inhoudelijke fit (geo+swap+mismatch+extra): hoge
-//   bereidheid versterkt een echte match, lage bereidheid dempt 'm.
+// Ontwerpprincipes (v3, gebaseerd op WoON 2024 + EIB Ouderenhuisvesting 2024):
+//
+//   1. Bereidheid werkt als vermenigvuldiger op de inhoudelijke fit, niet additief.
+//      Twee enthousiaste maar niet-passende huishoudens horen geen match te zijn.
+//
+//   2. De LAAGSTE bereidheid van de twee weegt zwaarder dan het gemiddelde.
+//      WoON 2024 bevestigt dat de minst bereidwillige partij (vrijwel altijd de
+//      senior) de bottleneck is in een verhuisketen. Een gemiddelde verdoezelt dat.
+//      Nieuwe formule: factor = 0.6 × bereid_laagste + 0.4 × bereid_hoogste
+//      (beide genormaliseerd naar 0.70–1.15 range).
+//
+//   3. Dealbreaker bij eenzijdig zeer lage bereidheid (≤ 1). Als één partij
+//      nauwelijks bereid is, is de kans op een echte verhuisbeweging minimaal —
+//      ongeacht hoe bereid de ander is. Drempel: één partij ≤ 1 én de ander < 4.
 
 // ─── WONINGGROOTTE-RANGORDE ───────────────────────────────────────────────────
-// Gebruikt om "groter/kleiner" écht te toetsen i.p.v. alleen op woningtype te gokken.
 const OPP_RANK = {
   '< 50 m²':1, '50–75 m²':2, '75–100 m²':3, '100–125 m²':4,
   '125–150 m²':5, '150–175 m²':6, '175–200 m²':7, '> 200 m²':8,
 };
 function oppRank(h) { return OPP_RANK[h && h.oppervlak] || null; }
 
-// Richtingcategorieën van een woonwens
 const WANTS_SMALLER = ['kleiner', 'gelijkvloers', 'appartement', 'zorg'];
 const WANTS_BIGGER  = ['groter', 'grondgeb'];
 
 // ─── GEO SCORE (max 25) ───────────────────────────────────────────────────────
-// We werken alleen met 4-cijferige postcode.
 function geoScore(a, b) {
   if (!a.postcode || !b.postcode) return 0;
   if (a.postcode === b.postcode) return 25;
-  // Zelfde regio: eerste 2 cijfers gelijk → 10 pts
   if (a.postcode.slice(0,2) === b.postcode.slice(0,2)) return 10;
-  // Zelfde provincie-gebied: eerste cijfer gelijk → 5 pts
   if (a.postcode.slice(0,1) === b.postcode.slice(0,1)) return 5;
   return 0;
 }
@@ -63,10 +67,6 @@ function locatieOk(a, b) {
 }
 
 // ─── WONING SWAP FIT (max 35) ─────────────────────────────────────────────────
-// Centrale vraag: kan de woning van A de wens van B vervullen, én vice versa?
-// v2: richtinggevoelig. We toetsen niet alleen woningtype maar ook of de
-// werkelijke grootte (oppervlak/kamers) klopt met de richting van de wens.
-
 const SWAP_MATRIX = {
   groter:        ['vrijstaand','2kap','woonboerderij','hoekwoning'],
   kleiner:       ['appartement','tussenwoning','hoekwoning','boven_beneden'],
@@ -78,25 +78,19 @@ const SWAP_MATRIX = {
   weet_niet:     [],
 };
 
-// Beoordeelt of de woning van 'provider' past bij de wens van 'seeker'.
-// Geeft 0–17 punten voor één richting.
 function oneWayFit(seeker, provider) {
   const want = seeker.gewenst_type;
   if (!want || !provider.woning_type) return 0;
 
   let pts = 0;
-
-  // (a) Woningtype past bij de wens volgens de matrix
   const compatibleTypes = SWAP_MATRIX[want] || [];
   if (compatibleTypes.includes(provider.woning_type)) pts += 10;
 
-  // (b) Grootte-richting klopt — alleen toetsen als beide oppervlak hebben
   const rs = oppRank(seeker), rp = oppRank(provider);
   if (rs && rp) {
-    if (WANTS_BIGGER.includes(want)  && rp >  rs) pts += 7;   // wil groter, provider is groter
-    if (WANTS_SMALLER.includes(want) && rp <  rs) pts += 7;   // wil kleiner, provider is kleiner
+    if (WANTS_BIGGER.includes(want)  && rp >  rs) pts += 7;
+    if (WANTS_SMALLER.includes(want) && rp <  rs) pts += 7;
     if (want === 'vergelijkbaar' && Math.abs(rp - rs) <= 1) pts += 5;
-    // verkeerde richting: lichte malus zodat een type-match niet misleidt
     if (WANTS_BIGGER.includes(want)  && rp <  rs) pts -= 4;
     if (WANTS_SMALLER.includes(want) && rp >  rs) pts -= 4;
   }
@@ -104,51 +98,69 @@ function oneWayFit(seeker, provider) {
 }
 
 function swapScore(a, b) {
-  let score = oneWayFit(a, b) + oneWayFit(b, a);   // beide richtingen, elk max 17
-  // Bonus: beide hebben type én wens ingevuld (volledigheid)
+  let score = oneWayFit(a, b) + oneWayFit(b, a);
   if (a.woning_type && b.woning_type && a.gewenst_type && b.gewenst_type) score += 1;
   return Math.min(35, score);
 }
 
 // ─── MISMATCH SIGNAAL (max 20) ────────────────────────────────────────────────
-// De kamerdelta is het sterkste matchsignaal: overruimte bij de één,
-// ruimtebehoefte bij de ander.
 function mismatchScore(a, b) {
   let score = 0;
   const deltaA = (a.kamers_totaal||0) - (a.kamers_gebruikt||0);
   const deltaB = (b.kamers_totaal||0) - (b.kamers_gebruikt||0);
 
-  // A heeft overruimte, B wil groter
   if (deltaA >= 2 && WANTS_BIGGER.includes(b.gewenst_type)) score += deltaA >= 3 ? 12 : 8;
-  // B heeft overruimte, A wil groter
   if (deltaB >= 2 && WANTS_BIGGER.includes(a.gewenst_type)) score += deltaB >= 3 ? 12 : 8;
 
-  // Complementair patroon: de één wil kleiner, de ander groter
   if (WANTS_SMALLER.includes(a.gewenst_type) && WANTS_BIGGER.includes(b.gewenst_type)) score += 5;
   if (WANTS_SMALLER.includes(b.gewenst_type) && WANTS_BIGGER.includes(a.gewenst_type)) score += 5;
 
   return Math.min(20, score);
 }
 
-// ─── VERHUISBEREIDHEID (vermenigvuldiger, niet additief) ──────────────────────
-// v2: bereidheid geeft geen losse punten meer. Het schaalt de inhoudelijke score.
-// Gemiddelde bereidheid 1..5 → factor 0.7 .. 1.15.
-//   1 → 0.70  (sterk dempen)
-//   3 → ~0.93
-//   5 → 1.15  (versterken)
-// Ontbrekende bereidheid → neutrale factor 0.9 (lichte voorzichtigheid).
+// ─── VERHUISBEREIDHEID (vermenigvuldiger) ─────────────────────────────────────
+// v3 — gebaseerd op WoON 2024 bottleneck-inzicht:
+//
+// De minst bereidwillige partij bepaalt in grote mate of een verhuisketen
+// ook daadwerkelijk op gang komt. Een gemiddelde van beide bereidheden verdoezelt
+// dat: een senior met bereidheid=1 en een gezin met bereidheid=5 geeft gemiddeld 3,
+// wat een factor 0.93 oplevert — veel te optimistisch.
+//
+// Nieuwe aanpak: gewogen combinatie waarbij de laagste bereidheid 60% van de
+// factor bepaalt en de hoogste 40%. Beide worden eerst vertaald naar hetzelfde
+// 0.70–1.15 bereik als voorheen.
+//
+//   bereidheid 1 → deelscore 0.70
+//   bereidheid 3 → deelscore 0.93
+//   bereidheid 5 → deelscore 1.15
+//
+// Voorbeeld: senior bereid=1, gezin bereid=5:
+//   Oud (gemiddelde): (1+5)/2 = 3 → factor 0.93
+//   Nieuw (gewogen):  0.6×0.70 + 0.4×1.15 = 0.42 + 0.46 = 0.88
+//   → realistischer: de senior-bottleneck weegt mee.
+//
+// Ontbrekende bereidheid → factor 0.85 (iets voorzichtiger dan v2's 0.90,
+// want onbekend = niet bewezen bereid).
+
+function bereidToScore(b) {
+  // Vertaal bereidheid 1..5 naar factor 0.70..1.15
+  return 0.70 + ((b - 1) / 4) * 0.45;
+}
+
 function bereidheidFactor(a, b) {
   const ba = a.verhuisbereidheid || 0;
   const bb = b.verhuisbereidheid || 0;
-  if (!ba || !bb) return 0.9;
-  const gem = (ba + bb) / 2;           // 1..5
-  return 0.70 + ((gem - 1) / 4) * 0.45; // lineair 0.70→1.15
+  if (!ba || !bb) return 0.85;   // onbekend: voorzichtig
+
+  const laag  = Math.min(ba, bb);
+  const hoog  = Math.max(ba, bb);
+  return 0.6 * bereidToScore(laag) + 0.4 * bereidToScore(hoog);
 }
 
 // ─── ENERGIE / EXTRA WENSEN (max 5) ──────────────────────────────────────────
-// LET OP: deze velden (mob_verwacht, gew_energie, thuiswerken) bestaan nog niet
-// in de huidige intake. Tot ze toegevoegd zijn levert dit blok 0 punten op.
-// De code blijft staan zodat het automatisch gaat tellen zodra de vragen er zijn.
+// LET OP: deze velden bestaan nog niet in de huidige intake. Tot ze toegevoegd
+// zijn levert dit blok 0 punten op. De code blijft staan zodat het automatisch
+// gaat tellen zodra de vragen er zijn.
 function extraScore(a, b) {
   let score = 0;
   if (a.mob_verwacht && b.mob_verwacht) score += 2;
@@ -160,75 +172,76 @@ function extraScore(a, b) {
 }
 
 // ─── REJECTION-FEEDBACK ───────────────────────────────────────────────────────
-// Het dashboard slaat per huishouden op welke kenmerken het al eens afwees:
-//   household._rejected_signals = { te_groot: 2, locatie: 1, 'type:appartement': 1, ... }
-// We gebruiken dat om de score van een NIEUWE, vergelijkbare match te dempen,
-// zodat iemand niet steeds hetzelfde soort match krijgt dat hij al afwees.
-//
-// We kijken vanuit BEIDE huishoudens: als A vaak "te groot" afwees en B's woning
-// is (relatief) groot, dan verlagen we. De malus schaalt met hoe vaak iets is
-// afgewezen (meer afwijzingen = sterker signaal), met een plafond.
-
 function rejectionPenalty(a, b) {
   let penalty = 0;
-  penalty += oneWayRejection(a, b);  // hoe A eerder afwees, t.o.v. B
-  penalty += oneWayRejection(b, a);  // en omgekeerd
-  return Math.min(25, penalty);      // nooit meer dan 25 punten dempen
+  penalty += oneWayRejection(a, b);
+  penalty += oneWayRejection(b, a);
+  return Math.min(25, penalty);
 }
 
 function oneWayRejection(seeker, provider) {
   const sig = seeker && seeker._rejected_signals;
   if (!sig || typeof sig !== 'object') return 0;
   let p = 0;
-  const w = (key) => Math.min(3, sig[key] || 0); // tel max 3 afwijzingen per reden
+  const w = (key) => Math.min(3, sig[key] || 0);
 
   const rs = oppRank(seeker), rp = oppRank(provider);
-  // "te groot" eerder afgewezen én provider is groter dan seeker
   if (rs && rp && rp > rs) p += w('te_groot') * 3;
-  // "te klein" eerder afgewezen én provider is kleiner
   if (rs && rp && rp < rs) p += w('te_klein') * 3;
-  // woningtype eerder expliciet afgewezen
   if (provider.woning_type && sig['type:' + provider.woning_type]) {
     p += Math.min(3, sig['type:' + provider.woning_type]) * 3;
   }
-  // "verkeerd woningtype" in het algemeen vaak afgewezen → lichte algemene malus
   p += w('type') * 1;
-  // locatie eerder afgewezen én niet exact dezelfde postcode
   if (seeker.postcode && provider.postcode && seeker.postcode !== provider.postcode) {
     p += w('locatie') * 2;
   }
-  // "energie/onderhoud" afgewezen → kleine generieke malus (geen energiedata om op te toetsen)
   p += w('energie') * 1;
   return p;
 }
 
 // ─── DEALBREAKERS ─────────────────────────────────────────────────────────────
-// v2: richtinggevoelig en grootte-bewust i.p.v. grove categoriegroepen.
+// v3: eenzijdig zeer lage bereidheid is nu een expliciete dealbreaker.
+//
+// Rationale (WoON 2024): er verhuizen structureel minder senioren dan er zeggen
+// te willen verhuizen. Bereidheid=1 bij één partij betekent in de praktijk dat
+// de match niet leidt tot een verhuisbeweging, ongeacht hoe bereid de ander is.
+// We blokkeren als één partij ≤ 1 heeft én de ander < 4 — ruimte voor het geval
+// dat een zeer gemotiveerde partij (bereid=5) toch net genoeg trekkracht heeft.
+
 function hasDealbreaker(a, b) {
-  // Locatie-incompatibiliteit (een van beide kanten)
+  // Locatie-incompatibiliteit
   if (!locatieOk(a, b) || !locatieOk(b, a)) return true;
 
-  // Beide willen (strikt) groter → niemand levert de grote woning
+  // Beide willen groter → niemand levert de grote woning
   if (a.gewenst_type === 'groter' && b.gewenst_type === 'groter') return true;
 
-  // Beide willen kleiner/gelijkvloers/appartement én woningen verschillen
-  // niet of nauwelijks in grootte → geen zinvolle ruil.
+  // Beide willen kleiner, gelijkvloers, etc. én woningen vergelijkbaar in grootte
   const bothSmaller = WANTS_SMALLER.includes(a.gewenst_type) && WANTS_SMALLER.includes(b.gewenst_type);
   if (bothSmaller) {
     const ra = oppRank(a), rb = oppRank(b);
-    // Alleen dealbreaker als we grootte kennen én ze (vrijwel) gelijk zijn.
     if (ra && rb && Math.abs(ra - rb) <= 1) return true;
-    // Zonder grootte-info: alleen blokkeren als ook woningtype gelijk is.
     if ((!ra || !rb) && a.woning_type && a.woning_type === b.woning_type) return true;
   }
 
-  // Bereidheid bij beiden minimaal (allebei 1) → geen animo
+  // v2: beiden bereidheid ≤ 1 → geen animo
   if ((a.verhuisbereidheid||0) <= 1 && (b.verhuisbereidheid||0) <= 1) return true;
+
+  // v3 (nieuw): eenzijdig zeer lage bereidheid is ook een dealbreaker,
+  // tenzij de andere partij uitzonderlijk gemotiveerd is (bereid = 5).
+  // Dit verwerkt de WoON 2024 bottleneck-bevinding in de dealbreaker-laag,
+  // als extra vangnet naast de bereidheidFactor-demping.
+  const ba = a.verhuisbereidheid || 0;
+  const bb = b.verhuisbereidheid || 0;
+  if (ba > 0 && bb > 0) {
+    const laag = Math.min(ba, bb);
+    const hoog = Math.max(ba, bb);
+    if (laag <= 1 && hoog < 4) return true;
+  }
 
   return false;
 }
 
-// ─── HOOFDFUNCTIE: bereken matchscore tussen twee profielen ──────────────────
+// ─── HOOFDFUNCTIE ─────────────────────────────────────────────────────────────
 export function matchScore(a, b) {
   if (hasDealbreaker(a, b)) return { total: 0, breakdown: null };
 
@@ -237,25 +250,19 @@ export function matchScore(a, b) {
   const mis    = mismatchScore(a, b);
   const extra  = extraScore(a, b);
 
-  // Inhoudelijke fit (zonder bereidheid)
-  const inhoud = geo + swap + mis + extra;
+  const inhoud  = geo + swap + mis + extra;
+  const factor  = bereidheidFactor(a, b);
+  let scaled    = inhoud * factor;
 
-  // Bereidheid schaalt de inhoudelijke fit
-  const factor = bereidheidFactor(a, b);
-  let scaled   = inhoud * factor;
-
-  // Rejection-feedback dempt vergelijkbare, eerder afgewezen matches
   const penalty = rejectionPenalty(a, b);
   let total = Math.round(scaled - penalty);
-  if (total < 0) total = 0;
+  if (total < 0)   total = 0;
   if (total > 100) total = 100;
 
   return {
     total,
     breakdown: {
       geo, swap, mis, extra,
-      // 'bereid' tonen we als afgeleide bijdrage zodat de admin-UI (die bd.bereid
-      // verwacht) blijft werken: het verschil dat de factor maakte.
       bereid: Math.round(inhoud * factor - inhoud),
       penalty,
       factor: Math.round(factor * 100) / 100,
