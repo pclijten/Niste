@@ -1,7 +1,15 @@
-// matching.js — Niste matchingalgoritme v3
+// matching.js — Niste matchingalgoritme v3.1
 //
 // Dit bestand berekent matchscores tussen huishoudprofielen.
 // Wordt aangeroepen vanuit admin.html. Schrijft resultaten naar /matches in Firestore.
+//
+// NIEUW IN v3.1 (geo-fix):
+//   Afstanden worden berekend op basis van echte PC4-centroïden (zie pc4geo.js)
+//   in plaats van postcodecijfer-vergelijking. De oude cijferlogica behandelde
+//   het eerste postcodecijfer als "provincie" en de eerste twee als "gemeente";
+//   beide aannames kloppen geografisch niet. "Tot 5 km" en "Tot 15 km" gaven
+//   daardoor identieke resultaten. Nu zijn alle afstandswensen écht in km.
+//   Bij een onbekende postcode valt het algoritme terug op de oude heuristiek.
 //
 // MATCHSCORE (0–100):
 //   Geo-overlap         max 25 pts
@@ -27,6 +35,8 @@
 //      nauwelijks bereid is, is de kans op een echte verhuisbeweging minimaal —
 //      ongeacht hoe bereid de ander is. Drempel: één partij ≤ 1 én de ander < 4.
 
+import { pc4Distance } from './pc4geo.js';
+
 // ─── ADMIN CONFIG (aanpasbaar via admin-interface) ────────────────────────────
 // Drempelwaarden zijn initiële schattingen — worden bijgesteld op basis van
 // pilotdata (Noord-Brabant 2026). Zie admin.html voor UI om deze aan te passen.
@@ -47,32 +57,62 @@ const WANTS_SMALLER = ['kleiner', 'gelijkvloers', 'appartement', 'zorg'];
 const WANTS_BIGGER  = ['groter', 'grondgeb'];
 
 // ─── GEO SCORE (max 25) ───────────────────────────────────────────────────────
+// Op basis van echte afstand tussen PC4-centroïden (pc4geo.js).
+// Schaal sluit aan op WoON 2024: de meeste senioren willen binnen de eigen
+// kern of gemeente blijven — nabijheid weegt daarom progressief zwaar.
 function geoScore(a, b) {
   if (!a.postcode || !b.postcode) return 0;
-  if (a.postcode === b.postcode) return 25;
+  if (a.postcode === b.postcode) return 25;        // zelfde PC4-gebied
+
+  const km = pc4Distance(a.postcode, b.postcode);
+  if (km === null) return geoScoreFallback(a, b);  // onbekende postcode
+
+  if (km <= 2)  return 22;   // zelfde kern / aangrenzende wijk
+  if (km <= 5)  return 18;   // zelfde of buurgemeente
+  if (km <= 10) return 12;   // korte fietsafstand
+  if (km <= 20) return 7;    // zelfde regio
+  if (km <= 35) return 3;    // randgeval
+  return 0;
+}
+
+// Oude cijferheuristiek, alleen als fallback bij een postcode die niet in de
+// PC4-dataset voorkomt (bv. typefout die door validatie glipte).
+function geoScoreFallback(a, b) {
   if (a.postcode.slice(0,2) === b.postcode.slice(0,2)) return 10;
   if (a.postcode.slice(0,1) === b.postcode.slice(0,1)) return 5;
   return 0;
 }
 
 // ─── LOCATIE WENS CHECK ───────────────────────────────────────────────────────
+// Harde filter op de afstandswens van een deelnemer, nu in echte kilometers.
+// "Zelfde gemeente" is benaderd als ≤ 7 km hemelsbreed: gemeentegrenzen volgen
+// geen postcodecijfers, en 7 km dekt vrijwel elke Nederlandse gemeente vanuit
+// de kern. Bewuste, gedocumenteerde proxy — exacte gemeente-mapping kan later
+// via een PC4→gemeente-tabel (CBS) als de pilot daarom vraagt.
+const LOCATIE_MAX_KM = {
+  'Zelfde wijk':     2,
+  'Zelfde gemeente': 7,
+  'Tot 5 km':        5,
+  'Tot 15 km':       15,
+  'Tot 30 km':       30,
+};
+
 function locatieOk(a, b) {
   if (!a.gewenste_locatie) return true;
+  if (a.gewenste_locatie === 'Heel Nederland') return true;
   if (!a.postcode || !b.postcode) return true;
+  if (a.postcode === b.postcode) return true;      // zelfde PC4 voldoet altijd
 
-  const samePc    = a.postcode === b.postcode;
-  const sameRegio = a.postcode.slice(0,2) === b.postcode.slice(0,2);
-  const sameProv  = a.postcode.slice(0,1) === b.postcode.slice(0,1);
+  const maxKm = LOCATIE_MAX_KM[a.gewenste_locatie];
+  if (maxKm === undefined) return true;            // onbekende wens → niet blokkeren
 
-  switch (a.gewenste_locatie) {
-    case 'Zelfde wijk':     return samePc;
-    case 'Zelfde gemeente': return sameRegio;
-    case 'Tot 5 km':        return sameRegio;
-    case 'Tot 15 km':       return sameProv;
-    case 'Tot 30 km':       return sameProv;
-    case 'Heel Nederland':  return true;
-    default:                return true;
+  const km = pc4Distance(a.postcode, b.postcode);
+  if (km === null) {                               // fallback oude heuristiek
+    const sameRegio = a.postcode.slice(0,2) === b.postcode.slice(0,2);
+    const sameProv  = a.postcode.slice(0,1) === b.postcode.slice(0,1);
+    return maxKm <= 7 ? sameRegio : sameProv;
   }
+  return km <= maxKm;
 }
 
 // ─── HUISHOUDENSGROOTTE NAAR GETAL ────────────────────────────────────────────

@@ -1,0 +1,140 @@
+rules_version = '2';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Niste — Firestore Security Rules v1
+//
+// Uitgangspunten (privacy-by-design):
+//   • Deelnemers kunnen UITSLUITEND hun eigen documenten lezen en schrijven.
+//   • Admins (allowlist hieronder) hebben volledige toegang.
+//   • Niemand anders kan iets lezen — ook niet "alle households ophalen".
+//   • De ADMIN_EMAILS-check in admin.html is alleen UX; DIT bestand is de
+//     daadwerkelijke beveiliging. Server-side, niet te omzeilen via de console.
+//
+// Deployen:
+//   Firebase Console → Firestore Database → Rules → plak dit bestand → Publish
+//   óf via CLI: firebase deploy --only firestore:rules
+//
+// Na elke wijziging testen met de Rules Playground in de console.
+// ─────────────────────────────────────────────────────────────────────────────
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helpers ──────────────────────────────────────────────────────────────
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // Admin-allowlist. E-mail moet geverifieerd zijn — anders kan iemand een
+    // ongeverifieerd account met dit adres proberen aan te maken bij een
+    // provider zonder verificatie. Google-login geeft email_verified = true.
+    function isAdmin() {
+      return signedIn()
+        && request.auth.token.email_verified == true
+        && request.auth.token.email in [
+             'pclijten@gmail.com',
+             'eplijten@gmail.com'
+           ];
+    }
+
+    function isOwner(uid) {
+      return signedIn() && request.auth.uid == uid;
+    }
+
+    // ── users/{uid} — accountmetadata ────────────────────────────────────────
+    match /users/{uid} {
+      allow read, write: if isOwner(uid) || isAdmin();
+    }
+
+    // ── households/{uid} — woonprofiel (doc-id = auth uid) ───────────────────
+    // Deelnemer beheert eigen profiel; admin schrijft o.a. _pending_matches.
+    match /households/{uid} {
+      allow read, write: if isOwner(uid) || isAdmin();
+    }
+
+    // ── messages — admin ↔ deelnemer berichten ───────────────────────────────
+    match /messages/{msgId} {
+      // Lezen: alleen eigen berichten, of admin (ziet alles).
+      allow read: if isAdmin()
+        || (signedIn() && resource.data.uid == request.auth.uid);
+
+      // Aanmaken: deelnemer mag alleen namens zichzelf en als sender 'user'.
+      allow create: if isAdmin()
+        || (signedIn()
+            && request.resource.data.uid == request.auth.uid
+            && request.resource.data.sender == 'user');
+
+      // Bijwerken: deelnemer mag alléén read_user togglen (gelezen-markering).
+      allow update: if isAdmin()
+        || (signedIn()
+            && resource.data.uid == request.auth.uid
+            && request.resource.data.diff(resource.data)
+                 .affectedKeys().hasOnly(['read_user']));
+
+      // Verwijderen: eigen berichten (accountverwijdering, AVG) of admin.
+      allow delete: if isAdmin()
+        || (signedIn() && resource.data.uid == request.auth.uid);
+    }
+
+    // ── matches — door admin berekend en beheerd ─────────────────────────────
+    match /matches/{matchId} {
+      // Lezen: alleen de twee betrokken huishoudens, of admin.
+      allow read: if isAdmin()
+        || (signedIn()
+            && (resource.data.household_a == request.auth.uid
+                || resource.data.household_b == request.auth.uid));
+
+      // Aanmaken: alleen admin (matching draait via admin.html / Cloud Function).
+      allow create: if isAdmin();
+
+      // Bijwerken: admin alles; deelnemer alléén het user_feedback-veld
+      // (afwijsredenen vanuit dashboard.html).
+      allow update: if isAdmin()
+        || (signedIn()
+            && (resource.data.household_a == request.auth.uid
+                || resource.data.household_b == request.auth.uid)
+            && request.resource.data.diff(resource.data)
+                 .affectedKeys().hasOnly(['user_feedback']));
+
+      // Verwijderen: admin, of betrokken deelnemer (accountverwijdering, AVG).
+      allow delete: if isAdmin()
+        || (signedIn()
+            && (resource.data.household_a == request.auth.uid
+                || resource.data.household_b == request.auth.uid));
+    }
+
+    // ── threads — anonieme match-chats (dubbele opt-in vereist) ──────────────
+    match /threads/{threadId} {
+      // Threaddocument: alleen deelnemers van de thread of admin.
+      allow read: if isAdmin()
+        || (signedIn() && request.auth.uid in resource.data.participants);
+
+      // Alleen admin opent een chat (na wederzijdse opt-in).
+      allow create, update, delete: if isAdmin();
+
+      // Berichten binnen een thread.
+      match /messages/{msgId} {
+        allow read: if isAdmin()
+          || (signedIn()
+              && request.auth.uid in
+                 get(/databases/$(database)/documents/threads/$(threadId))
+                   .data.participants);
+
+        allow create: if isAdmin()
+          || (signedIn()
+              && request.auth.uid in
+                 get(/databases/$(database)/documents/threads/$(threadId))
+                   .data.participants
+              && request.resource.data.sender_uid == request.auth.uid);
+
+        // Chatberichten zijn onveranderlijk voor deelnemers (moderatiespoor).
+        allow update, delete: if isAdmin();
+      }
+    }
+
+    // ── Alles wat hierboven niet expliciet is toegestaan: dicht ──────────────
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

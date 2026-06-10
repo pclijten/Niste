@@ -2,6 +2,5 @@ User-agent: *
 Allow: /
 Disallow: /admin.html
 Disallow: /dashboard.html
-Disallow: /aanmelden.html
 
 Sitemap: https://niste.nl/sitemap.xml
